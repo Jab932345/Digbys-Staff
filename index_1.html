@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Digbys BOH</title>
+<meta name="theme-color" content="#1f2a24" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%231f2a24%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22 fill=%22%23e8dcc0%22 font-family=%22sans-serif%22>D</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root{
+    --bg:#f6f3ec; --surface:#ffffff; --surface-2:#f0ece2; --border:#e2dccd;
+    --ink:#1f2a24; --ink-soft:#5b6660; --accent:#2f6f4f; --accent-ink:#ffffff;
+    --warn:#a5522c; --warn-bg:#fbe9e1; --ok:#2f6f4f; --ok-bg:#e6f0e9;
+    --pend:#8a6d1d; --pend-bg:#f6ecd2;
+    --radius:14px; --shadow:0 1px 2px rgba(31,42,36,.06), 0 8px 24px rgba(31,42,36,.06);
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:Inter,system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:72px;
+  }
+  h1,h2,h3{font-family:Sora,Inter,sans-serif; letter-spacing:-0.01em; margin:0 0 4px}
+  a{color:inherit}
+  button,input,select,textarea{font:inherit;color:inherit}
+  input,select,textarea{
+    width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px;
+    background:var(--surface); outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,111,79,.12)}
+  label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin:14px 0 6px}
+  label:first-child{margin-top:0}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding:10px 16px; border-radius:10px; border:1px solid transparent;
+    background:var(--accent); color:var(--accent-ink); font-weight:600; cursor:pointer;
+    font-size:14px; text-decoration:none;
+  }
+  .btn:disabled{opacity:.5; cursor:default}
+  .btn.secondary{background:var(--surface); color:var(--ink); border-color:var(--border)}
+  .btn.danger{background:var(--warn); color:#fff}
+  .btn.ghost{background:transparent; color:var(--accent); padding:6px 10px}
+  .btn.small{padding:6px 10px; font-size:13px}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+  .stack{display:flex; flex-direction:column; gap:12px}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .row.between{justify-content:space-between}
+  .muted{color:var(--ink-soft); font-size:13px}
+  .pill{display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700}
+  .pill.ok{background:var(--ok-bg); color:var(--ok)}
+  .pill.warn{background:var(--warn-bg); color:var(--warn)}
+  .pill.pend{background:var(--pend-bg); color:var(--pend)}
+  .pill.neutral{background:var(--surface-2); color:var(--ink-soft)}
+
+  #topbar{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    border-bottom:1px solid var(--border); padding:14px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  #topbar .brand{font-family:Sora; font-weight:700; font-size:18px}
+  #bell{position:relative; cursor:pointer; padding:8px; border-radius:10px}
+  #bell:hover{background:var(--surface-2)}
+  #bell .dot{position:absolute; top:4px; right:4px; width:9px; height:9px; border-radius:50%; background:var(--warn); display:none}
+  #bell.has-unread .dot{display:block}
+
+  #notif-panel{
+    position:fixed; top:60px; right:12px; left:12px; max-width:380px; margin-left:auto;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); max-height:70vh; overflow:auto; z-index:30; display:none;
+  }
+  #notif-panel.open{display:block}
+  .notif-item{padding:12px 16px; border-bottom:1px solid var(--border); font-size:13px}
+  .notif-item:last-child{border-bottom:none}
+  .notif-item .t{font-weight:600; margin-bottom:2px}
+  .notif-item.unread{background:#fbfaf5}
+
+  main{max-width:720px; margin:0 auto; padding:18px 16px}
+
+  #tabbar{
+    position:fixed; bottom:0; left:0; right:0; background:var(--surface);
+    border-top:1px solid var(--border); display:flex; z-index:20;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  #tabbar a{
+    flex:1; text-align:center; padding:10px 4px 8px; font-size:11px; font-weight:600;
+    color:var(--ink-soft); text-decoration:none;
+  }
+  #tabbar a.active{color:var(--accent)}
+  #tabbar .ic{display:block; font-size:18px; margin-bottom:2px}
+
+  .empty{padding:32px 16px; text-align:center; color:var(--ink-soft)}
+  .list{display:flex; flex-direction:column; gap:10px}
+  .item{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--surface)}
+  .item .title{font-weight:700; margin-bottom:2px}
+  .item .meta{font-size:13px; color:var(--ink-soft)}
+
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th,td{text-align:left; padding:8px 6px; border-bottom:1px solid var(--border)}
+  th{color:var(--ink-soft); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em}
+  .num{font-variant-numeric:tabular-nums}
+
+  .modal-backdrop{position:fixed; inset:0; background:rgba(31,42,36,.4); z-index:40; display:flex; align-items:flex-end; justify-content:center;}
+  @media(min-width:640px){ .modal-backdrop{align-items:center} }
+  .modal{background:var(--surface); border-radius:16px 16px 0 0; padding:20px; width:100%; max-width:480px; max-height:88vh; overflow:auto}
+  @media(min-width:640px){ .modal{border-radius:16px} }
+
+  .toast{
+    position:fixed; bottom:84px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px;
+    z-index:50; box-shadow:var(--shadow); opacity:0; transition:opacity .2s;
+  }
+  .toast.show{opacity:1}
+
+  .center-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px}
+  .auth-card{width:100%; max-width:380px}
+  .clock-big{font-family:Sora; font-size:40px; font-weight:700; text-align:center; margin:10px 0}
+  .link{color:var(--accent); font-weight:600; cursor:pointer; background:none; border:none; padding:0; text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+// ---------------------------------------------------------------------
+// Config — safe to be public: this is Supabase's anon/publishable key,
+// meant to ship inside client-side code. All real access control is
+// enforced by Postgres Row Level Security policies (see schema.sql),
+// not by keeping this key secret.
+// ---------------------------------------------------------------------
+const SUPABASE_URL = "https://jaajrllkozknilvmdezt.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ---------------------------------------------------------------------
+// Tiny app state + router
+// ---------------------------------------------------------------------
+const state = {
+  session: null,
+  profile: null,       // my own profile row
+  notifications: [],
+  unread: 0,
+  route: "#/dashboard",
+};
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function penceToGBP(p) {
+  if (p === null || p === undefined) return "—";
+  return "£" + (p / 100).toFixed(2);
+}
+function fmtDate(d) {
+  if (!d) return "";
+  const dt = new Date(d + "T00:00:00");
+  return dt.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
+function fmtDateTime(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+function todayIso() {
+  // Europe/London calendar date, robust across BST/GMT.
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" }); // en-CA => YYYY-MM-DD
+}
+function hoursBetween(inIso, outIso, breakMin) {
+  if (!outIso) return null;
+  const ms = new Date(outIso) - new Date(inIso) - (breakMin || 0) * 60000;
+  return Math.max(0, ms / 3600000);
+}
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function navigate(route) {
+  location.hash = route;
+}
+window.addEventListener("hashchange", () => render());
+
+async function requireData(fn) {
+  try {
+    return await fn();
+  } catch (e) {
+    console.error(e);
+    toast(e.message || "Something went wrong");
+    throw e;
+  }
+}
+
+// ---------------------------------------------------------------------
+// Auth
+// ---------------------------------------------------------------------
+async function refreshSession() {
+  const { data } = await sb.auth.getSession();
+  state.session = data.session;
+  if (state.session) {
+    await loadMyProfile();
+    await loadNotifications();
+  } else {
+    state.profile = null;
+    state.notifications = [];
+    state.unread = 0;
+  }
+}
+
+async function loadMyProfile() {
+  const { data, error } = await sb.from("profiles").select("*").eq("id", state.session.user.id).maybeSingle();
+  if (error) throw error;
+  state.profile = data;
+}
+
+async function loadNotifications() {
+  const { data } = await sb.from("notifications").select("*").order("created_at", { ascending: false }).limit(30);
+  state.notifications = data || [];
+  state.unread = state.notifications.filter((n) => !n.read).length;
+}
+
+sb.auth.onAuthStateChange((_event, session) => {
+  state.session = session;
+  if (!session) { state.profile = null; navigate("#/login"); render(); }
+});
+
+// ---------------------------------------------------------------------
+// Root render
+// ---------------------------------------------------------------------
+async function render() {
+  const app = document.getElementById("app");
+  const hash = location.hash || "#/dashboard";
+
+  await refreshSession();
+
+  if (!state.session) {
+    app.innerHTML = hash === "#/signup" ? signupScreen() : loginScreen();
+    wireAuthScreen(hash === "#/signup" ? "signup" : "login");
+    return;
+  }
+
+  if (!state.profile) {
+    app.innerHTML = `<div class="center-screen"><div class="card">Loading your account…</div></div>`;
+    return;
+  }
+
+  if (!state.profile.active) {
+    app.innerHTML = pendingScreen();
+    document.getElementById("signout-pending")?.addEventListener("click", () => sb.auth.signOut());
+    return;
+  }
+
+  app.innerHTML = shell(await pageContent(hash));
+  wireShell();
+  wirePage(hash);
+}
+
+function shell(inner) {
+  const isAdmin = state.profile.role === "ADMIN";
+  const tabs = [
+    ["#/dashboard", "🏠", "Home"],
+    ["#/schedule", "🗓️", "Schedule"],
+    ["#/shifts-open", "🙋", "Open"],
+    ["#/timeclock", "⏱️", "Clock"],
+    isAdmin ? ["#/staff", "👥", "Staff"] : ["#/time-off", "🌴", "Time off"],
+  ];
+  const current = location.hash || "#/dashboard";
+  return `
+    <div id="topbar">
+      <div class="brand">Digbys BOH</div>
+      <div class="row" style="gap:8px">
+        <div id="bell" class="${state.unread ? "has-unread" : ""}">🔔<span class="dot"></span></div>
+        <div class="btn ghost small" id="profile-link">${escapeHtml(state.profile.name.split(" ")[0])}</div>
+      </div>
+    </div>
+    <div id="notif-panel">${notifList()}</div>
+    <main>${inner}</main>
+    <div id="tabbar">
+      ${tabs.map(([href, ic, label]) => `<a href="${href}" class="${current.startsWith(href) ? "active" : ""}"><span class="ic">${ic}</span>${label}</a>`).join("")}
+    </div>
+  `;
+}
+
+function notifList() {
+  if (!state.notifications.length) return `<div class="empty">No notifications yet.</div>`;
+  return state.notifications
+    .map(
+      (n) => `<div class="notif-item ${n.read ? "" : "unread"}" data-id="${n.id}" data-link="${n.link || ""}">
+        <div class="t">${escapeHtml(n.title)}</div>
+        <div class="muted">${escapeHtml(n.body || "")}</div>
+        <div class="muted" style="margin-top:4px">${fmtDateTime(n.created_at)}</div>
+      </div>`
+    )
+    .join("");
+}
+
+function wireShell() {
+  document.getElementById("bell")?.addEventListener("click", () => {
+    document.getElementById("notif-panel").classList.toggle("open");
+  });
+  document.getElementById("profile-link")?.addEventListener("click", () => navigate("#/profile"));
+  document.querySelectorAll(".notif-item").forEach((el) => {
+    el.addEventListener("click", async () => {
+      const id = el.dataset.id;
+      await sb.from("notifications").update({ read: true }).eq("id", id);
+      const link = el.dataset.link;
+      document.getElementById("notif-panel").classList.remove("open");
+      if (link) navigate(link.startsWith("#") ? link : "#" + link);
+      else render();
+    });
+  });
+}
+
+// ---------------------------------------------------------------------
+// Pages
+// ---------------------------------------------------------------------
+async function pageContent(hash) {
+  const route = hash.split("?")[0];
+  const isAdmin = state.profile.role === "ADMIN";
+  if (route === "#/dashboard") return await requireData(dashboardPage);
+  if (route === "#/events") return await requireData(eventsPage);
+  if (route.startsWith("#/events/")) return await requireData(() => eventDetailPage(route.split("/")[2]));
+  if (route === "#/schedule") return await requireData(schedulePage);
+  if (route === "#/shifts-open") return await requireData(openShiftsPage);
+  if (route === "#/staff") return isAdmin ? await requireData(staffPage) : deniedPage();
+  if (route.startsWith("#/staff/")) return isAdmin ? await requireData(() => staffDetailPage(route.split("/")[2])) : deniedPage();
+  if (route === "#/timeclock") return await requireData(timeclockPage);
+  if (route === "#/timesheets") return isAdmin ? await requireData(timesheetsPage) : deniedPage();
+  if (route === "#/time-off") return await requireData(timeOffPage);
+  if (route === "#/profile") return await requireData(profilePage);
+  return `<div class="empty">Not found.</div>`;
+}
+
+function wirePage(hash) {
+  const route = hash.split("?")[0];
+  if (route === "#/dashboard") wireDashboard();
+  else if (route === "#/events") wireEvents();
+  else if (route.startsWith("#/events/")) wireEventDetail(route.split("/")[2]);
+  else if (route === "#/schedule") wireSchedule();
+  else if (route === "#/shifts-open") wireOpenShifts();
+  else if (route === "#/staff") wireStaff();
+  else if (route.startsWith("#/staff/")) wireStaffDetail(route.split("/")[2]);
+  else if (route === "#/timeclock") wireTimeclock();
+  else if (route === "#/timesheets") wireTimesheets();
+  else if (route === "#/time-off") wireTimeOff();
+  else if (route === "#/profile") wireProfile();
+}
+
+function deniedPage() {
+  return `<div class="empty">Admins only.</div>`;
+}
+
+// ---- Dashboard --------------------------------------------------------
+
+async function dashboardPage() {
+  const isAdmin = state.profile.role === "ADMIN";
+  const today = todayIso();
+
+  if (isAdmin) {
+    const [{ data: todays }, { data: openShifts }, { data: pendingTimeOff }] = await Promise.all([
+      sb.from("shifts").select("*, events(name)").eq("shift_date", today).order("start_time"),
+      sb.from("shifts").select("*").eq("status", "OPEN").gte("shift_date", today),
+      sb.from("time_off_requests").select("*, profiles!time_off_requests_user_id_fkey(name)").eq("status", "PENDING"),
+    ]);
+    return `
+      <div class="stack">
+        <h2>Today, ${fmtDate(today)}</h2>
+        ${listOrEmpty(todays, (s) => shiftItemHtml(s), "Nothing scheduled today.")}
+        <div class="row between"><h3>Open shifts</h3><span class="pill neutral">${(openShifts || []).length}</span></div>
+        ${listOrEmpty(openShifts, (s) => shiftItemHtml(s), "No open shifts.")}
+        <div class="row between"><h3>Pending time off</h3><span class="pill neutral">${(pendingTimeOff || []).length}</span></div>
+        ${listOrEmpty(pendingTimeOff, (r) => timeOffItemHtml(r, true), "Nothing pending.")}
+      </div>
+    `;
+  }
+
+  const [{ data: myUpcoming }, { data: openShifts }] = await Promise.all([
+    sb.from("shifts").select("*, events(name)").eq("assigned_user_id", state.session.user.id).gte("shift_date", today).order("shift_date").limit(5),
+    sb.from("shifts").select("*").eq("status", "OPEN").gte("shift_date", today).limit(5),
+  ]);
+  return `
+    <div class="stack">
+      <h2>Hi ${escapeHtml(state.profile.name.split(" ")[0])}</h2>
+      <h3>Your upcoming shifts</h3>
+      ${listOrEmpty(myUpcoming, (s) => shiftItemHtml(s), "Nothing scheduled — check Open Shifts.")}
+      <div class="row between"><h3>Open shifts</h3><a class="link" href="#/shifts-open">See all</a></div>
+      ${listOrEmpty(openShifts, (s) => shiftItemHtml(s), "No open shifts right now.")}
+    </div>
+  `;
+}
+function wireDashboard() {}
+
+function listOrEmpty(rows, render, emptyMsg) {
+  if (!rows || !rows.length) return `<div class="empty">${emptyMsg}</div>`;
+  return `<div class="list">${rows.map(render).join("")}</div>`;
+}
+
+function shiftItemHtml(s) {
+  const statusPill = s.status === "OPEN" ? `<span class="pill warn">Open</span>` : `<span class="pill ok">Assigned</span>`;
+  return `<div class="item">
+    <div class="row between">
+      <div>
+        <div class="title">${escapeHtml(s.title)}${s.events?.name ? " — " + escapeHtml(s.events.name) : ""}</div>
+        <div class="meta">${fmtDate(s.shift_date)} · ${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div>
+      </div>
+      ${statusPill}
+    </div>
+  </div>`;
+}
+
+function timeOffItemHtml(r, showName) {
+  const pillClass = r.status === "APPROVED" ? "ok" : r.status === "DECLINED" ? "warn" : "pend";
+  return `<div class="item">
+    <div class="row between">
+      <div>
+        <div class="title">${showName ? escapeHtml(r.profiles?.name || "Staff") + " — " : ""}${fmtDate(r.start_date)} to ${fmtDate(r.end_date)}</div>
+        <div class="meta">${escapeHtml(r.reason || "")}</div>
+      </div>
+      <span class="pill ${pillClass}">${r.status}</span>
+    </div>
+  </div>`;
+}
+
+// ---- Events (admin) -----------------------------------------------------
+
+async function eventsPage() {
+  const { data } = await sb.from("events").select("*").order("event_date");
+  return `
+    <div class="stack">
+      <div class="row between"><h2>Events</h2>${state.profile.role === "ADMIN" ? `<button class="btn small" id="new-event">+ New event</button>` : ""}</div>
+      ${listOrEmpty(data, (e) => `<a class="item" style="display:block;text-decoration:none" href="#/events/${e.id}">
+        <div class="title">${escapeHtml(e.name)}</div>
+        <div class="meta">${fmtDate(e.event_date)} · ${escapeHtml(e.location)}</div>
+      </a>`, "No events yet.")}
+    </div>
+  `;
+}
+function wireEvents() {
+  document.getElementById("new-event")?.addEventListener("click", () => openEventForm());
+}
+
+async function eventDetailPage(id) {
+  const [{ data: ev }, { data: shifts }] = await Promise.all([
+    sb.from("events").select("*").eq("id", id).single(),
+    sb.from("shifts").select("*, profiles(name)").eq("event_id", id).order("start_time"),
+  ]);
+  const isAdmin = state.profile.role === "ADMIN";
+  return `
+    <div class="stack">
+      <a class="link" href="#/events">← Events</a>
+      <h2>${escapeHtml(ev.name)}</h2>
+      <div class="card stack">
+        <div><strong>${escapeHtml(ev.client_name || "")}</strong></div>
+        <div class="muted">${fmtDate(ev.event_date)} · ${ev.start_time}–${ev.end_time}</div>
+        <div class="muted">${escapeHtml(ev.location)}${ev.address ? " — " + escapeHtml(ev.address) : ""}</div>
+        ${ev.guest_count ? `<div class="muted">${ev.guest_count} guests</div>` : ""}
+        ${ev.notes ? `<div>${escapeHtml(ev.notes)}</div>` : ""}
+        <span class="pill ${ev.status === "CANCELLED" ? "warn" : "ok"}">${ev.status}</span>
+      </div>
+      <div class="row between">
+        <h3>Shifts</h3>
+        ${isAdmin ? `<button class="btn small" id="new-shift" data-event="${id}">+ Add shift</button>` : ""}
+      </div>
+      ${listOrEmpty(shifts, (s) => `<div class="item">
+        <div class="row between">
+          <div>
+            <div class="title">${escapeHtml(s.title)}</div>
+            <div class="meta">${s.start_time}–${s.end_time} · ${s.assigned_user_id ? "Assigned: " + escapeHtml(s.profiles?.name || "") : "Open"}</div>
+          </div>
+          ${isAdmin ? `<button class="btn ghost small" data-edit-shift="${s.id}">Edit</button>` : ""}
+        </div>
+      </div>`, "No shifts yet.")}
+      ${isAdmin ? `<button class="btn danger small" id="delete-event" data-id="${ev.id}">Delete event</button>` : ""}
+    </div>
+  `;
+}
+function wireEventDetail(id) {
+  document.getElementById("new-shift")?.addEventListener("click", () => openShiftForm({ eventId: id }));
+  document.querySelectorAll("[data-edit-shift]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      const { data } = await sb.from("shifts").select("*").eq("id", btn.dataset.editShift).single();
+      openShiftForm({ shift: data, eventId: id });
+    })
+  );
+  document.getElementById("delete-event")?.addEventListener("click", async () => {
+    if (!confirm("Delete this event? This is blocked if any shift on it has recorded time entries.")) return;
+    const { error } = await sb.from("events").delete().eq("id", id);
+    if (error) { toast(error.message.includes("foreign key") ? "Can't delete — it has recorded time entries." : error.message); return; }
+    navigate("#/events");
+  });
+}
+
+// ---- Schedule -----------------------------------------------------------
+
+async function schedulePage() {
+  const today = todayIso();
+  const in14 = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+  const { data } = await sb.from("shifts").select("*, events(name), profiles(name)").gte("shift_date", today).lte("shift_date", in14).order("shift_date").order("start_time");
+  const isAdmin = state.profile.role === "ADMIN";
+  const byDate = {};
+  (data || []).forEach((s) => { (byDate[s.shift_date] ||= []).push(s); });
+  const dates = Object.keys(byDate).sort();
+  return `
+    <div class="stack">
+      <div class="row between"><h2>Schedule</h2>${isAdmin ? `<a class="btn small" href="#/events">Manage events</a>` : ""}</div>
+      ${dates.length ? dates.map((d) => `
+        <h3>${fmtDate(d)}</h3>
+        <div class="list">${byDate[d].map((s) => `<div class="item">
+          <div class="row between">
+            <div>
+              <div class="title">${escapeHtml(s.title)}${s.events?.name ? " — " + escapeHtml(s.events.name) : ""}</div>
+              <div class="meta">${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div>
+            </div>
+            <div>${s.assigned_user_id ? `<span class="pill ok">${escapeHtml(s.profiles?.name || "Assigned")}</span>` : `<span class="pill warn">Open</span>`}</div>
+          </div>
+        </div>`).join("")}</div>
+      `).join("") : `<div class="empty">Nothing scheduled in the next two weeks.</div>`}
+    </div>
+  `;
+}
+function wireSchedule() {}
+
+// ---- Open shifts (marketplace) ------------------------------------------
+
+async function openShiftsPage() {
+  const today = todayIso();
+  const { data } = await sb.from("shifts").select("*, events(name)").eq("status", "OPEN").gte("shift_date", today).order("shift_date");
+  return `
+    <div class="stack">
+      <h2>Open shifts</h2>
+      <p class="muted">First to claim gets it.</p>
+      ${listOrEmpty(data, (s) => `<div class="item">
+        <div class="row between">
+          <div>
+            <div class="title">${escapeHtml(s.title)}${s.events?.name ? " — " + escapeHtml(s.events.name) : ""}</div>
+            <div class="meta">${fmtDate(s.shift_date)} · ${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div>
+          </div>
+          <button class="btn small" data-claim="${s.id}">Claim</button>
+        </div>
+      </div>`, "No open shifts right now.")}
+    </div>
+  `;
+}
+function wireOpenShifts() {
+  document.querySelectorAll("[data-claim]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      const id = btn.dataset.claim;
+      const { data, error } = await sb.from("shifts").update({ status: "ASSIGNED", assigned_user_id: state.session.user.id }).eq("id", id).eq("status", "OPEN").select();
+      if (error) { toast(error.message); btn.disabled = false; return; }
+      if (!data || !data.length) { toast("Someone else just claimed that shift."); render(); return; }
+      toast("Shift claimed!");
+      render();
+    })
+  );
+}
+
+// ---- Staff (admin) --------------------------------------------------------
+
+async function staffPage() {
+  const { data, error } = await sb.rpc("list_profiles");
+  if (error) throw error;
+  const pending = (data || []).filter((p) => !p.active);
+  const active = (data || []).filter((p) => p.active);
+  return `
+    <div class="stack">
+      <h2>Staff</h2>
+      ${pending.length ? `<h3>Waiting for approval</h3><div class="list">${pending.map((p) => staffItemHtml(p)).join("")}</div>` : ""}
+      <h3>Active</h3>
+      ${listOrEmpty(active, (p) => staffItemHtml(p), "No staff yet.")}
+    </div>
+  `;
+}
+function staffItemHtml(p) {
+  return `<a class="item" style="display:block;text-decoration:none" href="#/staff/${p.id}">
+    <div class="row between">
+      <div>
+        <div class="title">${escapeHtml(p.name)}</div>
+        <div class="meta">${escapeHtml(p.job_title || p.role)} ${p.role === "ADMIN" ? "· Admin" : ""}</div>
+      </div>
+      ${p.active ? "" : `<span class="pill pend">Pending</span>`}
+    </div>
+  </a>`;
+}
+function wireStaff() {}
+
+async function staffDetailPage(id) {
+  const { data: rows, error } = await sb.rpc("list_profiles");
+  if (error) throw error;
+  const p = rows.find((r) => r.id === id);
+  if (!p) return `<div class="empty">Not found.</div>`;
+  return `
+    <div class="stack">
+      <a class="link" href="#/staff">← Staff</a>
+      <h2>${escapeHtml(p.name)}</h2>
+      <div class="muted">${escapeHtml(p.email)}</div>
+      <div class="card stack" id="staff-edit-form">
+        <label>Role</label>
+        <select id="f-role">
+          <option value="STAFF" ${p.role === "STAFF" ? "selected" : ""}>Staff</option>
+          <option value="ADMIN" ${p.role === "ADMIN" ? "selected" : ""}>Admin</option>
+        </select>
+        <label>Job title</label>
+        <input id="f-job-title" value="${escapeHtml(p.job_title || "")}" />
+        <label>Hourly rate (£)</label>
+        <input id="f-rate" type="number" step="0.01" value="${p.hourly_rate_pence != null ? (p.hourly_rate_pence / 100).toFixed(2) : ""}" placeholder="Not set" />
+        <label class="row"><input type="checkbox" id="f-active" style="width:auto" ${p.active ? "checked" : ""} /> <span style="font-weight:600">Active</span></label>
+        <button class="btn" id="save-staff" data-id="${p.id}">Save</button>
+      </div>
+    </div>
+  `;
+}
+function wireStaffDetail(id) {
+  document.getElementById("save-staff")?.addEventListener("click", async () => {
+    const role = document.getElementById("f-role").value;
+    const job_title = document.getElementById("f-job-title").value.trim() || null;
+    const rateStr = document.getElementById("f-rate").value.trim();
+    const active = document.getElementById("f-active").checked;
+    const clearRate = rateStr === "";
+    const rate = clearRate ? null : Math.round(parseFloat(rateStr) * 100);
+    const { error } = await sb.rpc("admin_update_profile", {
+      target_id: id, new_role: role, new_job_title: job_title,
+      new_rate_pence: rate, new_active: active, clear_rate: clearRate,
+    });
+    if (error) { toast(error.message); return; }
+    toast("Saved");
+    navigate("#/staff");
+  });
+}
+
+// ---- Time clock -----------------------------------------------------------
+
+async function timeclockPage() {
+  const [{ data: openEntry }, { data: myShifts }, { data: history }] = await Promise.all([
+    sb.from("time_entries").select("*, shifts(title)").eq("user_id", state.session.user.id).is("clock_out", null).maybeSingle(),
+    sb.from("shifts").select("*").eq("assigned_user_id", state.session.user.id).eq("shift_date", todayIso()),
+    sb.from("time_entries").select("*, shifts(title)").eq("user_id", state.session.user.id).order("clock_in", { ascending: false }).limit(10),
+  ]);
+
+  if (openEntry) {
+    return `
+      <div class="stack">
+        <h2>Time clock</h2>
+        <div class="card" style="text-align:center">
+          <div class="muted">Clocked in on</div>
+          <div class="title" style="font-size:18px">${escapeHtml(openEntry.shifts?.title || "Shift")}</div>
+          <div class="clock-big" id="live-timer">--:--:--</div>
+          <div class="muted">since ${fmtDateTime(openEntry.clock_in)}</div>
+          <button class="btn danger" id="clock-out" data-id="${openEntry.id}" data-clock-in-at="${openEntry.clock_in}" style="margin-top:14px">Clock out</button>
+        </div>
+        ${historyHtml(history)}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="stack">
+      <h2>Time clock</h2>
+      ${myShifts && myShifts.length ? `
+        <div class="list">${myShifts.map((s) => `<div class="item">
+          <div class="row between">
+            <div>
+              <div class="title">${escapeHtml(s.title)}</div>
+              <div class="meta">${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div>
+            </div>
+            <button class="btn small" data-clock-in="${s.id}">Clock in</button>
+          </div>
+        </div>`).join("")}</div>
+      ` : `<div class="empty">No shift assigned to you today.</div>`}
+      ${historyHtml(history)}
+    </div>
+  `;
+}
+function historyHtml(history) {
+  if (!history || !history.length) return "";
+  return `<h3>Recent</h3><div class="list">${history.map((e) => {
+    const hrs = hoursBetween(e.clock_in, e.clock_out, e.break_minutes);
+    return `<div class="item"><div class="row between">
+      <div>
+        <div class="title">${escapeHtml(e.shifts?.title || "Shift")}</div>
+        <div class="meta">${fmtDateTime(e.clock_in)} → ${e.clock_out ? fmtDateTime(e.clock_out) : "in progress"}</div>
+      </div>
+      <div class="num">${hrs != null ? hrs.toFixed(2) + "h" : ""}</div>
+    </div></div>`;
+  }).join("")}</div>`;
+}
+let timerInterval;
+function wireTimeclock() {
+  clearInterval(timerInterval);
+  const liveEl = document.getElementById("live-timer");
+  const clockOutBtn = document.getElementById("clock-out");
+  if (liveEl && clockOutBtn) {
+    const clockInIso = clockOutBtn.dataset.clockInAt;
+    const started = clockInIso ? new Date(clockInIso) : new Date();
+    const tick = () => {
+      const el = document.getElementById("live-timer");
+      if (!el) { clearInterval(timerInterval); return; }
+      const s = Math.max(0, Math.floor((Date.now() - started) / 1000));
+      const hh = String(Math.floor(s / 3600)).padStart(2, "0");
+      const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+      const ss = String(s % 60).padStart(2, "0");
+      el.textContent = `${hh}:${mm}:${ss}`;
+    };
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+  document.querySelectorAll("[data-clock-in]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      const { error } = await sb.from("time_entries").insert({ shift_id: btn.dataset.clockIn, user_id: state.session.user.id, clock_in: new Date().toISOString() });
+      if (error) { toast(error.message); return; }
+      toast("Clocked in");
+      render();
+    })
+  );
+  document.getElementById("clock-out")?.addEventListener("click", async () => {
+    const { error } = await sb.from("time_entries").update({ clock_out: new Date().toISOString() }).eq("id", document.getElementById("clock-out").dataset.id);
+    if (error) { toast(error.message); return; }
+    toast("Clocked out");
+    render();
+  });
+}
+
+// ---- Timesheets (admin) -----------------------------------------------------
+
+async function timesheetsPage() {
+  const today = new Date();
+  const day = today.getDay() || 7;
+  const monday = new Date(today); monday.setDate(today.getDate() - day + 1);
+  const weekStart = monday.toISOString().slice(0, 10);
+  const weekEnd = new Date(monday.getTime() + 6 * 86400000).toISOString().slice(0, 10);
+
+  const { data } = await sb.from("time_entries").select("*, profiles(name, hourly_rate_pence)").gte("clock_in", weekStart).lt("clock_in", weekEnd + "T23:59:59").order("clock_in");
+  const rows = (data || []).filter((e) => e.clock_out);
+  return `
+    <div class="stack">
+      <div class="row between"><h2>Timesheets</h2><button class="btn small" id="export-csv">Export CSV</button></div>
+      <div class="muted">Week of ${fmtDate(weekStart)}</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Name</th><th>Date</th><th>Hours</th><th>Pay</th></tr></thead>
+          <tbody>
+            ${rows.map((e) => {
+              const hrs = hoursBetween(e.clock_in, e.clock_out, e.break_minutes);
+              const rate = e.profiles?.hourly_rate_pence;
+              const pay = rate != null && hrs != null ? (hrs * rate) / 100 : null;
+              return `<tr>
+                <td>${escapeHtml(e.profiles?.name || "")}</td>
+                <td>${fmtDate(e.clock_in.slice(0, 10))}</td>
+                <td class="num">${hrs != null ? hrs.toFixed(2) : ""}</td>
+                <td class="num">${pay != null ? "£" + pay.toFixed(2) : "—"}</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+      ${!rows.length ? `<div class="empty">No completed entries this week.</div>` : ""}
+    </div>
+  `;
+}
+function wireTimesheets() {
+  document.getElementById("export-csv")?.addEventListener("click", async () => {
+    const today = new Date();
+    const day = today.getDay() || 7;
+    const monday = new Date(today); monday.setDate(today.getDate() - day + 1);
+    const weekStart = monday.toISOString().slice(0, 10);
+    const weekEnd = new Date(monday.getTime() + 6 * 86400000).toISOString().slice(0, 10);
+    const { data } = await sb.from("time_entries").select("*, profiles(name, hourly_rate_pence)").gte("clock_in", weekStart).lt("clock_in", weekEnd + "T23:59:59").order("clock_in");
+    const rows = (data || []).filter((e) => e.clock_out);
+    let csv = "Name,Date,Clock in,Clock out,Break (min),Hours,Rate,Pay\n";
+    rows.forEach((e) => {
+      const hrs = hoursBetween(e.clock_in, e.clock_out, e.break_minutes);
+      const rate = e.profiles?.hourly_rate_pence;
+      const pay = rate != null && hrs != null ? (hrs * rate) / 100 : 0;
+      csv += [e.profiles?.name, e.clock_in.slice(0, 10), e.clock_in, e.clock_out, e.break_minutes, hrs?.toFixed(2), rate != null ? "£" + (rate / 100).toFixed(2) : "", "£" + pay.toFixed(2)].join(",") + "\n";
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `timesheet-${weekStart}.csv`;
+    a.click();
+  });
+}
+
+// ---- Time off ---------------------------------------------------------------
+
+async function timeOffPage() {
+  const isAdmin = state.profile.role === "ADMIN";
+  const { data } = isAdmin
+    ? await sb.from("time_off_requests").select("*, profiles!time_off_requests_user_id_fkey(name)").order("created_at", { ascending: false })
+    : await sb.from("time_off_requests").select("*").eq("user_id", state.session.user.id).order("created_at", { ascending: false });
+  return `
+    <div class="stack">
+      <div class="row between"><h2>Time off</h2>${!isAdmin ? `<button class="btn small" id="new-timeoff">+ Request</button>` : ""}</div>
+      ${listOrEmpty(data, (r) => `<div class="item">
+        <div class="row between">
+          <div>
+            <div class="title">${isAdmin ? escapeHtml(r.profiles?.name || "Staff") + " — " : ""}${fmtDate(r.start_date)} to ${fmtDate(r.end_date)}</div>
+            <div class="meta">${escapeHtml(r.reason || "")}</div>
+          </div>
+          ${isAdmin && r.status === "PENDING"
+            ? `<div class="row"><button class="btn small" data-decide="${r.id}" data-status="APPROVED">Approve</button><button class="btn secondary small" data-decide="${r.id}" data-status="DECLINED">Decline</button></div>`
+            : `<span class="pill ${r.status === "APPROVED" ? "ok" : r.status === "DECLINED" ? "warn" : "pend"}">${r.status}</span>`}
+        </div>
+      </div>`, "Nothing here yet.")}
+    </div>
+  `;
+}
+function wireTimeOff() {
+  document.getElementById("new-timeoff")?.addEventListener("click", () => openTimeOffForm());
+  document.querySelectorAll("[data-decide]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      const { error } = await sb.from("time_off_requests").update({ status: btn.dataset.status, decided_by: state.session.user.id, decided_at: new Date().toISOString() }).eq("id", btn.dataset.decide);
+      if (error) { toast(error.message); return; }
+      render();
+    })
+  );
+}
+
+// ---- Profile ------------------------------------------------------------
+
+function profilePage() {
+  const p = state.profile;
+  return `
+    <div class="stack">
+      <h2>Your profile</h2>
+      <div class="card stack">
+        <div><strong>${escapeHtml(p.name)}</strong></div>
+        <div class="muted">${escapeHtml(p.email)}</div>
+        <div class="muted">${escapeHtml(p.job_title || p.role)}</div>
+        ${p.hourly_rate_pence != null ? `<div class="muted">Rate: ${penceToGBP(p.hourly_rate_pence)}/hr</div>` : ""}
+      </div>
+      <label>Phone</label>
+      <input id="f-phone" value="${escapeHtml(p.phone || "")}" />
+      <button class="btn secondary" id="save-phone">Save phone</button>
+
+      <h3 style="margin-top:18px">Change password</h3>
+      <label>New password</label>
+      <input id="f-newpass" type="password" placeholder="At least 8 characters" />
+      <button class="btn" id="save-pass">Update password</button>
+
+      <button class="btn secondary" id="signout" style="margin-top:24px">Sign out</button>
+    </div>
+  `;
+}
+function wireProfile() {
+  document.getElementById("save-phone")?.addEventListener("click", async () => {
+    const { error } = await sb.rpc("update_my_profile", { new_phone: document.getElementById("f-phone").value.trim() || null });
+    if (error) { toast(error.message); return; }
+    toast("Saved");
+  });
+  document.getElementById("save-pass")?.addEventListener("click", async () => {
+    const pw = document.getElementById("f-newpass").value;
+    if (pw.length < 8) { toast("Password must be at least 8 characters"); return; }
+    const { error } = await sb.auth.updateUser({ password: pw });
+    if (error) { toast(error.message); return; }
+    await sb.rpc("update_my_profile", { new_must_change_password: false });
+    toast("Password updated");
+    document.getElementById("f-newpass").value = "";
+  });
+  document.getElementById("signout")?.addEventListener("click", () => sb.auth.signOut());
+}
+
+// ---------------------------------------------------------------------
+// Modals: event form, shift form, time-off form
+// ---------------------------------------------------------------------
+function openModal(html) {
+  const wrap = document.createElement("div");
+  wrap.className = "modal-backdrop";
+  wrap.innerHTML = `<div class="modal">${html}</div>`;
+  wrap.addEventListener("click", (e) => { if (e.target === wrap) wrap.remove(); });
+  document.body.appendChild(wrap);
+  return wrap;
+}
+
+function openEventForm() {
+  const modal = openModal(`
+    <h3>New event</h3>
+    <div class="stack">
+      <label>Name</label><input id="m-name" />
+      <label>Client</label><input id="m-client" />
+      <label>Location</label><input id="m-location" />
+      <label>Address</label><input id="m-address" />
+      <label>Date</label><input id="m-date" type="date" />
+      <div class="row">
+        <div style="flex:1"><label>Start</label><input id="m-start" type="time" /></div>
+        <div style="flex:1"><label>End</label><input id="m-end" type="time" /></div>
+      </div>
+      <label>Guest count</label><input id="m-guests" type="number" />
+      <label>Notes</label><textarea id="m-notes" rows="3"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn" id="m-save">Create</button><button class="btn secondary" id="m-cancel">Cancel</button></div>
+    </div>
+  `);
+  modal.querySelector("#m-cancel").addEventListener("click", () => modal.remove());
+  modal.querySelector("#m-save").addEventListener("click", async () => {
+    const payload = {
+      name: modal.querySelector("#m-name").value.trim(),
+      client_name: modal.querySelector("#m-client").value.trim() || null,
+      location: modal.querySelector("#m-location").value.trim(),
+      address: modal.querySelector("#m-address").value.trim() || null,
+      event_date: modal.querySelector("#m-date").value,
+      start_time: modal.querySelector("#m-start").value,
+      end_time: modal.querySelector("#m-end").value,
+      guest_count: modal.querySelector("#m-guests").value ? parseInt(modal.querySelector("#m-guests").value) : null,
+      notes: modal.querySelector("#m-notes").value.trim() || null,
+      created_by: state.session.user.id,
+    };
+    if (!payload.name || !payload.location || !payload.event_date || !payload.start_time || !payload.end_time) { toast("Please fill in name, location, date and times"); return; }
+    const { error } = await sb.from("events").insert(payload);
+    if (error) { toast(error.message); return; }
+    modal.remove();
+    render();
+  });
+}
+
+function openShiftForm({ eventId, shift }) {
+  const modal = openModal(`
+    <h3>${shift ? "Edit shift" : "New shift"}</h3>
+    <div class="stack">
+      <label>Title</label><input id="m-title" value="${escapeHtml(shift?.title || "")}" />
+      <label>Location</label><input id="m-location" value="${escapeHtml(shift?.location || "")}" />
+      <label>Date</label><input id="m-date" type="date" value="${shift?.shift_date || ""}" />
+      <div class="row">
+        <div style="flex:1"><label>Start</label><input id="m-start" type="time" value="${shift?.start_time || ""}" /></div>
+        <div style="flex:1"><label>End</label><input id="m-end" type="time" value="${shift?.end_time || ""}" /></div>
+      </div>
+      <label>Notes</label><textarea id="m-notes" rows="2">${escapeHtml(shift?.notes || "")}</textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" id="m-save">${shift ? "Save" : "Create"}</button>
+        ${shift ? `<button class="btn danger" id="m-delete">Delete</button>` : ""}
+        <button class="btn secondary" id="m-cancel">Cancel</button>
+      </div>
+    </div>
+  `);
+  modal.querySelector("#m-cancel").addEventListener("click", () => modal.remove());
+  modal.querySelector("#m-save").addEventListener("click", async () => {
+    const payload = {
+      title: modal.querySelector("#m-title").value.trim(),
+      location: modal.querySelector("#m-location").value.trim(),
+      shift_date: modal.querySelector("#m-date").value,
+      start_time: modal.querySelector("#m-start").value,
+      end_time: modal.querySelector("#m-end").value,
+      notes: modal.querySelector("#m-notes").value.trim() || null,
+    };
+    if (!payload.title || !payload.location || !payload.shift_date || !payload.start_time || !payload.end_time) { toast("Please fill in every field"); return; }
+    let error;
+    if (shift) {
+      ({ error } = await sb.from("shifts").update(payload).eq("id", shift.id));
+    } else {
+      ({ error } = await sb.from("shifts").insert({ ...payload, event_id: eventId, created_by: state.session.user.id }));
+    }
+    if (error) { toast(error.message); return; }
+    modal.remove();
+    render();
+  });
+  modal.querySelector("#m-delete")?.addEventListener("click", async () => {
+    if (!confirm("Delete this shift?")) return;
+    const { error } = await sb.from("shifts").delete().eq("id", shift.id);
+    if (error) { toast(error.message.includes("foreign key") ? "Can't delete — it has recorded time entries." : error.message); return; }
+    modal.remove();
+    render();
+  });
+}
+
+function openTimeOffForm() {
+  const modal = openModal(`
+    <h3>Request time off</h3>
+    <div class="stack">
+      <label>Start date</label><input id="m-start" type="date" />
+      <label>End date</label><input id="m-end" type="date" />
+      <label>Reason (optional)</label><textarea id="m-reason" rows="2"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn" id="m-save">Request</button><button class="btn secondary" id="m-cancel">Cancel</button></div>
+    </div>
+  `);
+  modal.querySelector("#m-cancel").addEventListener("click", () => modal.remove());
+  modal.querySelector("#m-save").addEventListener("click", async () => {
+    const start_date = modal.querySelector("#m-start").value;
+    const end_date = modal.querySelector("#m-end").value;
+    if (!start_date || !end_date) { toast("Pick both dates"); return; }
+    const { error } = await sb.from("time_off_requests").insert({ user_id: state.session.user.id, start_date, end_date, reason: modal.querySelector("#m-reason").value.trim() || null });
+    if (error) { toast(error.message); return; }
+    modal.remove();
+    render();
+  });
+}
+
+// ---------------------------------------------------------------------
+// Login / signup / pending screens
+// ---------------------------------------------------------------------
+function loginScreen() {
+  return `
+    <div class="center-screen">
+      <div class="auth-card card stack">
+        <h2>Digbys BOH</h2>
+        <p class="muted">Sign in to see your schedule.</p>
+        <label>Email</label><input id="f-email" type="email" autocomplete="username" />
+        <label>Password</label><input id="f-password" type="password" autocomplete="current-password" />
+        <button class="btn" id="do-login" style="margin-top:8px">Sign in</button>
+        <p class="muted" id="auth-error" style="color:var(--warn)"></p>
+        <p class="muted">First time? <button class="link" id="go-signup">Create an account</button></p>
+      </div>
+    </div>
+  `;
+}
+function signupScreen() {
+  return `
+    <div class="center-screen">
+      <div class="auth-card card stack">
+        <h2>Create your account</h2>
+        <p class="muted">An admin needs to approve your account before you can see the schedule.</p>
+        <label>Name</label><input id="f-name" />
+        <label>Email</label><input id="f-email" type="email" autocomplete="username" />
+        <label>Password</label><input id="f-password" type="password" autocomplete="new-password" placeholder="At least 8 characters" />
+        <button class="btn" id="do-signup" style="margin-top:8px">Sign up</button>
+        <p class="muted" id="auth-error" style="color:var(--warn)"></p>
+        <p class="muted">Already have an account? <button class="link" id="go-login">Sign in</button></p>
+      </div>
+    </div>
+  `;
+}
+function pendingScreen() {
+  return `
+    <div class="center-screen">
+      <div class="auth-card card stack" style="text-align:center">
+        <h2>Almost there</h2>
+        <p class="muted">Your account is waiting for an admin to approve it. You'll be able to sign in normally once that's done.</p>
+        <button class="btn secondary" id="signout-pending">Sign out</button>
+      </div>
+    </div>
+  `;
+}
+function wireAuthScreen(kind) {
+  const err = document.getElementById("auth-error");
+  document.getElementById("go-signup")?.addEventListener("click", () => navigate("#/signup"));
+  document.getElementById("go-login")?.addEventListener("click", () => navigate("#/login"));
+  document.getElementById("do-login")?.addEventListener("click", async () => {
+    const email = document.getElementById("f-email").value.trim();
+    const password = document.getElementById("f-password").value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { err.textContent = error.message; return; }
+    navigate("#/dashboard");
+    render();
+  });
+  document.getElementById("do-signup")?.addEventListener("click", async () => {
+    const name = document.getElementById("f-name").value.trim();
+    const email = document.getElementById("f-email").value.trim();
+    const password = document.getElementById("f-password").value;
+    if (!name || !email || password.length < 8) { err.textContent = "Fill in your name, email, and a password of at least 8 characters."; return; }
+    const { error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
+    if (error) { err.textContent = error.message; return; }
+    navigate("#/dashboard");
+    render();
+  });
+}
+
+// ---------------------------------------------------------------------
+render();
+</script>
+</body>
+</html>
