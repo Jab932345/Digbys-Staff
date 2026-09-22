@@ -433,6 +433,15 @@ input[type=range]{accent-color:var(--accent);}
 .prep-code{font-family:var(--mono);font-size:var(--fs-fn);font-weight:600;color:var(--label);background:var(--fill3);padding:2px 8px;border-radius:var(--r-xs);}
 .prep-row{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sh);color:var(--label2);}
 .prep-row b{color:var(--label);font-weight:500;}
+/* details */
+.dt-card{padding:14px 18px 16px;display:flex;flex-direction:column;gap:12px;}
+.dt-hd{font-size:var(--fs-sh);font-weight:500;color:var(--label2);text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.dt-sub{font-size:var(--fs-fn);color:var(--label3);text-transform:none;letter-spacing:0;font-weight:400;}
+.dt-grid{gap:12px 14px;}
+.dt-wide{grid-column:1/-1;}
+.dt-check{min-height:36px;}
+.person-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:46%;}
+@media (max-width:900px){.person-chips{display:none;}}
 /* auth */
 .auth{height:100dvh;overflow:auto;display:flex;padding:24px;background:var(--bg);}
 .auth-card{margin:auto;}
@@ -493,7 +502,7 @@ input[type=range]{accent-color:var(--accent);}
 // One file, Supabase Auth, same design system as Kitchen Prep. Events on the
 // rota come from Kitchen Prep's function sheets by job code, so a booking is
 // typed once and staffed here.
-const APP_VERSION='2',APP_BUILD_DATE='2026-09-22';
+const APP_VERSION='2.1',APP_BUILD_DATE='2026-09-22';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
 const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
@@ -782,34 +791,90 @@ async function decideTimeOff(id,status){
   toast(status==='APPROVED'?'Approved':'Declined');render();
 }
 
+// ── Staff details — one record per person, kept in finance_staff (the payroll
+// table), typed once. Staff keep their own; admins see and edit everything. ──
+const DETAIL_SECTIONS=[
+  {t:'Contact',f:[['phone','Phone','tel'],['email','Email','email'],['address','Address','text',{wide:true}]]},
+  {t:'Personal',f:[['dob','Date of birth','date'],['ni_number','National Insurance number','text',{placeholder:'QQ 12 34 56 C'}]]},
+  {t:'Emergency contacts',f:[['emergency_contact_name','Name','text'],['emergency_contact_relation','Relationship','text'],['emergency_contact_phone','Phone','tel'],['emergency_contact_2_name','Second contact — name','text'],['emergency_contact_2_phone','Second contact — phone','tel']]},
+  {t:'Health & dietary',f:[['allergies','Allergies','text'],['dietary_requirements','Dietary requirements','text'],['medical_notes','Medical notes relevant to work','textarea',{wide:true}]]},
+  {t:'Certificates & licences',f:[['food_hygiene_level','Food hygiene certificate','select',{options:['','Level 1','Level 2','Level 3','Level 4']}],['food_hygiene_expiry','Food hygiene expiry','date'],['first_aid_trained','First aid trained','check'],['first_aid_expiry','First aid expiry','date'],['driving_licence','Driving licence','check'],['driving_licence_categories','Licence categories','text',{placeholder:'B, C1…'}]]},
+  {t:'Uniform',f:[['uniform_size','Uniform size','select',{options:['','XS','S','M','L','XL','XXL']}]]},
+  {t:'Bank details',sub:'For payroll only — seen by you and the admins.',f:[['bank_name','Bank','text'],['bank_sort_code','Sort code','text',{placeholder:'00-00-00'}],['bank_account','Account number','text',{placeholder:'8 digits'}]]},
+];
+const ADMIN_SECTIONS=[
+  {t:'Pay & employment',f:[['pay_rate','Hourly rate (£)','number',{step:'0.01'}],['pay_frequency','Paid','select',{options:['','Per event','Weekly','Monthly']}],['tax_code','Tax code','text',{placeholder:'1257L'}],['employment_start','Start date','date']]},
+  {t:'Right to work',f:[['rtw_doc_type','Document seen','select',{options:['','UK Passport','Irish Passport','Share code','Birth certificate + NI','Other']}],['rtw_check_date','Checked on','date']]},
+  {t:'Admin notes',f:[['notes','Notes (admins only)','textarea',{wide:true}]]},
+];
+function detailField([key,label,type,o={}],d){
+  const v=d&&d[key]!=null?d[key]:'';const id='dt-'+key;
+  if(type==='check')return`<label class="fld dt-check" style="flex-direction:row;align-items:center;justify-content:space-between;gap:12px;"><span class="fld-label" style="color:var(--label);">${label}</span><span class="switch"><input type="checkbox" id="${id}" data-key="${key}" ${v===true||v==='true'?'checked':''}><span class="knob"></span></span></label>`;
+  if(type==='select')return`<div class="fld"><label class="fld-label">${label}</label><select class="fld-sel" id="${id}" data-key="${key}">${(o.options||[]).map(op=>`<option value="${h(op)}" ${String(v)===op?'selected':''}>${op||'—'}</option>`).join('')}</select></div>`;
+  if(type==='textarea')return`<div class="fld${o.wide?' dt-wide':''}"><label class="fld-label">${label}</label><textarea class="fld-ta" id="${id}" data-key="${key}" style="min-height:64px;">${h(v)}</textarea></div>`;
+  return`<div class="fld${o.wide?' dt-wide':''}"><label class="fld-label">${label}</label><input class="fld-inp${type==='number'?' num':''}" id="${id}" data-key="${key}" type="${type}" ${o.step?`step="${o.step}"`:''} ${type==='tel'?'inputmode="tel"':''} value="${h(v)}" placeholder="${h(o.placeholder||'')}"></div>`;
+}
+function detailsFormHTML(sections,d){
+  return sections.map(sec=>`<div class="card dt-card"><div class="dt-hd">${sec.t}${sec.sub?`<span class="dt-sub">${sec.sub}</span>`:''}</div><div class="g2 dt-grid">${sec.f.map(f=>detailField(f,d)).join('')}</div></div>`).join('');
+}
+function collectDetails(){
+  const out={};
+  document.querySelectorAll('[data-key]').forEach(el=>{const k=el.dataset.key;out[k]=el.type==='checkbox'?(el.checked?'true':'false'):(el.value??'').trim();});
+  return out;
+}
+async function loadDetails(target){
+  try{const{data,error}=await sb.rpc('staff_details',target?{target}:{});if(error)throw error;return{d:data||{},ok:true};}
+  catch(e){return{d:{},ok:false,err:e.message||String(e)};}
+}
+async function saveDetails(target,label){
+  const d=collectDetails();
+  const{error}=await sb.rpc('save_staff_details',{target:target||null,d});
+  if(error){toast(/staff_details|save_staff_details/.test(error.message)?'Run digbys-staff-details.sql in Supabase first':error.message,'err');return false;}
+  toast(label||'Details saved');return true;
+}
+// Chips for the Staff list: what is missing or running out.
+function complianceChips(c){
+  if(!c)return'';const chips=[];const soon=iso=>{if(!iso)return null;const days=Math.round((new Date(iso+'T00:00:00')-new Date())/864e5);return days<0?'expired':days<=60?'expiring':null;};
+  const missing=[!c.has_bank&&'bank',!c.has_ni&&'NI',!c.has_emergency&&'emergency contact',!c.has_address&&'address'].filter(Boolean);
+  if(missing.length)chips.push(`<span class="badge pend">Missing: ${missing.join(', ')}</span>`);
+  const fh=soon(c.food_hygiene_expiry);if(fh)chips.push(`<span class="badge ${fh==='expired'?'no':'pend'}">Food hygiene ${fh}</span>`);
+  const fa=soon(c.first_aid_expiry);if(fa)chips.push(`<span class="badge ${fa==='expired'?'no':'pend'}">First aid ${fa}</span>`);
+  if(!c.rtw_check_date)chips.push('<span class="badge">No RTW check</span>');
+  return chips.slice(0,2).join('');
+}
+
 // ── Staff (admin) ──
 async function staffPage(){
-  const{data,error}=await sb.rpc('list_profiles');if(error)throw error;
-  const rows=data||[];state.profiles=rows;
+  const[{data,error},comp]=await Promise.all([sb.rpc('list_profiles'),sb.rpc('staff_compliance').then(r=>r.data||[]).catch(()=>[])]);if(error)throw error;
+  const rows=data||[];state.profiles=rows;const compBy=Object.fromEntries((comp||[]).map(c=>[c.profile_id,c]));
   const pending=rows.filter(p=>!p.active),active=rows.filter(p=>p.active).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  const person=p=>`<div class="person" onclick="navigate('#/staff/${p.id}')"><span class="avatar${p.id===me()?' me':''}">${initials(p.name)}</span><div style="flex:1;min-width:0;"><div class="person-name">${h(p.name)}</div><div class="person-sub">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}${p.role==='ADMIN'&&p.job_title?' · Admin':''}${p.pay_rate>0?' · '+fmt$(p.pay_rate)+'/h':''}</div></div>${p.active?'':'<span class="badge pend">Waiting</span>'}${chev()}</div>`;
-  return{title:'Staff',sub:`${active.length} active${pending.length?` · ${pending.length} waiting for approval`:''}`,body:`${pending.length?`<div class="sec"><div class="sec-hd">Waiting for approval</div><div class="list">${pending.map(person).join('')}</div></div>`:''}<div class="sec"><div class="sec-hd">Team</div>${active.length?`<div class="list">${active.map(person).join('')}</div>`:`<div class="card">${emptyHTML('people','No staff yet','New sign-ups appear here for approval.')}</div>`}</div><div class="note">Anyone can create an account at this address; nothing shows until you approve them here. Pay rates come from the linked Finance record, never typed here.</div>`};
+  const person=p=>`<div class="person" onclick="navigate('#/staff/${p.id}')"><span class="avatar${p.id===me()?' me':''}">${initials(p.name)}</span><div style="flex:1;min-width:0;"><div class="person-name">${h(p.name)}</div><div class="person-sub">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}${p.role==='ADMIN'&&p.job_title?' · Admin':''}${p.pay_rate>0?' · '+fmt$(p.pay_rate)+'/h':''}</div></div><span class="person-chips">${p.active?complianceChips(compBy[p.id]):'<span class="badge pend">Waiting</span>'}</span>${chev()}</div>`;
+  return{title:'Staff',sub:`${active.length} active${pending.length?` · ${pending.length} waiting for approval`:''}`,body:`${pending.length?`<div class="sec"><div class="sec-hd">Waiting for approval</div><div class="list">${pending.map(person).join('')}</div></div>`:''}<div class="sec"><div class="sec-hd">Team</div>${active.length?`<div class="list">${active.map(person).join('')}</div>`:`<div class="card">${emptyHTML('people','No staff yet','New sign-ups appear here for approval.')}</div>`}</div><div class="note">Anyone can create an account at this address; nothing shows until you approve them here. Each person keeps their own details under You; you can see and edit everything, including pay, on their page.</div>`};
 }
 async function staffDetailPage(id){
-  const[{data:rows,error},{data:fin}]=await Promise.all([sb.rpc('list_profiles'),sb.rpc('list_finance_staff_for_linking')]);
+  const[{data:rows,error},{data:fin},det]=await Promise.all([sb.rpc('list_profiles'),sb.rpc('list_finance_staff_for_linking'),loadDetails(id)]);
   if(error)throw error;
   const p=(rows||[]).find(r=>r.id===id);if(!p)return{title:'Not found',body:emptyHTML('person','No such person')};
   const opts=(fin||[]).map(f=>`<option value="${f.id}" ${f.id===p.finance_staff_id?'selected':''}>${h(f.name)}</option>`).join('');
-  return{title:p.name,sub:h(p.email||''),actions:`<button class="btn btn-sm" onclick="navigate('#/staff')">${ico('chevronL')}Staff</button>`,body:`
-    <div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
-      <div class="g2"><div class="fld"><label class="fld-label">Role</label><select class="fld-sel" id="f-role"><option value="STAFF" ${p.role==='STAFF'?'selected':''}>Staff</option><option value="ADMIN" ${p.role==='ADMIN'?'selected':''}>Admin</option></select></div>
-      <div class="fld"><label class="fld-label">Job title</label><input class="fld-inp" id="f-job" value="${h(p.job_title||'')}" placeholder="Chef de partie, Front of house…"></div></div>
-      <div class="fld"><label class="fld-label">Finance record (pay rate comes from here)</label><select class="fld-sel" id="f-fin"><option value="">Not linked</option>${opts}</select>${p.pay_rate>0?`<div class="muted" style="font-size:var(--fs-fn);">Current rate ${fmt$(p.pay_rate)} an hour</div>`:''}</div>
-      <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><span><div style="font-weight:500;">Active</div><div class="muted" style="font-size:var(--fs-fn);">Can sign in, see the rota and claim shifts</div></span><span class="switch"><input type="checkbox" id="f-active" ${p.active?'checked':''}><span class="knob"></span></span></label>
-      <div style="display:flex;justify-content:flex-end;gap:8px;"><button class="btn btn-primary" onclick="saveStaff('${p.id}')">${ico('check')}Save</button></div>
-    </div>`};
+  const d=det.d||{};
+  return{title:p.name,sub:h(p.email||''),actions:`<button class="btn btn-sm" onclick="navigate('#/staff')">${ico('chevronL')}Staff</button><button class="btn btn-sm btn-primary" onclick="saveStaff('${p.id}')">${ico('check')}Save</button>`,body:`
+    <div class="card dt-card">
+      <div class="dt-hd">Account</div>
+      <div class="g2 dt-grid"><div class="fld"><label class="fld-label">Role</label><select class="fld-sel" id="f-role"><option value="STAFF" ${p.role==='STAFF'?'selected':''}>Staff</option><option value="ADMIN" ${p.role==='ADMIN'?'selected':''}>Admin</option></select></div>
+      <div class="fld"><label class="fld-label">Job title</label><input class="fld-inp" id="f-job" value="${h(p.job_title||'')}" placeholder="Chef de partie, Front of house…"></div>
+      <div class="fld"><label class="fld-label">Finance record</label><select class="fld-sel" id="f-fin"><option value="">Not linked — created on first save</option>${opts}</select></div>
+      <label class="fld" style="flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding-top:22px;"><span><div style="font-weight:500;">Active</div><div class="muted" style="font-size:var(--fs-fn);">Can sign in, see the rota and claim shifts</div></span><span class="switch"><input type="checkbox" id="f-active" ${p.active?'checked':''}><span class="knob"></span></span></label></div>
+    </div>
+    ${det.ok?detailsFormHTML([...ADMIN_SECTIONS,...DETAIL_SECTIONS],d):`<div class="card" style="padding:14px 16px;"><div class="note" style="padding:0;">Staff details need <b>digbys-staff-details.sql</b> run once in Supabase. ${h(det.err||'')}</div></div>`}
+    <div style="display:flex;justify-content:flex-end;gap:8px;"><button class="btn btn-primary btn-lg" onclick="saveStaff('${p.id}')">${ico('check')}Save</button></div>`};
 }
 async function saveStaff(id){
   const g=s=>document.getElementById(s);
   const financeId=g('f-fin').value||null;
   const{error}=await sb.rpc('admin_update_profile',{target_id:id,new_role:g('f-role').value,new_job_title:g('f-job').value.trim()||null,new_active:g('f-active').checked,new_finance_staff_id:financeId,clear_finance_link:!financeId});
   if(error){toast(error.message,'err');return;}
-  toast('Saved');navigate('#/staff');
+  if(document.querySelector('[data-key]')){if(!(await saveDetails(id,'Saved')))return;}else toast('Saved');
+  navigate('#/staff');
 }
 
 // ── Timesheets (admin) ──
@@ -945,12 +1010,12 @@ async function openShiftSheet(shiftId,eventId){
 }
 
 // ── Profile / More ──
-function profilePage(){
-  const p=state.profile;
-  return{title:'You',sub:h(p.email||''),body:`
+async function profilePage(){
+  const p=state.profile;const det=await loadDetails(null);const d=det.d||{};if(!d.phone&&p.phone)d.phone=p.phone;if(!d.email&&p.email)d.email=p.email;
+  return{title:'You',sub:h(p.email||''),actions:det.ok?`<button class="btn btn-sm btn-primary" onclick="saveMyDetails()">${ico('check')}Save details</button>`:'',body:`
     <div class="card" style="padding:18px;display:flex;align-items:center;gap:14px;"><span class="avatar me" style="width:52px;height:52px;font-size:var(--fs-hl);">${initials(p.name)}</span><div><div style="font-size:var(--fs-hl);font-weight:600;">${h(p.name)}</div><div class="muted" style="font-size:var(--fs-sh);">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}${p.pay_rate>0?' · '+fmt$(p.pay_rate)+' an hour':''}</div></div></div>
+    ${det.ok?`<div class="note">Your details, kept in one place for the rota and payroll. Only you and the admins can see them.</div>${detailsFormHTML(DETAIL_SECTIONS,d)}<div style="display:flex;justify-content:flex-end;"><button class="btn btn-primary btn-lg" onclick="saveMyDetails()">${ico('check')}Save details</button></div>`:`<div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;"><div class="fld"><label class="fld-label">Phone</label><div style="display:flex;gap:8px;"><input class="fld-inp" id="p-phone" value="${h(p.phone||'')}" inputmode="tel"><button class="btn" onclick="savePhone()">Save</button></div></div></div>`}
     <div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
-      <div class="fld"><label class="fld-label">Phone</label><div style="display:flex;gap:8px;"><input class="fld-inp" id="p-phone" value="${h(p.phone||'')}" inputmode="tel"><button class="btn" onclick="savePhone()">Save</button></div></div>
       <div class="fld"><label class="fld-label">New password</label><div style="display:flex;gap:8px;"><input class="fld-inp" id="p-pass" type="password" placeholder="At least 8 characters" autocomplete="new-password"><button class="btn" onclick="savePassword()">Update</button></div></div>
     </div>
     <div class="list">
@@ -960,6 +1025,7 @@ function profilePage(){
     <div class="note" style="text-align:center;">Digby's Staff v${APP_VERSION} · build ${new Date(APP_BUILD_DATE+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>`};
 }
 async function savePhone(){const{error}=await sb.rpc('update_my_profile',{new_phone:document.getElementById('p-phone').value.trim()||null});if(error){toast(error.message,'err');return;}toast('Saved');}
+async function saveMyDetails(){if(await saveDetails(null,'Details saved'))await loadMyProfile();}
 async function savePassword(){const pw=document.getElementById('p-pass').value;if(pw.length<8){toast('At least 8 characters','err');return;}const{error}=await sb.auth.updateUser({password:pw});if(error){toast(error.message,'err');return;}try{await sb.rpc('update_my_profile',{new_must_change_password:false});}catch(e){}document.getElementById('p-pass').value='';toast('Password updated');}
 function morePage(){
   const items=[['#/profile','person','You'],['#/timeoff','leaf','Time off'],...(isAdmin()?[['#/events','forkknife','Events'],['#/staff','people','Staff'],['#/timesheets','doc','Timesheets']]:[])];
