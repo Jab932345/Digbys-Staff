@@ -304,7 +304,7 @@ input[type=range]{accent-color:var(--accent);}
 .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-24px) scale(.96);background:var(--material-strong);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);color:var(--label);padding:10px 18px 10px 14px;border-radius:var(--r-pill);font-size:var(--fs-cl);font-weight:600;opacity:0;pointer-events:none;transition:opacity var(--dur-lg) var(--spring),transform var(--dur-lg) var(--spring);z-index:9999;max-width:90vw;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px;letter-spacing:-.005em;}
 .toast::before{content:'';width:18px;height:18px;border-radius:50%;flex-shrink:0;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/11px no-repeat;}
 .toast.err::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M12 7v6M12 17h.01'/%3E%3C/svg%3E") center/11px no-repeat;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto;}
 
 /* ── Modals as sheets ────────────────────────────── */
 .modal-ov,.modal-overlay,.crop-modal-ov,.recipe-ov{position:fixed;inset:0;background:rgba(0,0,0,.34);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
@@ -524,7 +524,7 @@ input[type=range]{accent-color:var(--accent);}
 // One file, Supabase Auth, same design system as Kitchen Prep. Events on the
 // rota come from Kitchen Prep's function sheets by job code, so a booking is
 // typed once and staffed here.
-const APP_VERSION='2.11',APP_BUILD_DATE='2026-09-22';
+const APP_VERSION='2.12',APP_BUILD_DATE='2026-09-22';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
 const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
