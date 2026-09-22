@@ -524,7 +524,7 @@ input[type=range]{accent-color:var(--accent);}
 // One file, Supabase Auth, same design system as Kitchen Prep. Events on the
 // rota come from Kitchen Prep's function sheets by job code, so a booking is
 // typed once and staffed here.
-const APP_VERSION='2.10',APP_BUILD_DATE='2026-09-22';
+const APP_VERSION='2.11',APP_BUILD_DATE='2026-09-22';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
 const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
@@ -1166,7 +1166,7 @@ function morePage(){
   const items=[['#/profile','person','You'],['#/timeoff','leaf','Time off'],...(isAdmin()?[['#/events','forkknife','Events'],['#/staff','people','Staff'],['#/timesheets','doc','Timesheets']]:[])];
   if(isAdmin())setTimeout(runSetupChecks,0);
   return{title:'More',body:`<div class="list">${items.map(([r,i,l])=>`<div class="more-row" onclick="navigate('${r}')">${ico(i)}<span style="flex:1;">${l}</span>${chev()}</div>`).join('')}</div><div class="list"><div class="more-row" onclick="openNotifications()">${ico('bell')}<span style="flex:1;">Notifications</span>${state.unread?`<span class="badge no">${state.unread}</span>`:''}${chev()}</div><div class="more-row" onclick="toggleTheme()">${ico('moon')}<span style="flex:1;">Light / dark</span></div><div class="more-row" onclick="sb.auth.signOut()">${ico('logout')}<span style="flex:1;">Sign out</span></div></div>
-    ${isAdmin()?`<div class="sec"><div class="sec-hd">Setup <button class="btn btn-sm" onclick="runSetupChecks()" style="margin-left:auto;">Check again</button></div>${setupListHTML()}<div class="note">Checked against the live database each time you open this page.</div><div class="note">Password resets: “Forgot your password?” emails only go out once Supabase → Authentication → SMTP Settings has a custom sender. Until then, use Reset password on a person’s page (a temporary password they must change).</div></div>`:''}
+    ${isAdmin()?`<div class="sec"><div class="sec-hd">Setup <button class="btn btn-sm" onclick="runSetupChecks()" style="margin-left:auto;">Check again</button></div>${setupListHTML()}<div class="note">Checked against the live database each time you open this page.</div><div class="note">Email links: in Supabase → Authentication → URL Configuration set the Site URL to this app’s address and add it to Redirect URLs — otherwise confirmation and reset links send people to localhost. Password resets: “Forgot your password?” emails only go out once Supabase → Authentication → SMTP Settings has a custom sender; until then use Reset password on a person’s page (a temporary password they must change).</div></div>`:''}
     ${_errLog.length?`<div class="sec"><div class="sec-hd">Recent errors <button class="btn btn-sm" onclick="copyErrorLog()" style="margin-left:auto;">Copy all</button></div><div class="list">${_errLog.slice(0,8).map(r=>`<div class="kv"><span style="min-width:0;"><span class="muted">${r.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span> ${h(r.msg)}</span></div>`).join('')}</div><div class="note">Tap Copy on an error toast, or Copy all here, and paste it to get it fixed.</div></div>`:''}
     <div class="note" style="text-align:center;margin-top:16px;">Digby's Staff v${APP_VERSION}</div>`};
 }
@@ -1209,7 +1209,7 @@ function wireAuth(kind){
     go.disabled=true;
     const email=document.getElementById('a-email').value.trim(),password=document.getElementById('a-pass').value;
     if(kind==='login'){const{error}=await sb.auth.signInWithPassword({email,password});if(error){err.textContent=/invalid/i.test(error.message)?'Wrong email or password':error.message;go.disabled=false;return;}navigate('#/today');render();}
-    else{const name=document.getElementById('a-name').value.trim();if(!name||!email||password.length<8){err.textContent='Your name, email and a password of at least 8 characters.';go.disabled=false;return;}const{error}=await sb.auth.signUp({email,password,options:{data:{name}}});if(error){err.textContent=error.message;go.disabled=false;return;}navigate('#/today');render();}
+    else{const name=document.getElementById('a-name').value.trim();if(!name||!email||password.length<8){err.textContent='Your name, email and a password of at least 8 characters.';go.disabled=false;return;}const{error}=await sb.auth.signUp({email,password,options:{data:{name},emailRedirectTo:location.origin+location.pathname}});if(error){err.textContent=error.message;go.disabled=false;return;}navigate('#/today');render();}
   };
   go.addEventListener('click',submit);
   document.querySelectorAll('.auth-card input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')submit();}));
