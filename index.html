@@ -1,241 +1,1003 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Digby's Staff</title>
-<meta name="theme-color" content="#1f2a24" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Digby's — Staff</title>
+<meta name="theme-color" content="#F4F3F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0E0D" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Digby's Staff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{
-    --bg:#f6f3ec; --surface:#ffffff; --surface-2:#f0ece2; --border:#e2dccd;
-    --ink:#1f2a24; --ink-soft:#5b6660; --accent:#2f6f4f; --accent-ink:#ffffff;
-    --warn:#a5522c; --warn-bg:#fbe9e1; --ok:#2f6f4f; --ok-bg:#e6f0e9;
-    --pend:#8a6d1d; --pend-bg:#f6ecd2;
-    --radius:14px; --shadow:0 1px 2px rgba(31,42,36,.06), 0 8px 24px rgba(31,42,36,.06);
-    font-synthesis:none;
+/* ══════════════════════════════════════════════════════════════════════
+   DIGBY'S KITCHEN — design system
+   One type family, one accent, label/fill/separator hierarchy, grouped
+   surfaces, materials, spring motion. Light + dark. Every token below is
+   the only place a colour, radius or duration is decided.
+   ══════════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  color-scheme:light dark;
+  /* ── Type ─────────────────────────────────────── */
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Inter",system-ui,"Helvetica Neue",Arial,sans-serif;
+  --serif:'Lora',Georgia,serif;                 /* wordmark only */
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --fs-lt:34px;--lh-lt:1.12;--ls-lt:-.022em;    /* large title */
+  --fs-t1:28px;--ls-t1:-.018em;
+  --fs-t2:22px;--ls-t2:-.012em;
+  --fs-t3:19px;--ls-t3:-.008em;
+  --fs-hl:16px;                                  /* headline */
+  --fs-bd:15px;                                  /* body (lists) */
+  --fs-cl:14px;                                  /* callout (controls) */
+  --fs-sh:13px;                                  /* subheadline (meta) */
+  --fs-fn:12px;                                  /* footnote */
+  --fs-cp:11px;                                  /* caption */
+  /* ── Neutrals: warm greys so the brand still feels like Digby's ─── */
+  --bg:#F4F3F1;                 /* system grouped background */
+  --bg2:#FFFFFF;                /* secondary grouped (cards) */
+  --bg3:#F4F3F1;                /* tertiary grouped (nested) */
+  --surface:#FFFFFF;
+  --material:rgba(246,245,243,.78);
+  --material-strong:rgba(255,255,255,.86);
+  --label:#1E1B19;
+  --label2:rgba(60,55,52,.62);
+  --label3:rgba(60,55,52,.34);
+  --label4:rgba(60,55,52,.18);
+  --sep:rgba(60,55,52,.16);
+  --sep-strong:rgba(60,55,52,.28);
+  --fill:rgba(118,112,106,.12);   /* control fills */
+  --fill2:rgba(118,112,106,.16);
+  --fill3:rgba(118,112,106,.09);
+  --fill4:rgba(118,112,106,.06);
+  /* ── Accent (brand) + semantics ───────────────── */
+  --accent:#8C2F2F;
+  --accent-hover:#7A2727;
+  --accent-tint:rgba(140,47,47,.11);
+  --accent-tint2:rgba(140,47,47,.18);
+  --on-accent:#FFFFFF;
+  --ok:#2F8F4E;--ok-tint:rgba(47,143,78,.13);
+  --warn:#C77A12;--warn-tint:rgba(199,122,18,.14);
+  --info:#3B6FB6;--info-tint:rgba(59,111,182,.12);
+  --danger:var(--accent);--danger-tint:var(--accent-tint);
+  /* category hues (Library) */
+  --cat-c:#7A4E9E;--cat-st:#3B6FB6;--cat-ma:#8C2F2F;--cat-ki:#2A7A8A;--cat-de:#A8477A;--cat-gr:#2F8F4E;--cat-si:#5F7A2F;--cat-ot:#8A837C;
+  /* ── Shape ─────────────────────────────────────── */
+  --r-xs:6px;--r-sm:8px;--r:10px;--r-md:12px;--r-lg:14px;--r-xl:18px;--r-pill:999px;
+  /* ── Elevation ─────────────────────────────────── */
+  --ring:0 0 0 .5px rgba(60,55,52,.07);                    /* card definition */
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06),0 0 0 .5px rgba(60,55,52,.06);
+  --shadow-md:0 4px 14px rgba(0,0,0,.08),0 0 0 .5px rgba(60,55,52,.06);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.16),0 0 0 .5px rgba(60,55,52,.08);
+  --shadow-xl:0 24px 80px rgba(0,0,0,.28),0 0 0 .5px rgba(60,55,52,.10);
+  --focus:0 0 0 3.5px rgba(140,47,47,.28);
+  /* ── Motion ────────────────────────────────────── */
+  --spring:cubic-bezier(.2,.8,.2,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur-xs:.12s;--dur:.18s;--dur-lg:.28s;--dur-xl:.42s;
+  /* ── Layout ────────────────────────────────────── */
+  --sidebar-w:232px;--gutter:24px;--row-h:44px;
+  /* ── Legacy aliases (untouched inline styles keep resolving) ─────── */
+  --paper:var(--bg);--white:var(--surface);--paper2:var(--fill3);--line:var(--sep);--line2:var(--sep-strong);
+  --ink:var(--label);--ink2:var(--label2);--stone:var(--label2);--stone2:var(--label3);
+  --brick:var(--accent);--brick-bg:var(--accent-tint);--brick-bd:var(--accent-tint2);
+  --ok-bg:var(--ok-tint);--ok-bd:var(--ok-tint);--warn-bg:var(--warn-tint);--warn-bd:var(--warn-tint);--info-bg:var(--info-tint);--info-bd:var(--info-tint);
+  --r2:var(--r-sm);--r3:var(--r-xs);--r-lg:var(--r-lg);
+  --shadow-xs:var(--ring);--ease:var(--spring);--top:0px;
+  --s1:var(--surface);--s2:var(--fill3);--s3:var(--sep);--bd:var(--sep);--bd2:var(--sep-strong);
+  --t1:var(--label);--t2:var(--label2);--t3:var(--label2);--t4:var(--label3);
+  --gold:var(--label);--golddim:var(--label2);--goldfg:var(--fill3);--goldbd:var(--sep-strong);
+  --red:var(--accent);--redbg:var(--accent-tint);--redbd:var(--accent-tint2);
+  --grn:var(--ok);--grnbg:var(--ok-tint);--grnbd:var(--ok-tint);
+  --amb:var(--warn);--ambbg:var(--warn-tint);--ambbd:var(--warn-tint);
+  --blu:var(--info);--blubg:var(--info-tint);--blubd:var(--info-tint);
+  --abg:var(--warn-tint);--abd:var(--warn-tint);--c1:var(--bg);--c2:var(--fill3);
+  --g:var(--label);--gc:var(--label);--ga:var(--fill3);--gbd:var(--ok-tint);
+  --ink3:var(--label2);--ink4:var(--label3);--ink5:var(--label3);--l1:var(--sep);--l2:var(--sep-strong);
+  --r1:var(--r-sm);--rbg:var(--accent-tint);--sb:var(--surface);--surface2:var(--fill3);--border:var(--sep);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F0E0D;--bg2:#1C1B1A;--bg3:#2A2826;--surface:#1C1B1A;
+    --material:rgba(22,21,20,.72);--material-strong:rgba(30,29,28,.86);
+    --label:#F3F1EE;--label2:rgba(235,230,225,.62);--label3:rgba(235,230,225,.34);--label4:rgba(235,230,225,.18);
+    --sep:rgba(200,195,190,.14);--sep-strong:rgba(200,195,190,.26);
+    --fill:rgba(140,134,128,.24);--fill2:rgba(140,134,128,.32);--fill3:rgba(140,134,128,.16);--fill4:rgba(140,134,128,.10);
+    --accent:#C9514F;--accent-hover:#D9625F;--accent-tint:rgba(201,81,79,.18);--accent-tint2:rgba(201,81,79,.28);
+    --ok:#4FBF74;--ok-tint:rgba(79,191,116,.16);--warn:#E3A03A;--warn-tint:rgba(227,160,58,.16);--info:#6A9BE0;--info-tint:rgba(106,155,224,.16);
+    --cat-c:#A57BD0;--cat-st:#6A9BE0;--cat-ma:#D8706E;--cat-ki:#4BAABE;--cat-de:#D46FA4;--cat-gr:#4FBF74;--cat-si:#8FAE4A;--cat-ot:#9A938C;
+    --ring:0 0 0 .5px rgba(255,255,255,.06);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 0 0 .5px rgba(255,255,255,.05);
+    --shadow-md:0 4px 14px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.06);
+    --shadow-lg:0 12px 40px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.08);
+    --shadow-xl:0 24px 80px rgba(0,0,0,.7),0 0 0 .5px rgba(255,255,255,.10);
+    --focus:0 0 0 3.5px rgba(201,81,79,.36);
   }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:72px;}
-  h1,h2,h3{font-family:Sora,Inter,sans-serif;letter-spacing:-0.01em;margin:0 0 4px}
-  a{color:inherit}
-  button,input,select,textarea{font:inherit;color:inherit}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);outline:none;}
-  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,111,79,.12)}
-  label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin:14px 0 6px}
-  label:first-child{margin-top:0}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:10px;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer;font-size:14px;text-decoration:none;}
-  .btn:disabled{opacity:.5;cursor:default}
-  .btn.secondary{background:var(--surface);color:var(--ink);border-color:var(--border)}
-  .btn.danger{background:var(--warn);color:#fff}
-  .btn.ghost{background:transparent;color:var(--accent);padding:6px 10px}
-  .btn.small{padding:6px 10px;font-size:13px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-  .stack{display:flex;flex-direction:column;gap:12px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .row.between{justify-content:space-between}
-  .muted{color:var(--ink-soft);font-size:13px}
-  .pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
-  .pill.ok{background:var(--ok-bg);color:var(--ok)}
-  .pill.warn{background:var(--warn-bg);color:var(--warn)}
-  .pill.pend{background:var(--pend-bg);color:var(--pend)}
-  .pill.neutral{background:var(--surface-2);color:var(--ink-soft)}
-  #topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
-  #topbar .brand{font-family:Sora;font-weight:700;font-size:18px}
-  #bell{position:relative;cursor:pointer;padding:8px;border-radius:10px}
-  #bell:hover{background:var(--surface-2)}
-  #bell .dot{position:absolute;top:4px;right:4px;width:9px;height:9px;border-radius:50%;background:var(--warn);display:none}
-  #bell.has-unread .dot{display:block}
-  #notif-panel{position:fixed;top:60px;right:12px;left:12px;max-width:380px;margin-left:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);max-height:70vh;overflow:auto;z-index:30;display:none;}
-  #notif-panel.open{display:block}
-  .notif-item{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px}
-  .notif-item:last-child{border-bottom:none}
-  .notif-item .t{font-weight:600;margin-bottom:2px}
-  .notif-item.unread{background:#fbfaf5}
-  main{max-width:720px;margin:0 auto;padding:18px 16px}
-  #tabbar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);}
-  #tabbar a{flex:1;text-align:center;padding:10px 4px 8px;font-size:11px;font-weight:600;color:var(--ink-soft);text-decoration:none;}
-  #tabbar a.active{color:var(--accent)}
-  #tabbar .ic{display:block;font-size:18px;margin-bottom:2px}
-  .empty{padding:32px 16px;text-align:center;color:var(--ink-soft)}
-  .list{display:flex;flex-direction:column;gap:10px}
-  .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--surface)}
-  .item .title{font-weight:700;margin-bottom:2px}
-  .item .meta{font-size:13px;color:var(--ink-soft)}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
-  th{color:var(--ink-soft);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
-  .num{font-variant-numeric:tabular-nums}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(31,42,36,.4);z-index:40;display:flex;align-items:flex-end;justify-content:center;}
-  @media(min-width:640px){.modal-backdrop{align-items:center}}
-  .modal{background:var(--surface);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:88vh;overflow:auto}
-  @media(min-width:640px){.modal{border-radius:16px}}
-  .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:50;box-shadow:var(--shadow);opacity:0;transition:opacity .2s;}
-  .toast.show{opacity:1}
-  .center-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .auth-card{width:100%;max-width:380px}
-  .clock-big{font-family:Sora;font-size:40px;font-weight:700;text-align:center;margin:10px 0}
-  .link{color:var(--accent);font-weight:600;cursor:pointer;background:none;border:none;padding:0;text-decoration:underline}
-  /* Kitchen Prep integration */
-  .prep-panel{background:#f0ece2;border:1px solid #e2dccd;border-radius:12px;padding:14px 16px;margin-top:4px;}
-  .prep-panel-title{font-size:11px;font-weight:700;color:#5b6660;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
-  .prep-job-badge{font-family:monospace;font-weight:700;color:#2f6f4f;background:#e6f0e9;padding:2px 10px;border-radius:999px;font-size:12px;}
-  .prep-detail{font-size:13px;color:#1f2a24;margin-bottom:6px;}
-  .prep-open{display:inline-block;padding:6px 14px;background:#2f6f4f;color:white;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;margin-top:6px;}
+}
+:root[data-theme="dark"]{
+  --bg:#0F0E0D;--bg2:#1C1B1A;--bg3:#2A2826;--surface:#1C1B1A;
+  --material:rgba(22,21,20,.72);--material-strong:rgba(30,29,28,.86);
+  --label:#F3F1EE;--label2:rgba(235,230,225,.62);--label3:rgba(235,230,225,.34);--label4:rgba(235,230,225,.18);
+  --sep:rgba(200,195,190,.14);--sep-strong:rgba(200,195,190,.26);
+  --fill:rgba(140,134,128,.24);--fill2:rgba(140,134,128,.32);--fill3:rgba(140,134,128,.16);--fill4:rgba(140,134,128,.10);
+  --accent:#C9514F;--accent-hover:#D9625F;--accent-tint:rgba(201,81,79,.18);--accent-tint2:rgba(201,81,79,.28);
+  --ok:#4FBF74;--ok-tint:rgba(79,191,116,.16);--warn:#E3A03A;--warn-tint:rgba(227,160,58,.16);--info:#6A9BE0;--info-tint:rgba(106,155,224,.16);
+  --cat-c:#A57BD0;--cat-st:#6A9BE0;--cat-ma:#D8706E;--cat-ki:#4BAABE;--cat-de:#D46FA4;--cat-gr:#4FBF74;--cat-si:#8FAE4A;--cat-ot:#9A938C;
+  --ring:0 0 0 .5px rgba(255,255,255,.06);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 0 0 .5px rgba(255,255,255,.05);
+  --shadow-md:0 4px 14px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.06);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.08);
+  --shadow-xl:0 24px 80px rgba(0,0,0,.7),0 0 0 .5px rgba(255,255,255,.10);
+  --focus:0 0 0 3.5px rgba(201,81,79,.36);
+}
+
+/* ── Base ─────────────────────────────────────────── */
+html,body{height:100%;overflow:hidden;font-family:var(--sans);font-size:var(--fs-cl);line-height:1.45;color:var(--label);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv11","ss01";-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+button{cursor:pointer;background:none;border:none;}
+b,strong{font-weight:600;}
+::selection{background:var(--accent-tint2);color:var(--label);}
+:focus{outline:none;}
+:focus-visible{outline:none;box-shadow:var(--focus);border-radius:var(--r-sm);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--label3);border-radius:99px;border:3px solid transparent;background-clip:padding-box;}
+::-webkit-scrollbar-thumb:hover{background:var(--label2);background-clip:padding-box;}
+*{scrollbar-width:thin;scrollbar-color:var(--label3) transparent;}
+.num,.tnum,[data-num]{font-variant-numeric:tabular-nums;}
+.ico{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vertical-align:-4px;display:inline-block;}
+.ico-sm{width:16px;height:16px;vertical-align:-3px;}
+.ico-xs{width:14px;height:14px;vertical-align:-2px;}
+.ico-lg{width:26px;height:26px;}
+.hairline{position:relative;}
+@media (min-resolution:2dppx){.row::after,.hairline::after,.list>*+*::before{transform:scaleY(.5);transform-origin:bottom;}}
+
+/* ── App shell: sidebar + content ─────────────────── */
+.app{display:flex;flex-direction:row;height:100vh;height:100dvh;overflow:hidden;}
+.topbar,.nav,.topbar-right,.wordmark-sub{display:none;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;display:flex;flex-direction:column;background:var(--material);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-right:1px solid var(--sep);padding:18px 12px 14px;gap:6px;z-index:10;}
+.sb-wordmark{display:flex;align-items:baseline;gap:8px;padding:6px 10px 18px;cursor:pointer;color:var(--label);text-align:left;}
+.sb-wordmark .wm{font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:.02em;line-height:1;}
+.sb-wordmark .wm-sub{font-size:var(--fs-cp);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--label3);}
+.sb-nav{display:flex;flex-direction:column;gap:2px;}
+.sb-sec{font-size:var(--fs-fn);font-weight:600;color:var(--label3);text-transform:uppercase;letter-spacing:.06em;padding:14px 10px 6px;}
+.nav-item{display:flex;align-items:center;gap:11px;height:36px;padding:0 10px;border-radius:var(--r-sm);font-size:var(--fs-bd);font-weight:500;color:var(--label);text-align:left;width:100%;transition:background var(--dur) var(--spring),color var(--dur) var(--spring),transform var(--dur-xs) var(--spring);}
+.nav-item .ico{color:var(--label2);transition:color var(--dur) var(--spring);}
+@media (hover:hover){.nav-item:hover{background:var(--fill4);}}
+.nav-item:active{transform:scale(.985);background:var(--fill3);}
+.nav-item.active{background:var(--accent-tint);color:var(--accent);font-weight:600;}
+.nav-item.active .ico{color:var(--accent);}
+.nav-item::after{display:none;}
+.sb-foot{margin-top:auto;padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.conn{display:flex;align-items:center;gap:7px;font-size:var(--fs-fn);color:var(--label2);font-weight:500;}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:var(--label3);transition:background var(--dur-lg) var(--spring),box-shadow var(--dur-lg) var(--spring);}
+.conn-dot.live{background:var(--ok);box-shadow:0 0 0 3px var(--ok-tint);}
+.conn-dot.err{background:var(--accent);box-shadow:0 0 0 3px var(--accent-tint);}
+.theme-btn{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--label2);transition:background var(--dur) var(--spring),color var(--dur) var(--spring);}
+@media (hover:hover){.theme-btn:hover{background:var(--fill3);color:var(--label);}}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;min-width:0;background:var(--bg);}
+.view{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
+.view.active{display:flex;}
+.tabbar{display:none;}
+
+/* ── Page header (large title + toolbar) ───────────── */
+.ph{padding:26px var(--gutter) 10px;display:flex;align-items:flex-end;gap:16px;flex-shrink:0;min-height:0;background:transparent;border:none;}
+.ph-title{font-size:var(--fs-lt);line-height:var(--lh-lt);letter-spacing:var(--ls-lt);font-weight:700;color:var(--label);flex:1;min-width:0;}
+.ph-sub{font-size:var(--fs-sh);color:var(--label2);margin-left:8px;}
+.ph-actions{display:flex;gap:8px;align-items:center;padding-bottom:4px;}
+
+/* Segmented control — every sub-tab bar in the app is one of these. */
+.seg{display:inline-flex;position:relative;align-items:stretch;background:var(--fill);border-radius:var(--r);padding:2px;gap:0;isolation:isolate;}
+.seg>button,.seg>.seg-btn{position:relative;z-index:1;height:28px;padding:0 14px;border-radius:calc(var(--r) - 2px);font-size:var(--fs-sh);font-weight:500;color:var(--label);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:color var(--dur) var(--spring),opacity var(--dur) var(--spring);letter-spacing:-.005em;}
+.seg>button::after{display:none!important;}
+@media (hover:hover){.seg>button:not(.on):not(.active):hover{opacity:.7;}}
+.seg>button:active{opacity:.6;}
+.seg>button.on,.seg>button.active{font-weight:600;color:var(--label);}
+.seg::before{content:'';position:absolute;z-index:0;top:2px;bottom:2px;left:var(--seg-x,2px);width:var(--seg-w,0px);border-radius:calc(var(--r) - 2px);background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04);transition:left var(--dur-lg) var(--spring),width var(--dur-lg) var(--spring);opacity:var(--seg-o,0);}
+:root[data-theme="dark"] .seg::before{background:rgba(255,255,255,.14);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg::before{background:rgba(255,255,255,.14);}}
+.seg-row{padding:0 var(--gutter) 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.seg-count{font-size:var(--fs-fn);color:var(--label3);font-variant-numeric:tabular-nums;margin-left:auto;font-weight:500;}
+/* legacy bar wrappers become the seg row */
+.ev-subbar,.prep-subbar,.cl-tabs,.b-topbar,.lib-panel-hd,.builder-steps{background:transparent;border:none;height:auto;padding:0 var(--gutter) 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.ev-subtab,.prep-subtab,.cl-tab,.b-tab,.lib-cat,.bs-tab{height:28px;}
+.page-bar{background:transparent;border:none;height:auto;padding:0 var(--gutter) 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.page-sep{width:1px;height:18px;background:var(--sep-strong);margin:0 4px;}
+.page-body{flex:1;overflow:auto;padding:4px var(--gutter) 40px;}
+/* Chips: pill filters */
+.filter-chip,.chip,.wdb,.csb,.diet-chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 13px;border-radius:var(--r-pill);background:var(--fill3);color:var(--label);font-size:var(--fs-sh);font-weight:500;cursor:pointer;user-select:none;border:none;transition:background var(--dur) var(--spring),color var(--dur) var(--spring),transform var(--dur-xs) var(--spring);white-space:nowrap;}
+@media (hover:hover){.filter-chip:hover,.chip:hover,.wdb:hover,.csb:hover,.diet-chip:hover{background:var(--fill2);}}
+.filter-chip:active,.chip:active,.wdb:active,.csb:active,.diet-chip:active{transform:scale(.96);}
+.filter-chip.on,.chip.on,.wdb.on,.csb.on,.diet-chip.on{background:var(--label);color:var(--bg2);}
+.diet-chip.added{background:var(--ok-tint);color:var(--ok);}
+.diet-chip.removed{background:var(--accent-tint);color:var(--accent);}
+.chips,.diet-tags{display:flex;flex-wrap:wrap;gap:6px;}
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;border-radius:var(--r);border:none;background:var(--fill);color:var(--label);font-size:var(--fs-cl);font-weight:500;cursor:pointer;white-space:nowrap;line-height:1;letter-spacing:-.005em;box-shadow:none;transition:background var(--dur) var(--spring),color var(--dur) var(--spring),transform var(--dur-xs) var(--spring),opacity var(--dur) var(--spring);}
+@media (hover:hover){.btn:hover{background:var(--fill2);transform:none;box-shadow:none;}}
+.btn:active{transform:scale(.96);opacity:.85;}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important;}
+.btn-sm{height:30px;padding:0 12px;font-size:var(--fs-sh);border-radius:var(--r-sm);}
+.btn-xs{height:26px;padding:0 10px;font-size:var(--fs-fn);border-radius:var(--r-xs);}
+.btn-lg{height:44px;padding:0 20px;font-size:var(--fs-hl);font-weight:600;border-radius:var(--r-md);}
+.btn-primary,.btn-dark{background:var(--accent);color:var(--on-accent);font-weight:600;}
+@media (hover:hover){.btn-primary:hover,.btn-dark:hover{background:var(--accent-hover);}}
+.btn-danger{background:var(--accent-tint);color:var(--accent);}
+@media (hover:hover){.btn-danger:hover{background:var(--accent-tint2);}}
+.btn-danger-solid{background:var(--accent);color:var(--on-accent);font-weight:600;}
+@media (hover:hover){.btn-danger-solid:hover{background:var(--accent-hover);filter:none;box-shadow:none;}}
+.btn-ghost{background:transparent;color:var(--accent);font-weight:500;}
+@media (hover:hover){.btn-ghost:hover{background:var(--accent-tint);}}
+.btn-tint{background:var(--accent-tint);color:var(--accent);font-weight:600;}
+.done-btn{background:var(--ok);color:#fff;font-weight:600;}
+.btn .ico{width:17px;height:17px;}
+.btn-sm .ico{width:15px;height:15px;}
+.btn-xs .ico{width:13px;height:13px;}
+.btn-icon{width:34px;padding:0;border-radius:50%;}
+.btn-icon.btn-sm{width:30px;}
+.add-row-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;height:40px;border-radius:var(--r);background:var(--fill4);color:var(--accent);font-size:var(--fs-cl);font-weight:500;border:1px dashed var(--sep-strong);transition:background var(--dur) var(--spring),border-color var(--dur) var(--spring);}
+@media (hover:hover){.add-row-btn:hover{background:var(--accent-tint);border-color:transparent;}}
+
+/* ── Forms ───────────────────────────────────────── */
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.fld-label{font-size:var(--fs-sh);font-weight:500;color:var(--label2);letter-spacing:0;}
+.fld-inp,.fld-sel,.fld-ta,.lib-search,.wiz-search-inp,.prep-ev-sel,.comp-meta-inp,.ir-name,.ir-qty,.ir-unit,.sr-ta,.ord-have-input,.diet-variant-sel,.basket-pick-bar input,.basket-pick-bar select,.recipe-serving-ctrl input{width:100%;min-height:36px;padding:8px 12px;border:none;border-radius:var(--r);background:var(--fill);font-size:var(--fs-bd);color:var(--label);transition:background var(--dur) var(--spring),box-shadow var(--dur) var(--spring);appearance:none;-webkit-appearance:none;}
+.fld-inp:hover,.fld-sel:hover,.fld-ta:hover{background:var(--fill2);}
+.fld-inp:focus,.fld-sel:focus,.fld-ta:focus,.lib-search:focus,.wiz-search-inp:focus,.prep-ev-sel:focus,.comp-meta-inp:focus,.ir-name:focus,.ir-qty:focus,.ir-unit:focus,.sr-ta:focus,.ord-have-input:focus,.basket-pick-bar input:focus,.basket-pick-bar select:focus,.recipe-serving-ctrl input:focus{outline:none;background:var(--surface);box-shadow:var(--focus);}
+.fld-inp::placeholder,.fld-ta::placeholder,.lib-search::placeholder,.wiz-search-inp::placeholder,input::placeholder,textarea::placeholder{color:var(--label3);}
+.fld-inp:disabled,.fld-sel:disabled{opacity:.5;}
+.fld-sel,select.prep-ev-sel,.basket-pick-bar select,.diet-variant-sel,select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6.5 8 10l3.5-3.5' fill='none' stroke='%238A837C' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;cursor:pointer;}
+.fld-ta{min-height:92px;resize:vertical;line-height:1.5;}
+input[type=date],input[type=time]{min-height:36px;}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;height:18px;}
+input[type=range]{accent-color:var(--accent);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+/* iOS switch */
+.switch{position:relative;display:inline-block;width:51px;height:31px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;position:absolute;}
+.switch .knob{position:absolute;inset:0;background:var(--fill2);border-radius:var(--r-pill);transition:background var(--dur-lg) var(--spring);}
+.switch .knob::after{content:'';position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 1px 1px rgba(0,0,0,.16);transition:transform var(--dur-lg) var(--spring);}
+.switch input:checked+.knob{background:var(--ok);}
+.switch input:checked+.knob::after{transform:translateX(20px);}
+.switch input:focus-visible+.knob{box-shadow:var(--focus);}
+
+/* ── Grouped lists, rows, section headers ────────── */
+.list,.card,.today-section,.ev-section,.fs-sec,.pnl-section,.boh-panel,.haccp-section,.prep-bucket,.comp-block,.diet-dish-block,.stat-grid,.b-tbl-wrap,.brine-result-card,.b-stat,.prep-stat,.guest-card,.wiz-list-card,.b-card,.b-scan-result,.data-table,.cost-tbl,.orders-table,.brine-ing-table,.board-card,.cal-ev-card,.cal-prep-card{background:var(--bg2);border-radius:var(--r-md);box-shadow:var(--ring);border:none;}
+.sec-hd,.pipeline-section-label,.ev-section-hd,.fs-hd,.pnl-hd-title,.boh-panel-title,.cal-section-label,.lib-cat-name,.cl-area-hd,.today-area-label,.stock-group-hd,.basket-list-title,.comp-col-hd,.comp-section-label,.modal-divider,.week-task-area,.haccp-section-hd,.ev-menu-cat,.prep-method-title{font-size:var(--fs-sh);font-weight:500;color:var(--label2);text-transform:uppercase;letter-spacing:.02em;}
+.row{position:relative;display:flex;align-items:center;gap:12px;min-height:var(--row-h);padding:10px 16px;}
+.row::after,.today-ev::after,.week-row::after,.alert-row::after,.upcoming-row::after,.ev-row::after,.dish-row::after,.today-task::after,.ev-menu-item::after,.cl-task-row::after,.boh-shift-row::after,.haccp-step-row::after,.pnl-row::after,.wiz-order-item::after,.fs-fl::after,.fs-dish-item::after,.basket-line::after,.bl-item-row::after,.recipe-ing-row::after,.stat::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:1px;background:var(--sep);pointer-events:none;}
+.row:last-child::after,.today-ev:last-child::after,.week-row:last-child::after,.alert-row:last-child::after,.upcoming-row:last-child::after,.ev-row:last-child::after,.dish-row:last-child::after,.today-task:last-child::after,.ev-menu-item:last-child::after,.cl-task-row:last-child::after,.boh-shift-row:last-child::after,.haccp-step-row:last-child::after,.pnl-row:last-child::after,.wiz-order-item:last-child::after,.fs-fl:last-child::after,.fs-dish-item:last-child::after,.basket-line:last-child::after,.bl-item-row:last-child::after,.recipe-ing-row:last-child::after{display:none;}
+.chev{color:var(--label3);width:16px;height:16px;flex-shrink:0;margin-left:auto;}
+.row-nav{cursor:pointer;transition:background var(--dur-xs) var(--spring);}
+@media (hover:hover){.row-nav:hover{background:var(--fill4);}}
+.row-nav:active{background:var(--fill3);}
+
+/* ── Utilities ───────────────────────────────────── */
+.serif{font-family:var(--sans);}
+.mono{font-variant-numeric:tabular-nums;font-family:var(--mono);}
+.muted{color:var(--label2);}
+.hidden{display:none;}
+.badge,.ev-status,.pay-pill,.fs-type-tag,.b-badge,.cl-freq-badge,.g-sev,.diet-guest-tag,.diet-dish-safe,.diet-portions-badge,.prep-hd-pill,.haccp-step-type,.wiz-cat-badge,.cost-pill,.prep-task-tag,.al-tag,.par-badge,.cal-flag,.board-col-count{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px;border-radius:var(--r-pill);font-size:var(--fs-fn);font-weight:600;background:var(--fill3);color:var(--label2);white-space:nowrap;letter-spacing:0;text-transform:none;line-height:1;}
+.badge-red,.ev-status.Cancelled,.pay-pill.unpaid,.g-sev,.diet-guest-tag,.al-tag.c,.par-badge.out,.cal-flag-pay,.prep-task-tag.pt-al-c,.prep-task-tag.pt-late{background:var(--accent-tint);color:var(--accent);}
+.ev-status.Confirmed,.pay-pill.paid,.diet-dish-safe,.b-badge-active,.b-badge-sold,.diet-chip.added{background:var(--ok-tint);color:var(--ok);}
+.ev-status.Provisional,.pay-pill.part,.b-badge-in_crate,.b-badge-at_market,.par-badge.low,.al-tag.may,.prep-task-tag.pt-al-m,.prep-task-tag.pt-soon{background:var(--warn-tint);color:var(--warn);}
+.ev-status.Enquiry,.b-badge-packed,.b-badge-in_freezer,.cal-flag-menu{background:var(--info-tint);color:var(--info);}
+.ev-status.Completed{background:var(--fill3);color:var(--label2);}
+.badge-n{margin-left:6px;}
+.empty,.lib-empty,.b-scan-empty,.wiz-order-empty,.board-col-empty,.wiz-list-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;text-align:center;gap:6px;color:var(--label2);}
+.empty-icon,.lib-empty-mark{font-size:28px;color:var(--label3);margin-bottom:6px;opacity:1;}
+.empty-icon .ico{width:44px;height:44px;stroke-width:1.25;color:var(--label3);}
+.empty-t,.empty-title,.lib-empty-t,.lib-empty-title{font-size:var(--fs-hl);font-weight:600;color:var(--label);letter-spacing:-.005em;}
+.empty-s,.empty-sub,.lib-empty-sub{font-size:var(--fs-sh);color:var(--label2);max-width:340px;line-height:1.45;}
+.spin{width:22px;height:22px;border:2px solid var(--sep);border-top-color:var(--label2);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Toast: floating capsule at the top, like a system notification */
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-24px) scale(.96);background:var(--material-strong);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);color:var(--label);padding:10px 18px 10px 14px;border-radius:var(--r-pill);font-size:var(--fs-cl);font-weight:600;opacity:0;pointer-events:none;transition:opacity var(--dur-lg) var(--spring),transform var(--dur-lg) var(--spring);z-index:9999;max-width:90vw;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px;letter-spacing:-.005em;}
+.toast::before{content:'';width:18px;height:18px;border-radius:50%;flex-shrink:0;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/11px no-repeat;}
+.toast.err::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M12 7v6M12 17h.01'/%3E%3C/svg%3E") center/11px no-repeat;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+
+/* ── Modals as sheets ────────────────────────────── */
+.modal-ov,.modal-overlay,.crop-modal-ov,.recipe-ov{position:fixed;inset:0;background:rgba(0,0,0,.34);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.modal-ov.open,.modal-overlay.open,.crop-modal-ov.open,.recipe-ov.open{display:flex;}
+.modal,.recipe-card,.crop-box{background:var(--surface);border-radius:var(--r-lg);width:100%;max-width:520px;max-height:min(90vh,860px);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-xl);}
+.modal-xl{max-width:900px;}
+.modal-hd{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;position:relative;}
+.modal-title{font-size:var(--fs-hl);font-weight:600;flex:1;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.008em;}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--fill);color:var(--label2);font-size:0;display:inline-flex;align-items:center;justify-content:center;transition:background var(--dur) var(--spring),color var(--dur) var(--spring),transform var(--dur-xs) var(--spring);flex-shrink:0;}
+.modal-close::before{content:'';width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center/contain no-repeat;}
+@media (hover:hover){.modal-close:hover{background:var(--fill2);color:var(--label);transform:none;}}
+.modal-close:active{transform:scale(.92);}
+.modal-body{padding:6px 20px 20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px;}
+.modal-divider{margin-top:14px;padding-top:14px;border-top:1px solid var(--sep);}
+.modal-divider:first-child{margin-top:0;padding-top:0;border-top:none;}
+.modal-foot{padding:12px 20px 16px;display:flex;justify-content:flex-end;gap:8px;background:transparent;border-top:1px solid var(--sep);}
+.modal-foot .btn{height:36px;}
+
+/* ── Motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion:no-preference){
+  .view.active{animation:viewIn var(--dur-xl) var(--spring) both;}
+  @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .modal-ov.open .modal,.recipe-ov.open .recipe-card,.crop-modal-ov.open .crop-box{animation:sheetIn var(--dur-lg) var(--spring) both;}
+  @keyframes sheetIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
+  .modal-ov.open,.recipe-ov.open,.crop-modal-ov.open{animation:fadeIn var(--dur-lg) var(--ease-out) both;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation-duration:.01ms!important;}}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width:1180px){:root{--sidebar-w:200px;}}
+@media (max-width:900px){
+  :root{--gutter:16px;--fs-lt:30px;}
+  .app{flex-direction:column;}
+  .sidebar{display:none;}
+  .main{padding-bottom:calc(58px + env(safe-area-inset-bottom));}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;height:calc(58px + env(safe-area-inset-bottom));background:var(--material);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-top:1px solid var(--sep);z-index:100;padding:0 6px env(safe-area-inset-bottom);}
+  .tab-item{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;color:var(--label2);cursor:pointer;padding:6px 0 4px;letter-spacing:0;transition:color var(--dur) var(--spring),transform var(--dur-xs) var(--spring);}
+  .tab-item:active{transform:scale(.94);}
+  .tab-item.active{color:var(--accent);font-weight:600;}
+  .tab-item .ico{width:24px;height:24px;stroke-width:1.6;}
+  .tab-item.active .ico{stroke-width:2;}
+  .ph{padding:12px var(--gutter) 8px;flex-wrap:wrap;}
+  .ph-actions{padding-bottom:0;flex-wrap:wrap;}
+  .g2,.g3,.g4{grid-template-columns:1fr;}
+  .fld-inp,.fld-sel,.fld-ta{font-size:16px;}
+  .modal-ov{align-items:flex-end;padding:0;}
+  .modal{max-width:none;border-radius:var(--r-xl) var(--r-xl) 0 0;max-height:92vh;padding-bottom:env(safe-area-inset-bottom);}
+  @media (prefers-reduced-motion:no-preference){
+    .modal-ov.open .modal{animation:sheetUp var(--dur-xl) var(--spring) both;}
+    @keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+  }
+  .toast{top:auto;bottom:calc(70px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px) scale(.96);}
+  .toast.show{transform:translateX(-50%) translateY(0) scale(1);}
+}
+
+
+/* ── Staff app ───────────────────────────────────── */
+.page{flex:1;overflow-y:auto;padding:0 var(--gutter) 48px;display:flex;flex-direction:column;gap:18px;}
+.page>*{flex-shrink:0;}
+.page-inner{width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:18px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;}
+.stat{position:relative;padding:16px 16px 14px;text-align:left;border:none;}
+.stat:nth-child(odd)::before{content:'';position:absolute;top:0;bottom:0;right:0;width:1px;background:var(--sep);}
+.stat:nth-child(-n+2)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--sep);}
+.stat-n{font-size:var(--fs-t1);font-weight:700;color:var(--label);line-height:1;letter-spacing:var(--ls-t1);font-variant-numeric:tabular-nums;}
+.stat-n.is-alert{color:var(--accent);}
+.stat-l{font-size:var(--fs-fn);color:var(--label2);margin-top:6px;font-weight:500;}
+.stat.row-nav{cursor:pointer;}
+.sec{display:flex;flex-direction:column;gap:8px;}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 4px;}
+.sec-hd .btn{text-transform:none;letter-spacing:0;}
+/* shift rows */
+.shift{position:relative;display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 16px;min-height:64px;}
+.shift::after{content:'';position:absolute;left:82px;right:0;bottom:0;height:1px;background:var(--sep);}
+.shift:last-child::after{display:none;}
+.shift.row-nav{cursor:pointer;}
+.shift-time{display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;height:44px;border-radius:var(--r-sm);background:var(--fill3);font-variant-numeric:tabular-nums;}
+.shift-time b{font-size:var(--fs-cl);font-weight:700;color:var(--label);line-height:1.1;}
+.shift-time span{font-size:var(--fs-cp);color:var(--label2);font-weight:500;line-height:1.1;margin-top:2px;}
+.shift-main{min-width:0;}
+.shift-title{font-size:var(--fs-bd);font-weight:500;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shift-sub{font-size:var(--fs-sh);color:var(--label2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shift-right{display:flex;align-items:center;gap:8px;}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sh);color:var(--label2);}
+.avatar{width:26px;height:26px;border-radius:50%;background:var(--fill2);color:var(--label);display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-cp);font-weight:700;letter-spacing:.02em;flex-shrink:0;}
+.avatar.me{background:var(--accent);color:#fff;}
+.day-hd{font-size:var(--fs-sh);font-weight:500;color:var(--label2);text-transform:uppercase;letter-spacing:.02em;padding:6px 4px 2px;display:flex;justify-content:space-between;}
+.day-hd.today{color:var(--accent);}
+/* hero */
+.hero{padding:18px 20px;display:flex;flex-direction:column;gap:6px;}
+.hero-eyebrow{font-size:var(--fs-sh);color:var(--label2);font-weight:500;}
+.hero-title{font-size:var(--fs-t2);letter-spacing:var(--ls-t2);font-weight:700;color:var(--label);line-height:1.15;}
+.hero-sub{font-size:var(--fs-sh);color:var(--label2);}
+.hero-acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+/* clock */
+.clock-card{padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;}
+.clock-big{font-size:52px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;color:var(--label);margin:8px 0 4px;}
+.clock-ring{width:14px;height:14px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-tint);animation:pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--ok-tint)}50%{box-shadow:0 0 0 8px transparent}}
+/* staff */
+.person{position:relative;display:flex;align-items:center;gap:12px;padding:10px 16px;min-height:56px;cursor:pointer;}
+.person::after{content:'';position:absolute;left:66px;right:0;bottom:0;height:1px;background:var(--sep);}
+.person:last-child::after{display:none;}
+.person .avatar{width:36px;height:36px;font-size:var(--fs-sh);}
+.person-name{font-weight:500;color:var(--label);}
+.person-sub{font-size:var(--fs-sh);color:var(--label2);}
+/* timesheets */
+.ts-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-sh);}
+.ts-table th{text-align:left;font-size:var(--fs-fn);font-weight:500;color:var(--label2);text-transform:uppercase;letter-spacing:.02em;padding:10px 14px;border-bottom:1px solid var(--sep);}
+.ts-table td{padding:10px 14px;border-bottom:1px solid var(--sep);color:var(--label);}
+.ts-table tr:last-child td{border-bottom:none;}
+.ts-table .tr{text-align:right;font-variant-numeric:tabular-nums;}
+.ts-table tfoot td{font-weight:600;border-top:1.5px solid var(--sep-strong);}
+.week-nav{display:flex;align-items:center;gap:8px;}
+.week-nav .btn-icon{width:30px;height:30px;}
+/* event cards */
+.ev-card{padding:14px 16px;display:flex;flex-direction:column;gap:4px;}
+.ev-card-title{font-size:var(--fs-hl);font-weight:600;color:var(--label);}
+.ev-card-sub{font-size:var(--fs-sh);color:var(--label2);}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 16px;position:relative;font-size:var(--fs-cl);}
+.kv::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:1px;background:var(--sep);}
+.kv:last-child::after{display:none;}
+.kv-l{color:var(--label2);}
+.kv-v{color:var(--label);text-align:right;font-weight:500;min-width:0;}
+.prep-panel{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.prep-panel-hd{display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.prep-code{font-family:var(--mono);font-size:var(--fs-fn);font-weight:600;color:var(--label);background:var(--fill3);padding:2px 8px;border-radius:var(--r-xs);}
+.prep-row{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sh);color:var(--label2);}
+.prep-row b{color:var(--label);font-weight:500;}
+/* auth */
+.auth{height:100dvh;overflow:auto;display:flex;padding:24px;background:var(--bg);}
+.auth-card{margin:auto;}
+.auth-card{width:100%;max-width:400px;padding:28px 24px 24px;display:flex;flex-direction:column;gap:14px;}
+.auth-wm{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.auth-wm .wm{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:.02em;}
+.auth-wm .wm-sub{font-size:var(--fs-cp);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--label3);}
+.auth-title{font-size:var(--fs-t3);font-weight:700;letter-spacing:var(--ls-t3);}
+.auth-err{font-size:var(--fs-sh);color:var(--accent);min-height:18px;}
+.link-btn{color:var(--accent);font-weight:500;background:none;border:none;padding:0;cursor:pointer;font-size:inherit;}
+/* notifications */
+.notif{position:relative;display:flex;gap:12px;padding:12px 16px;}
+.notif::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:1px;background:var(--sep);}
+.notif:last-child::after{display:none;}
+.notif.unread .notif-t{font-weight:600;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:7px;flex-shrink:0;opacity:0;}
+.notif.unread .notif-dot{opacity:1;}
+.notif-t{font-size:var(--fs-cl);color:var(--label);}
+.notif-b{font-size:var(--fs-sh);color:var(--label2);margin-top:1px;}
+.notif-d{font-size:var(--fs-fn);color:var(--label3);margin-top:3px;}
+.bell{position:relative;}
+.bell-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--material);display:none;}
+.bell.has .bell-dot{display:block;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;color:var(--label);text-align:left;width:100%;}
+@media (hover:hover){.sb-user:hover{background:var(--fill4);}}
+.sb-user-name{font-size:var(--fs-sh);font-weight:600;line-height:1.2;}
+.sb-user-role{font-size:var(--fs-cp);color:var(--label3);}
+.mob-top{display:none;}
+.more-row{position:relative;display:flex;align-items:center;gap:12px;min-height:var(--row-h);padding:10px 16px;cursor:pointer;color:var(--label);font-size:var(--fs-bd);}
+.more-row::after{content:'';position:absolute;left:48px;right:0;bottom:0;height:1px;background:var(--sep);}
+.more-row:last-child::after{display:none;}
+.more-row .ico{color:var(--label2);}
+.badge.open{background:var(--warn-tint);color:var(--warn);}
+.badge.ok{background:var(--ok-tint);color:var(--ok);}
+.badge.pend{background:var(--warn-tint);color:var(--warn);}
+.badge.no{background:var(--accent-tint);color:var(--accent);}
+.badge.info{background:var(--info-tint);color:var(--info);}
+.note{font-size:var(--fs-sh);color:var(--label2);line-height:1.45;padding:0 4px;}
+.confirm-body{font-size:var(--fs-cl);color:var(--label2);line-height:1.5;}
+@media (max-width:900px){
+  .mob-top{display:flex;align-items:center;justify-content:space-between;padding:12px var(--gutter) 0;}
+  .shift{grid-template-columns:48px minmax(0,1fr);}
+  .shift-right{grid-column:2;justify-content:flex-start;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .ts-table th:nth-child(2),.ts-table td:nth-child(2){display:none;}
+}
+@media (min-width:901px){
+  .ph-actions .bell{display:none;}
+}
+
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div id="toast" class="toast"></div>
+<div id="app"><div class="auth"><div class="card auth-card" style="align-items:center;"><span class="spin"></span></div></div></div>
+<div class="toast" id="toast"></div>
 <script>
+// ═══ Digby's Staff — rota, open shifts, time clock, time off, timesheets.
+// One file, Supabase Auth, same design system as Kitchen Prep. Events on the
+// rota come from Kitchen Prep's function sheets by job code, so a booking is
+// typed once and staffed here.
+const APP_VERSION='2',APP_BUILD_DATE='2026-09-22';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
+const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
+const PREP_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmbnd5b29pcHd0Znppa3VrenR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczODY0MTcsImV4cCI6MjA5Mjk2MjQxN30.qzq30fT8L2bhX7kx46HZdco3rt7bN2zRGSKETCNgQqw";
+const PREP_APP_URL="https://digbys-prep.vercel.app";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const sbPrep=supabase.createClient(PREP_URL,PREP_KEY);
 
-// Kitchen Prep app - cross read (open RLS, anon key works)
-const sbPrep=supabase.createClient(
-  "https://qfnwyooipwtfzikukztz.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmbnd5b29pcHd0Znppa3VrenR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczODY0MTcsImV4cCI6MjA5Mjk2MjQxN30.qzq30fT8L2bhX7kx46HZdco3rt7bN2zRGSKETCNgQqw"
-);
+// ── Icons (24-grid strokes, same set as Kitchen Prep) ──
+const ICONS={
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+  calendar:'<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/>',
+  hand:'<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11.5V4a1.5 1.5 0 0 1 3 0v8M14 11.5V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M17 12.5a1.5 1.5 0 0 1 3 0V16a6 6 0 0 1-6 6h-2a6 6 0 0 1-5.2-3l-3-5.3a1.5 1.5 0 0 1 2.6-1.5L8 14.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  people:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.8"/><path d="M15.5 14.2A5.5 5.5 0 0 1 22 19.5"/>',
+  person:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  leaf:'<path d="M20 4c-8 0-14 5-14 12 0 1.5.3 2.8 1 4 6-1 12-6 13-16Z"/><path d="M7 20c2-5 6-9 11-12"/>',
+  doc:'<path d="M14 2.5H6.5A2.5 2.5 0 0 0 4 5v14a2.5 2.5 0 0 0 2.5 2.5h11A2.5 2.5 0 0 0 20 19V8.5z"/><path d="M14 2.5V8.5h6M8 13h8M8 17h5"/>',
+  bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  chevron:'<path d="m9 6 6 6-6 6"/>',
+  chevronL:'<path d="m15 6-6 6 6 6"/>',
+  chevronR:'<path d="m9 6 6 6-6 6"/>',
+  check:'<path d="m5 12.5 4.5 4.5L19 7"/>',
+  xmark:'<path d="M6 6l12 12M18 6 6 18"/>',
+  pencil:'<path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="m13.5 6.5 3 3"/>',
+  trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/>',
+  printer:'<path d="M6 9V3.5h12V9"/><rect x="3" y="9" width="18" height="9" rx="2"/><path d="M6 15h12v5.5H6z"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+  arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  sliders:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/>',
+  envelope:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3 7 9 6 9-6"/>',
+  lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  warning:'<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.5h.01"/>',
+  checkCircle:'<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/>',
+  logout:'<path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15M10 8l-4 4 4 4M6 12h9"/>',
+  forkknife:'<path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+  ellipsis:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  circle:'<circle cx="12" cy="12" r="9"/>',
+  open:'<path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
+};
+const ico=(name,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]||ICONS.circle}</svg>`;
+const chev=()=>ico('chevron','chev');
 
-const state={session:null,profile:null,notifications:[],unread:0,route:"#/dashboard"};
-
-function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),2600);}
-function fmtGBP(a){if(a===null||a===undefined)return"—";return"£"+Number(a).toFixed(2);}
-function fmtDate(d){if(!d)return"";const dt=new Date(d+"T00:00:00");return dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});}
-function fmtDateTime(iso){if(!iso)return"";return new Date(iso).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});}
-function todayIso(){return new Date().toLocaleDateString("en-CA",{timeZone:"Europe/London"});}
-function hoursBetween(i,o,b){if(!o)return null;const ms=new Date(o)-new Date(i)-(b||0)*60000;return Math.max(0,ms/3600000);}
-function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,(c)=({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+// ── Helpers ──
+const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt$=v=>v==null||v===''?'—':'£'+(+v).toFixed(2);
+const todayIso=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Europe/London'});
+const addDays=(iso,n)=>{const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return d.toLocaleDateString('en-CA');};
+const relDay=d=>{const dt=new Date(String(d).length===10?d+'T00:00:00':d);if(isNaN(dt))return'—';const t=new Date();t.setHours(0,0,0,0);dt.setHours(0,0,0,0);const diff=Math.round((dt-t)/864e5);if(diff===0)return'Today';if(diff===1)return'Tomorrow';if(diff===-1)return'Yesterday';const o={weekday:'short',day:'numeric',month:'short'};if(dt.getFullYear()!==t.getFullYear())o.year='numeric';return dt.toLocaleDateString('en-GB',o);};
+const fmtDate=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):'';
+const fmtLong=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}):'';
+const fmtDT=iso=>iso?new Date(iso).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+const fmtT=iso=>iso?new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'';
+const hm=t=>t?String(t).slice(0,5):'';
+const hoursBetween=(i,o,b)=>{if(!o)return null;const ms=new Date(o)-new Date(i)-(b||0)*60000;return Math.max(0,ms/3600000);};
+const initials=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')||'?';
+const first=n=>String(n||'').split(' ')[0];
+function toast(msg,type){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type==='err'?' err':'');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),type==='err'?3600:2400);}
 function navigate(r){location.hash=r;}
-window.addEventListener("hashchange",()=>render());
+window.addEventListener('hashchange',()=>render());
 
-async function requireData(fn){try{return await fn();}catch(e){console.error(e);toast(e.message||"Something went wrong");throw e;}}
+// Sheets: one builder for every form and confirm in the app.
+function openSheet({title,sub,body,foot,wide,onClose}){
+  const ov=document.createElement('div');ov.className='modal-ov open';
+  ov.innerHTML=`<div class="modal${wide?' modal-xl':''}"><div class="modal-hd"><div><div class="modal-title">${h(title)}</div>${sub?`<div class="muted" style="font-size:var(--fs-fn);margin-top:2px;">${h(sub)}</div>`:''}</div><button class="modal-close" data-close></button></div><div class="modal-body">${body}</div>${foot?`<div class="modal-foot">${foot}</div>`:''}</div>`;
+  const close=()=>{ov.remove();onClose&&onClose();};
+  ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('[data-close]'))close();});
+  document.body.appendChild(ov);
+  setTimeout(()=>ov.querySelector('input,select,textarea')?.focus(),60);
+  return{el:ov,close,q:s=>ov.querySelector(s),v:s=>(ov.querySelector(s)?.value??'').trim()};
+}
+function askConfirm(msg,{title='Are you sure?',confirmLabel='Confirm',danger=true}={}){
+  return new Promise(res=>{
+    const s=openSheet({title,body:`<div class="confirm-body">${h(msg)}</div>`,foot:`<button class="btn" data-close>Cancel</button><button class="btn ${danger?'btn-danger-solid':'btn-primary'}" id="cf-ok">${h(confirmLabel)}</button>`,onClose:()=>res(false)});
+    s.q('#cf-ok').addEventListener('click',()=>{s.el.remove();res(true);});
+  });
+}
 
+// ── Theme ──
+function applyTheme(){const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;}
+function toggleTheme(){const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');localStorage.setItem('theme',cur==='dark'?'light':'dark');applyTheme();}
+applyTheme();
+
+// ── State & auth ──
+const state={session:null,profile:null,profiles:[],notifications:[],unread:0,week:null};
 async function refreshSession(){const{data}=await sb.auth.getSession();state.session=data.session;if(state.session){await loadMyProfile();await loadNotifications();}else{state.profile=null;state.notifications=[];state.unread=0;}}
-async function loadMyProfile(){const{data,error}=await sb.from("profiles").select("*").eq("id",state.session.user.id).maybeSingle();if(error)throw error;state.profile=data;if(state.profile){const{data:rows}=await sb.rpc("list_profiles");const mine=rows?.find((r)=>r.id===state.profile.id);state.profile.pay_rate=mine?.pay_rate??null;}}
-async function loadNotifications(){const{data}=await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(30);state.notifications=data||[];state.unread=state.notifications.filter((n)=>!n.read).length;}
+async function loadMyProfile(){
+  const{data,error}=await sb.from('profiles').select('*').eq('id',state.session.user.id).maybeSingle();if(error)throw error;
+  state.profile=data;
+  if(state.profile){try{const{data:rows}=await sb.rpc('list_profiles');state.profiles=rows||[];const mine=state.profiles.find(r=>r.id===state.profile.id);state.profile.pay_rate=mine?.pay_rate??null;}catch(e){state.profiles=[];}}
+}
+async function loadNotifications(){const{data}=await sb.from('notifications').select('*').order('created_at',{ascending:false}).limit(30);state.notifications=data||[];state.unread=state.notifications.filter(n=>!n.read).length;}
+const isAdmin=()=>state.profile&&state.profile.role==='ADMIN';
+const me=()=>state.session&&state.session.user.id;
+sb.auth.onAuthStateChange((_e,session)=>{const had=!!state.session;state.session=session;if(!session&&had){state.profile=null;navigate('#/login');render();}});
 
-sb.auth.onAuthStateChange((_event,session)=>{state.session=session;if(!session){state.profile=null;navigate("#/login");render();}});
-
-async function render(){const app=document.getElementById("app");const hash=location.hash||"#/dashboard";await refreshSession();if(!state.session){app.innerHTML=hash==="#/signup"?signupScreen():loginScreen();wireAuthScreen(hash==="#/signup"?"signup":"login");return;}if(!state.profile){app.innerHTML=`<div class="center-screen"><div class="card">Loading...</div></div>`;return;}if(!state.profile.active){app.innerHTML=pendingScreen();document.getElementById("signout-pending")?.addEventListener("click",()=>sb.auth.signOut());return;}app.innerHTML=shell(await pageContent(hash));wireShell();wirePage(hash);}
-
-function shell(inner){const isAdmin=state.profile.role==="ADMIN";const tabs=[["#/dashboard","🏠","Home"],["#/schedule","🗓️","Schedule"],["#/shifts-open","🙋","Open"],["#/timeclock","⏱️","Clock"],isAdmin?["#/staff","👥","Staff"]:["#/time-off","🌴","Time off"]];const current=location.hash||"#/dashboard";return`<div id="topbar"><div class="brand">Digby's Staff</div><div class="row" style="gap:8px"><div id="bell" class="${state.unread?"has-unread":""}">🔔<span class="dot"></span></div><div class="btn ghost small" id="profile-link">${escapeHtml(state.profile.name.split(" ")[0])}</div></div></div><div id="notif-panel">${notifList()}</div><main>${inner}</main><div id="tabbar">${tabs.map(([href,ic,label])=>`<a href="${href}" class="${current.startsWith(href)?"active":""}"><span class="ic">${ic}</span>${label}</a>`).join("")}</div>`;}
-
-function notifList(){if(!state.notifications.length)return`<div class="empty">No notifications yet.</div>`;return state.notifications.map((n)=>`<div class="notif-item ${n.read?"":"unread"}" data-id="${n.id}" data-link="${n.link||""}"><div class="t">${escapeHtml(n.title)}</div><div class="muted">${escapeHtml(n.body||"")}</div><div class="muted" style="margin-top:4px">${fmtDateTime(n.created_at)}</div></div>`).join("");}
-
-function wireShell(){document.getElementById("bell")?.addEventListener("click",()=>document.getElementById("notif-panel").classList.toggle("open"));document.getElementById("profile-link")?.addEventListener("click",()=>navigate("#/profile"));document.querySelectorAll(".notif-item").forEach((el)=>{el.addEventListener("click",async()=>{const id=el.dataset.id;await sb.from("notifications").update({read:true}).eq("id",id);const link=el.dataset.link;document.getElementById("notif-panel").classList.remove("open");if(link)navigate(link.startsWith("#")?link:"#"+link);else render();});});}
-
-async function pageContent(hash){const route=hash.split("?")[0];const isAdmin=state.profile.role==="ADMIN";if(route==="#/dashboard")return await requireData(dashboardPage);if(route==="#/schedule")return await requireData(schedulePage);if(route==="#/shifts-open")return await requireData(openShiftsPage);if(route==="#/staff")return isAdmin?await requireData(staffPage):deniedPage();if(route.startsWith("#/staff/"))return isAdmin?await requireData(()=>staffDetailPage(route.split("/")[2])):deniedPage();if(route==="#/timeclock")return await requireData(timeclockPage);if(route==="#/timesheets")return isAdmin?await requireData(timesheetsPage):deniedPage();if(route==="#/time-off")return await requireData(timeOffPage);if(route==="#/profile")return await requireData(profilePage);if(route.startsWith("#/events/"))return await requireData(()=>eventDetailPage(route.split("/")[2]));return`<div class="empty">Not found.</div>`;}
-
-function wirePage(hash){const route=hash.split("?")[0];if(route==="#/dashboard")wireDashboard();else if(route==="#/schedule")wireSchedule();else if(route==="#/shifts-open")wireOpenShifts();else if(route==="#/staff")wireStaff();else if(route.startsWith("#/staff/"))wireStaffDetail(route.split("/")[2]);else if(route==="#/timeclock")wireTimeclock();else if(route==="#/timesheets")wireTimesheets();else if(route==="#/time-off")wireTimeOff();else if(route==="#/profile")wireProfile();else if(route.startsWith("#/events/"))wireEventDetail(route.split("/")[2]);}
-
-function deniedPage(){return`<div class="empty">Admins only.</div>`;}
-function listOrEmpty(rows,render,emptyMsg){if(!rows||!rows.length)return`<div class="empty">${emptyMsg}</div>`;return`<div class="list">${rows.map(render).join("")}</div>`;}
-
-async function dashboardPage(){const isAdmin=state.profile.role==="ADMIN";const today=todayIso();if(isAdmin){const[{data:todays},{data:openShifts},{data:pendingTimeOff}]=await Promise.all([sb.from("shifts").select("*, events(name)").eq("shift_date",today).order("start_time"),sb.from("shifts").select("*").eq("status","OPEN").gte("shift_date",today),sb.from("time_off_requests").select("*, profiles!time_off_requests_user_id_fkey(name)").eq("status","PENDING")]);return`<div class="stack"><h2>Today, ${fmtDate(today)}</h2>${listOrEmpty(todays,(s)=>shiftItemHtml(s),"Nothing scheduled today.")}<div class="row between"><h3>Open shifts</h3><span class="pill neutral">${(openShifts||[]).length}</span></div>${listOrEmpty(openShifts,(s)=>shiftItemHtml(s),"No open shifts.")}<div class="row between"><h3>Pending time off</h3><span class="pill neutral">${(pendingTimeOff||[]).length}</span></div>${listOrEmpty(pendingTimeOff,(r)=>timeOffItemHtml(r,true),"Nothing pending.")}</div>`;}const[{data:myUpcoming},{data:openShifts}]=await Promise.all([sb.from("shifts").select("*, events(name)").eq("assigned_user_id",state.session.user.id).gte("shift_date",today).order("shift_date").limit(5),sb.from("shifts").select("*").eq("status","OPEN").gte("shift_date",today).limit(5)]);return`<div class="stack"><h2>Hi ${escapeHtml(state.profile.name.split(" ")[0])}</h2><h3>Your upcoming shifts</h3>${listOrEmpty(myUpcoming,(s)=>shiftItemHtml(s),"Nothing scheduled — check Open Shifts.")}<div class="row between"><h3>Open shifts</h3><a class="link" href="#/shifts-open">See all</a></div>${listOrEmpty(openShifts,(s)=>shiftItemHtml(s),"No open shifts right now.")}</div>`;}
-function wireDashboard(){}
-
-function shiftItemHtml(s){const statusPill=s.status==="OPEN"?`<span class="pill warn">Open</span>`:`<span class="pill ok">Assigned</span>`;return`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(s.title)}${s.events?.name?" — "+escapeHtml(s.events.name):""}</div><div class="meta">${fmtDate(s.shift_date)} · ${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div></div>${statusPill}</div></div>`;}
-function timeOffItemHtml(r,showName){const pillClass=r.status==="APPROVED"?"ok":r.status==="DECLINED"?"warn":"pend";return`<div class="item"><div class="row between"><div><div class="title">${showName?escapeHtml(r.profiles?.name||"Staff")+" — ":""}${fmtDate(r.start_date)} to ${fmtDate(r.end_date)}</div><div class="meta">${escapeHtml(r.reason||"")}</div></div><span class="pill ${pillClass}">${r.status}</span></div></div>`;}
-
-async function schedulePage(){const today=todayIso();const in14=new Date(Date.now()+14*86400000).toISOString().slice(0,10);const{data}=await sb.from("shifts").select("*, events(name), profiles(name)").gte("shift_date",today).lte("shift_date",in14).order("shift_date").order("start_time");const isAdmin=state.profile.role==="ADMIN";const byDate={};(data||[]).forEach((s)=>{(byDate[s.shift_date]||=[]).push(s);});const dates=Object.keys(byDate).sort();return`<div class="stack"><div class="row between"><h2>Schedule</h2>${isAdmin?`<a class="btn small" href="#/events">Manage events</a>`:""}</div>${dates.length?dates.map((d)=>`<h3>${fmtDate(d)}</h3><div class="list">${byDate[d].map((s)=>`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(s.title)}${s.events?.name?" — "+escapeHtml(s.events.name):""}</div><div class="meta">${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div></div><div>${s.assigned_user_id?`<span class="pill ok">${escapeHtml(s.profiles?.name||"Assigned")}</span>`:`<span class="pill warn">Open</span>`}</div></div></div>`).join("")}</div>`).join(""):`<div class="empty">Nothing scheduled in the next two weeks.</div>`}</div>`;}
-function wireSchedule(){}
-
-async function openShiftsPage(){const today=todayIso();const{data}=await sb.from("shifts").select("*, events(name)").eq("status","OPEN").gte("shift_date",today).order("shift_date");return`<div class="stack"><h2>Open shifts</h2><p class="muted">First to claim gets it.</p>${listOrEmpty(data,(s)=>`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(s.title)}${s.events?.name?" — "+escapeHtml(s.events.name):""}</div><div class="meta">${fmtDate(s.shift_date)} · ${s.start_time}–${s.end_time} · ${escapeHtml(s.location)}</div></div><button class="btn small" data-claim="${s.id}">Claim</button></div></div>`,"No open shifts right now.")}</div>`;}
-function wireOpenShifts(){document.querySelectorAll("[data-claim]").forEach((btn)=>btn.addEventListener("click",async()=>{btn.disabled=true;const id=btn.dataset.claim;const{data,error}=await sb.from("shifts").update({status:"ASSIGNED",assigned_user_id:state.session.user.id}).eq("id",id).eq("status","OPEN").select();if(error){toast(error.message);btn.disabled=false;return;}if(!data||!data.length){toast("Someone else just claimed that shift.");render();return;}toast("Shift claimed!");render();}));}
-
-async function staffPage(){const{data,error}=await sb.rpc("list_profiles");if(error)throw error;const pending=(data||[]).filter((p)=>!p.active);const active=(data||[]).filter((p)=>p.active);return`<div class="stack"><h2>Staff</h2>${pending.length?`<h3>Waiting for approval</h3><div class="list">${pending.map((p)=>staffItemHtml(p)).join("")}</div>`:""}<h3>Active</h3>${listOrEmpty(active,(p)=>staffItemHtml(p),"No staff yet.")}</div>`;}
-function staffItemHtml(p){return`<a class="item" style="display:block;text-decoration:none" href="#/staff/${p.id}"><div class="row between"><div><div class="title">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.job_title||p.role)}${p.role==="ADMIN"?" · Admin":""}</div></div>${p.active?"":`<span class="pill pend">Pending</span>`}</div></a>`;}
-function wireStaff(){}
-
-async function staffDetailPage(id){const[{data:rows,error},{data:financeStaff}]=await Promise.all([sb.rpc("list_profiles"),sb.rpc("list_finance_staff_for_linking")]);if(error)throw error;const p=rows.find((r)=>r.id===id);if(!p)return`<div class="empty">Not found.</div>`;const options=(financeStaff||[]).map((fs)=>`<option value="${fs.id}" ${fs.id===p.finance_staff_id?"selected":""}>${escapeHtml(fs.name)}</option>`).join("");return`<div class="stack"><a class="link" href="#/staff">← Staff</a><h2>${escapeHtml(p.name)}</h2><div class="muted">${escapeHtml(p.email)}</div><div class="card stack" id="staff-edit-form"><label>Role</label><select id="f-role"><option value="STAFF" ${p.role==="STAFF"?"selected":""}>Staff</option><option value="ADMIN" ${p.role==="ADMIN"?"selected":""}>Admin</option></select><label>Job title</label><input id="f-job-title" value="${escapeHtml(p.job_title||"")}" /><label>Finance record</label><select id="f-finance-link"><option value="">Not linked</option>${options}</select>${p.pay_rate!=null?`<div class="muted">Rate: ${fmtGBP(p.pay_rate)}/hr</div>`:""}<label class="row"><input type="checkbox" id="f-active" style="width:auto" ${p.active?"checked":""} /> <span style="font-weight:600">Active</span></label><button class="btn" id="save-staff" data-id="${p.id}">Save</button></div></div>`;}
-function wireStaffDetail(id){document.getElementById("save-staff")?.addEventListener("click",async()=>{const role=document.getElementById("f-role").value;const job_title=document.getElementById("f-job-title").value.trim()||null;const financeId=document.getElementById("f-finance-link").value||null;const active=document.getElementById("f-active").checked;const{error}=await sb.rpc("admin_update_profile",{target_id:id,new_role:role,new_job_title:job_title,new_active:active,new_finance_staff_id:financeId,clear_finance_link:!financeId});if(error){toast(error.message);return;}toast("Saved");navigate("#/staff");});}
-
-async function eventDetailPage(id){
-  const[{data:ev},{data:shifts}]=await Promise.all([
-    sb.from("events").select("*").eq("id",id).single(),
-    sb.from("shifts").select("*, profiles(name)").eq("event_id",id).order("start_time"),
-  ]);
-  const isAdmin=state.profile.role==="ADMIN";
-
-  // Load matching function sheet from Kitchen Prep (open RLS — no auth needed)
-  let prepHTML='';
-  const lookupKey=ev.job_code||null;
-  if(lookupKey){
-    try{
-      const{data:prepEvs}=await sbPrep.from('events')
-        .select('id,client_name,event_date,covers,status,budget,deposit_status,event_dishes(dish_id)')
-        .eq('job_code',lookupKey).limit(1);
-      if(prepEvs&&prepEvs.length){
-        const pe=prepEvs[0];
-        const dishCount=(pe.event_dishes||[]).length;
-        const payLabel={deposit:'Deposit taken',invoiced:'Invoice sent',paid:'Paid in full'}[pe.deposit_status]||'Unpaid';
-        prepHTML=`<div class="prep-panel">
-          <div class="prep-panel-title">Kitchen Prep <span class="prep-job-badge">${escapeHtml(lookupKey)}</span></div>
-          <div class="prep-detail">${escapeHtml(pe.client_name)} &middot; ${pe.covers||0} covers &middot; ${dishCount} dishes on menu</div>
-          <div class="prep-detail">${pe.status} &middot; ${pe.budget||'—'} &middot; ${payLabel}</div>
-          <a class="prep-open" href="https://digbys-prep.vercel.app" target="_blank">Open Kitchen Prep &rarr;</a>
-        </div>`;
-      } else {
-        prepHTML=`<div class="prep-panel"><div class="prep-panel-title">Kitchen Prep</div><div class="muted" style="font-size:13px;">No prep event found for job code <strong>${escapeHtml(lookupKey)}</strong></div></div>`;
-      }
-    }catch(e){}
-  }
-
-  return`<div class="stack">
-    <a class="link" href="#/schedule">&#8592; Schedule</a>
-    <h2>${escapeHtml(ev.name)}</h2>
-    <div class="card stack">
-      <div><strong>${escapeHtml(ev.client_name||"")}</strong></div>
-      <div class="muted">${fmtDate(ev.event_date)} &middot; ${ev.start_time}&#8211;${ev.end_time}</div>
-      <div class="muted">${escapeHtml(ev.location)}${ev.address?" &mdash; "+escapeHtml(ev.address):""}</div>
-      ${ev.guest_count?`<div class="muted">${ev.guest_count} guests</div>`:""}
-      ${ev.job_code?`<div class="muted">Job code: <strong style="font-family:monospace">${escapeHtml(ev.job_code)}</strong></div>`:""}
-      ${ev.notes?`<div>${escapeHtml(ev.notes)}</div>`:""}
-      <span class="pill ${ev.status==="CANCELLED"?"warn":"ok"}">${ev.status}</span>
+// ── Render ──
+let _rendering=false;
+async function render(){
+  const app=document.getElementById('app');
+  const hash=location.hash||'#/today';
+  try{await refreshSession();}catch(e){app.innerHTML=`<div class="auth"><div class="card auth-card"><div class="auth-title">Can't reach the server</div><div class="note">${h(e.message||'')}</div><button class="btn btn-primary" onclick="render()">Try again</button></div></div>`;return;}
+  if(!state.session){app.innerHTML=hash==='#/signup'?signupScreen():loginScreen();wireAuth(hash==='#/signup'?'signup':'login');return;}
+  if(!state.profile){app.innerHTML=`<div class="auth"><div class="card auth-card" style="align-items:center;"><span class="spin"></span></div></div>`;return;}
+  if(!state.profile.active){app.innerHTML=pendingScreen();document.getElementById('signout-pending')?.addEventListener('click',()=>sb.auth.signOut());return;}
+  let page;
+  try{page=await pageFor(hash);}catch(e){console.error(e);page={title:'Something went wrong',body:`<div class="empty"><div class="empty-icon">${ico('warning')}</div><div class="empty-t">Couldn't load this page</div><div class="empty-s">${h(e.message||'')}</div></div>`};}
+  app.innerHTML=shell(hash,page);
+  wireShell();
+  if(page.wire)page.wire();
+}
+const NAV=[
+  ['#/today','sun','Today'],['#/schedule','calendar','Schedule'],['#/open','hand','Open shifts'],['#/clock','clock','Time clock'],['#/timeoff','leaf','Time off'],
+];
+const NAV_ADMIN=[['#/events','forkknife','Events'],['#/staff','people','Staff'],['#/timesheets','doc','Timesheets']];
+function shell(hash,page){
+  const route=hash.split('?')[0];
+  const active=r=>route===r||route.startsWith(r+'/');
+  const nav=[...NAV,...(isAdmin()?NAV_ADMIN:[])];
+  const tabs=[NAV[0],NAV[1],NAV[2],NAV[3],['#/more','ellipsis','More']];
+  const p=state.profile;
+  return`<div class="app">
+  <aside class="sidebar">
+    <button class="sb-wordmark" onclick="navigate('#/today')"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></button>
+    <nav class="sb-nav">${nav.map(([r,i,l])=>`<button class="nav-item${active(r)?' active':''}" onclick="navigate('${r}')">${ico(i)}<span>${l}</span></button>`).join('')}</nav>
+    <div class="sb-foot" style="flex-direction:column;align-items:stretch;gap:4px;padding:0;">
+      <button class="sb-user" onclick="navigate('#/profile')"><span class="avatar me">${initials(p.name)}</span><span style="min-width:0;"><div class="sb-user-name">${h(p.name)}</div><div class="sb-user-role">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}</div></span></button>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 10px 0;">
+        <span class="conn"><span class="conn-dot live"></span>Live <span class="muted" style="font-size:var(--fs-cp);font-weight:600;">v${APP_VERSION}</span></span>
+        <span style="display:flex;gap:2px;"><button class="theme-btn bell${state.unread?' has':''}" title="Notifications" onclick="openNotifications()">${ico('bell')}<span class="bell-dot"></span></button><button class="theme-btn" title="Light / dark" onclick="toggleTheme()">${ico('moon')}</button></span>
+      </div>
     </div>
-    ${prepHTML}
-    <div class="row between"><h3>Shifts</h3>${isAdmin?`<button class="btn small" id="new-shift" data-event="${id}">+ Add shift</button>`:""}</div>
-    ${listOrEmpty(shifts,(s)=>`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(s.title)}</div><div class="meta">${s.start_time}&#8211;${s.end_time} &middot; ${s.assigned_user_id?"Assigned: "+escapeHtml(s.profiles?.name||""):"Open"}</div></div>${isAdmin?`<button class="btn ghost small" data-edit-shift="${s.id}">Edit</button>`:""}</div></div>`,"No shifts yet.")}
-    ${isAdmin?`<button class="btn danger small" id="delete-event" data-id="${ev.id}">Delete event</button>`:""}
-  </div>`;}
+  </aside>
+  <main class="main">
+    <div class="view active">
+      <div class="mob-top"><button class="sb-wordmark" style="padding:0;" onclick="navigate('#/today')"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></button><span style="display:flex;gap:2px;"><button class="theme-btn bell${state.unread?' has':''}" onclick="openNotifications()">${ico('bell')}<span class="bell-dot"></span></button><button class="theme-btn" onclick="navigate('#/profile')">${ico('person')}</button></span></div>
+      <div class="ph"><div><div class="ph-title">${h(page.title||'')}</div>${page.sub?`<div class="ph-sub" style="margin-left:0;margin-top:4px;">${page.sub}</div>`:''}</div>${page.actions?`<div class="ph-actions">${page.actions}</div>`:''}</div>
+      <div class="page"><div class="page-inner">${page.body}</div></div>
+    </div>
+  </main>
+  <nav class="tabbar">${tabs.map(([r,i,l])=>`<button class="tab-item${active(r)||(r==='#/more'&&/^#\/(profile|timeoff|staff|timesheets|events)/.test(route))?' active':''}" onclick="navigate('${r}')">${ico(i)}<span>${l}</span></button>`).join('')}</nav>
+</div>`;
+}
+function wireShell(){}
 
-function wireEventDetail(id){document.getElementById("new-shift")?.addEventListener("click",()=>openShiftForm({eventId:id}));document.querySelectorAll("[data-edit-shift]").forEach((btn)=>btn.addEventListener("click",async()=>{const{data}=await sb.from("shifts").select("*").eq("id",btn.dataset.editShift).single();openShiftForm({shift:data,eventId:id});}));document.getElementById("delete-event")?.addEventListener("click",async()=>{if(!confirm("Delete this event?"))return;const{error}=await sb.from("events").delete().eq("id",id);if(error){toast(error.message.includes("foreign key")?"Can't delete — it has recorded time entries.":error.message);return;}navigate("#/schedule");});}
+async function pageFor(hash){
+  const route=hash.split('?')[0];const seg=route.split('/');
+  if(route==='#/today'||route==='#/'||route==='#/dashboard')return todayPage();
+  if(route==='#/schedule')return schedulePage();
+  if(route==='#/open'||route==='#/shifts-open')return openShiftsPage();
+  if(route==='#/clock'||route==='#/timeclock')return clockPage();
+  if(route==='#/timeoff'||route==='#/time-off')return timeOffPage();
+  if(route==='#/profile')return profilePage();
+  if(route==='#/more')return morePage();
+  if(route==='#/staff')return isAdmin()?staffPage():denied();
+  if(route.startsWith('#/staff/'))return isAdmin()?staffDetailPage(seg[2]):denied();
+  if(route==='#/timesheets')return isAdmin()?timesheetsPage():denied();
+  if(route==='#/events')return isAdmin()?eventsPage():denied();
+  if(route.startsWith('#/events/'))return eventDetailPage(seg[2]);
+  return{title:'Not found',body:`<div class="empty"><div class="empty-t">Nothing here</div></div>`};
+}
+const denied=()=>({title:'Admins only',body:`<div class="empty"><div class="empty-icon">${ico('lock')}</div><div class="empty-t">Admins only</div></div>`});
+const emptyHTML=(icon,t,s)=>`<div class="empty"><div class="empty-icon">${ico(icon)}</div><div class="empty-t">${h(t)}</div>${s?`<div class="empty-s">${h(s)}</div>`:''}</div>`;
 
-async function timeclockPage(){const[{data:openEntry},{data:myShifts},{data:history}]=await Promise.all([sb.from("time_entries").select("*, shifts(title)").eq("user_id",state.session.user.id).is("clock_out",null).maybeSingle(),sb.from("shifts").select("*").eq("assigned_user_id",state.session.user.id).eq("shift_date",todayIso()),sb.from("time_entries").select("*, shifts(title)").eq("user_id",state.session.user.id).order("clock_in",{ascending:false}).limit(10)]);if(openEntry){return`<div class="stack"><h2>Time clock</h2><div class="card" style="text-align:center"><div class="muted">Clocked in on</div><div class="title" style="font-size:18px">${escapeHtml(openEntry.shifts?.title||"Shift")}</div><div class="clock-big" id="live-timer">--:--:--</div><div class="muted">since ${fmtDateTime(openEntry.clock_in)}</div><button class="btn danger" id="clock-out" data-id="${openEntry.id}" data-clock-in-at="${openEntry.clock_in}" style="margin-top:14px">Clock out</button></div>${historyHtml(history)}</div>`;}return`<div class="stack"><h2>Time clock</h2>${myShifts&&myShifts.length?`<div class="list">${myShifts.map((s)=>`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(s.title)}</div><div class="meta">${s.start_time}&#8211;${s.end_time} &middot; ${escapeHtml(s.location)}</div></div><button class="btn small" data-clock-in="${s.id}">Clock in</button></div></div>`).join("")}</div>`:`<div class="empty">No shift assigned to you today.</div>`}${historyHtml(history)}</div>`;}
-function historyHtml(history){if(!history||!history.length)return"";return`<h3>Recent</h3><div class="list">${history.map((e)=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<div class="item"><div class="row between"><div><div class="title">${escapeHtml(e.shifts?.title||"Shift")}</div><div class="meta">${fmtDateTime(e.clock_in)} &rarr; ${e.clock_out?fmtDateTime(e.clock_out):"in progress"}</div></div><div class="num">${hrs!=null?hrs.toFixed(2)+"h":""}</div></div></div>`;}).join("")}</div>`;}
+// ── Shift rows ──
+function shiftRow(s,opts={}){
+  const mine=s.assigned_user_id&&s.assigned_user_id===me();
+  const who=s.status==='OPEN'||!s.assigned_user_id?`<span class="badge open">Open</span>`:`<span class="who"><span class="avatar${mine?' me':''}">${initials(s.profiles?.name||(mine?state.profile.name:''))}</span>${mine?'You':h(first(s.profiles?.name)||'Assigned')}</span>`;
+  const ev=s.events?.name?` · ${h(s.events.name)}`:'';
+  const act=opts.claim&&s.status==='OPEN'?`<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();claimShift('${s.id}')">Claim</button>`:'';
+  const nav=opts.nav!==false;
+  return`<div class="shift${nav?' row-nav':''}" ${nav?`onclick="openShiftSheet('${s.id}')"`:''}>
+    <div class="shift-time"><b>${hm(s.start_time)}</b><span>${hm(s.end_time)}</span></div>
+    <div class="shift-main"><div class="shift-title">${h(s.title)}${ev}</div><div class="shift-sub">${opts.date?relDay(s.shift_date)+' · ':''}${h(s.location||'')}${s.notes?' · '+h(s.notes):''}</div></div>
+    <div class="shift-right">${who}${act}${nav&&!act?chev():''}</div>
+  </div>`;
+}
+function groupByDate(rows){const by={};rows.forEach(s=>{(by[s.shift_date]=by[s.shift_date]||[]).push(s);});return Object.keys(by).sort().map(d=>[d,by[d]]);}
+function dayList(rows,opts){return groupByDate(rows).map(([d,list])=>`<div class="sec"><div class="day-hd${d===todayIso()?' today':''}"><span>${relDay(d)}</span><span>${fmtDate(d)}</span></div><div class="list">${list.map(s=>shiftRow(s,opts)).join('')}</div></div>`).join('');}
 
-let timerInterval;
-function wireTimeclock(){clearInterval(timerInterval);const liveEl=document.getElementById("live-timer");const clockOutBtn=document.getElementById("clock-out");if(liveEl&&clockOutBtn){const clockInIso=clockOutBtn.dataset.clockInAt;const started=clockInIso?new Date(clockInIso):new Date();const tick=()=>{const el=document.getElementById("live-timer");if(!el){clearInterval(timerInterval);return;}const s=Math.max(0,Math.floor((Date.now()-started)/1000));const hh=String(Math.floor(s/3600)).padStart(2,"0");const mm=String(Math.floor((s%3600)/60)).padStart(2,"0");const ss=String(s%60).padStart(2,"0");el.textContent=`${hh}:${mm}:${ss}`;};tick();timerInterval=setInterval(tick,1000);}document.querySelectorAll("[data-clock-in]").forEach((btn)=>btn.addEventListener("click",async()=>{const{error}=await sb.from("time_entries").insert({shift_id:btn.dataset.clockIn,user_id:state.session.user.id,clock_in:new Date().toISOString()});if(error){toast(error.message);return;}toast("Clocked in");render();}));document.getElementById("clock-out")?.addEventListener("click",async()=>{const{error}=await sb.from("time_entries").update({clock_out:new Date().toISOString()}).eq("id",document.getElementById("clock-out").dataset.id);if(error){toast(error.message);return;}toast("Clocked out");render();});}
+// ── Today ──
+async function todayPage(){
+  const today=todayIso(),in7=addDays(today,7);
+  if(isAdmin()){
+    const[{data:todays},{data:open},{data:pending},{data:week}]=await Promise.all([
+      sb.from('shifts').select('*, events(name), profiles(name)').eq('shift_date',today).order('start_time'),
+      sb.from('shifts').select('*, events(name)').eq('status','OPEN').gte('shift_date',today).order('shift_date').order('start_time'),
+      sb.from('time_off_requests').select('*, profiles!time_off_requests_user_id_fkey(name)').eq('status','PENDING'),
+      sb.from('shifts').select('id,shift_date,status').gte('shift_date',today).lte('shift_date',in7)
+    ]);
+    const unfilled=(week||[]).filter(s=>s.status==='OPEN').length;
+    return{title:'Today',sub:fmtLong(today),actions:`<button class="btn btn-sm" onclick="navigate('#/events')">${ico('forkknife')}Events</button>`,body:`
+      <div class="stat-grid card">
+        <button class="stat row-nav" onclick="navigate('#/schedule')"><div class="stat-n">${(todays||[]).length}</div><div class="stat-l">Shifts today</div></button>
+        <button class="stat row-nav" onclick="navigate('#/open')"><div class="stat-n${unfilled?' is-alert':''}">${unfilled}</div><div class="stat-l">Unfilled this week</div></button>
+        <button class="stat row-nav" onclick="navigate('#/timeoff')"><div class="stat-n${(pending||[]).length?' is-alert':''}">${(pending||[]).length}</div><div class="stat-l">Time off to decide</div></button>
+        <button class="stat row-nav" onclick="navigate('#/staff')"><div class="stat-n">${state.profiles.filter(p=>p.active).length}</div><div class="stat-l">Active staff${state.profiles.some(p=>!p.active)?' · '+state.profiles.filter(p=>!p.active).length+' waiting':''}</div></button>
+      </div>
+      <div class="sec"><div class="sec-hd">Today</div>${(todays||[]).length?`<div class="list">${todays.map(s=>shiftRow(s)).join('')}</div>`:`<div class="card">${emptyHTML('sun','Nothing scheduled today')}</div>`}</div>
+      <div class="sec"><div class="sec-hd">Open shifts <span class="seg-count" style="margin:0;">${(open||[]).length}</span></div>${(open||[]).length?`<div class="list">${open.slice(0,6).map(s=>shiftRow(s,{date:true})).join('')}</div>`:`<div class="note">Every shift is covered.</div>`}</div>
+      ${(pending||[]).length?`<div class="sec"><div class="sec-hd">Time off to decide</div><div class="list">${pending.map(r=>timeOffRow(r,true)).join('')}</div></div>`:''}`};
+  }
+  const[{data:mine},{data:open},{data:openEntry}]=await Promise.all([
+    sb.from('shifts').select('*, events(name)').eq('assigned_user_id',me()).gte('shift_date',today).order('shift_date').order('start_time').limit(8),
+    sb.from('shifts').select('*, events(name)').eq('status','OPEN').gte('shift_date',today).order('shift_date').order('start_time').limit(6),
+    sb.from('time_entries').select('*, shifts(title)').eq('user_id',me()).is('clock_out',null).maybeSingle()
+  ]);
+  const next=(mine||[])[0];
+  const hero=openEntry?`<div class="card hero"><div class="hero-eyebrow">Clocked in</div><div class="hero-title">${h(openEntry.shifts?.title||'Shift')}</div><div class="hero-sub">since ${fmtT(openEntry.clock_in)}</div><div class="hero-acts"><button class="btn btn-primary" onclick="navigate('#/clock')">${ico('clock')}Open time clock</button></div></div>`
+    :next?`<div class="card hero"><div class="hero-eyebrow">Your next shift · ${relDay(next.shift_date)}</div><div class="hero-title">${h(next.title)}${next.events?.name?` — ${h(next.events.name)}`:''}</div><div class="hero-sub">${hm(next.start_time)}–${hm(next.end_time)} · ${h(next.location||'')}</div><div class="hero-acts">${next.shift_date===today?`<button class="btn btn-primary" onclick="navigate('#/clock')">${ico('clock')}Clock in</button>`:''}<button class="btn" onclick="navigate('#/schedule')">${ico('calendar')}Schedule</button></div></div>`
+    :`<div class="card hero"><div class="hero-eyebrow">Hi ${h(first(state.profile.name))}</div><div class="hero-title">No shifts booked</div><div class="hero-sub">Claim one from the open shifts below.</div></div>`;
+  return{title:`Hi ${h(first(state.profile.name))}`,sub:fmtLong(today),body:`${hero}
+    <div class="sec"><div class="sec-hd">Your upcoming shifts</div>${(mine||[]).length?`<div class="list">${mine.map(s=>shiftRow(s,{date:true})).join('')}</div>`:`<div class="note">Nothing booked yet.</div>`}</div>
+    <div class="sec"><div class="sec-hd">Open shifts <button class="btn btn-xs" onclick="navigate('#/open')">See all${ico('chevronR')}</button></div>${(open||[]).length?`<div class="list">${open.map(s=>shiftRow(s,{date:true,claim:true})).join('')}</div>`:`<div class="note">No open shifts right now.</div>`}</div>`};
+}
 
-async function timesheetsPage(){const today=new Date();const day=today.getDay()||7;const monday=new Date(today);monday.setDate(today.getDate()-day+1);const weekStart=monday.toISOString().slice(0,10);const weekEnd=new Date(monday.getTime()+6*86400000).toISOString().slice(0,10);const[{data},{data:profileRows}]=await Promise.all([sb.from("time_entries").select("*, profiles(name)").gte("clock_in",weekStart).lt("clock_in",weekEnd+"T23:59:59").order("clock_in"),sb.rpc("list_profiles")]);const rateByUser=Object.fromEntries((profileRows||[]).map((p)=>[p.id,p.pay_rate]));const rows=(data||[]).filter((e)=>e.clock_out);return`<div class="stack"><div class="row between"><h2>Timesheets</h2><button class="btn small" id="export-csv">Export CSV</button></div><div class="muted">Week of ${fmtDate(weekStart)}</div><div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Date</th><th>Hours</th><th>Pay</th></tr></thead><tbody>${rows.map((e)=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);const rate=rateByUser[e.user_id];const pay=rate!=null&&hrs!=null?hrs*rate:null;return`<tr><td>${escapeHtml(e.profiles?.name||"")}</td><td>${fmtDate(e.clock_in.slice(0,10))}</td><td class="num">${hrs!=null?hrs.toFixed(2):""}</td><td class="num">${pay!=null?fmtGBP(pay):"—"}</td></tr>`;}).join("")}</tbody></table></div>${!rows.length?`<div class="empty">No completed entries this week.</div>`:""}</div>`;}
-function wireTimesheets(){document.getElementById("export-csv")?.addEventListener("click",async()=>{const today=new Date();const day=today.getDay()||7;const monday=new Date(today);monday.setDate(today.getDate()-day+1);const weekStart=monday.toISOString().slice(0,10);const weekEnd=new Date(monday.getTime()+6*86400000).toISOString().slice(0,10);const[{data},{data:profileRows}]=await Promise.all([sb.from("time_entries").select("*, profiles(name)").gte("clock_in",weekStart).lt("clock_in",weekEnd+"T23:59:59").order("clock_in"),sb.rpc("list_profiles")]);const rateByUser=Object.fromEntries((profileRows||[]).map((p)=>[p.id,p.pay_rate]));const rows=(data||[]).filter((e)=>e.clock_out);let csv="Name,Date,Clock in,Clock out,Break (min),Hours,Rate,Pay\n";rows.forEach((e)=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);const rate=rateByUser[e.user_id];const pay=rate!=null&&hrs!=null?hrs*rate:0;csv+=[e.profiles?.name,e.clock_in.slice(0,10),e.clock_in,e.clock_out,e.break_minutes,hrs?.toFixed(2),rate!=null?fmtGBP(rate):"",fmtGBP(pay)].join(",")+"\n";});const blob=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`timesheet-${weekStart}.csv`;a.click();});}
+// ── Schedule ──
+let _schedRange=14;
+async function schedulePage(){
+  const today=todayIso(),end=addDays(today,_schedRange);
+  const{data}=await sb.from('shifts').select('*, events(name), profiles(name)').gte('shift_date',today).lte('shift_date',end).order('shift_date').order('start_time');
+  const rows=data||[];
+  return{title:'Schedule',sub:`Next ${_schedRange} days · ${rows.length} shift${rows.length===1?'':'s'}`,actions:`<div class="seg" id="sched-seg"><button class="${_schedRange===7?'on':''}" onclick="setSchedRange(7)">Week</button><button class="${_schedRange===14?'on':''}" onclick="setSchedRange(14)">Fortnight</button><button class="${_schedRange===31?'on':''}" onclick="setSchedRange(31)">Month</button></div>${isAdmin()?`<button class="btn btn-sm btn-primary" onclick="navigate('#/events')">${ico('plus')}Add shifts</button>`:''}`,
+    body:rows.length?dayList(rows):`<div class="card">${emptyHTML('calendar','Nothing scheduled',isAdmin()?'Add shifts from an event.':'Check back soon — or claim an open shift.')}</div>`,wire:segSyncAll};
+}
+function setSchedRange(n){_schedRange=n;render();}
 
-async function timeOffPage(){const isAdmin=state.profile.role==="ADMIN";const{data}=isAdmin?await sb.from("time_off_requests").select("*, profiles!time_off_requests_user_id_fkey(name)").order("created_at",{ascending:false}):await sb.from("time_off_requests").select("*").eq("user_id",state.session.user.id).order("created_at",{ascending:false});return`<div class="stack"><div class="row between"><h2>Time off</h2>${!isAdmin?`<button class="btn small" id="new-timeoff">+ Request</button>`:""}</div>${listOrEmpty(data,(r)=>`<div class="item"><div class="row between"><div><div class="title">${isAdmin?escapeHtml(r.profiles?.name||"Staff")+" &mdash; ":""}${fmtDate(r.start_date)} to ${fmtDate(r.end_date)}</div><div class="meta">${escapeHtml(r.reason||"")}</div></div>${isAdmin&&r.status==="PENDING"?`<div class="row"><button class="btn small" data-decide="${r.id}" data-status="APPROVED">Approve</button><button class="btn secondary small" data-decide="${r.id}" data-status="DECLINED">Decline</button></div>`:`<span class="pill ${r.status==="APPROVED"?"ok":r.status==="DECLINED"?"warn":"pend"}">${r.status}</span>`}</div></div>`,"Nothing here yet.")}</div>`;}
-function wireTimeOff(){document.getElementById("new-timeoff")?.addEventListener("click",()=>openTimeOffForm());document.querySelectorAll("[data-decide]").forEach((btn)=>btn.addEventListener("click",async()=>{const{error}=await sb.from("time_off_requests").update({status:btn.dataset.status,decided_by:state.session.user.id,decided_at:new Date().toISOString()}).eq("id",btn.dataset.decide);if(error){toast(error.message);return;}render();}));}
+// ── Open shifts ──
+async function openShiftsPage(){
+  const{data}=await sb.from('shifts').select('*, events(name)').eq('status','OPEN').gte('shift_date',todayIso()).order('shift_date').order('start_time');
+  const rows=data||[];
+  return{title:'Open shifts',sub:rows.length?`${rows.length} to claim · first come, first served`:'',body:rows.length?dayList(rows,{claim:true,nav:isAdmin()}):`<div class="card">${emptyHTML('checkCircle','Nothing open','Every shift is covered.')}</div>`};
+}
+async function claimShift(id){
+  const{data,error}=await sb.from('shifts').update({status:'ASSIGNED',assigned_user_id:me()}).eq('id',id).eq('status','OPEN').select();
+  if(error){toast(error.message,'err');return;}
+  if(!data||!data.length){toast('Someone else just took that one','err');render();return;}
+  toast('Shift claimed');render();
+}
 
-function profilePage(){const p=state.profile;return`<div class="stack"><h2>Your profile</h2><div class="card stack"><div><strong>${escapeHtml(p.name)}</strong></div><div class="muted">${escapeHtml(p.email)}</div><div class="muted">${escapeHtml(p.job_title||p.role)}</div>${p.pay_rate!=null?`<div class="muted">Rate: ${fmtGBP(p.pay_rate)}/hr</div>`:""}</div><label>Phone</label><input id="f-phone" value="${escapeHtml(p.phone||"")}" /><button class="btn secondary" id="save-phone">Save phone</button><h3 style="margin-top:18px">Change password</h3><label>New password</label><input id="f-newpass" type="password" placeholder="At least 8 characters" /><button class="btn" id="save-pass">Update password</button><button class="btn secondary" id="signout" style="margin-top:24px">Sign out</button></div>`;}
-function wireProfile(){document.getElementById("save-phone")?.addEventListener("click",async()=>{const{error}=await sb.rpc("update_my_profile",{new_phone:document.getElementById("f-phone").value.trim()||null});if(error){toast(error.message);return;}toast("Saved");});document.getElementById("save-pass")?.addEventListener("click",async()=>{const pw=document.getElementById("f-newpass").value;if(pw.length<8){toast("Password must be at least 8 characters");return;}const{error}=await sb.auth.updateUser({password:pw});if(error){toast(error.message);return;}await sb.rpc("update_my_profile",{new_must_change_password:false});toast("Password updated");document.getElementById("f-newpass").value="";});document.getElementById("signout")?.addEventListener("click",()=>sb.auth.signOut());}
+// ── Time clock ──
+let _timer=null;
+async function clockPage(){
+  const today=todayIso();
+  const[{data:openEntry},{data:myShifts},{data:history}]=await Promise.all([
+    sb.from('time_entries').select('*, shifts(title,location)').eq('user_id',me()).is('clock_out',null).maybeSingle(),
+    sb.from('shifts').select('*, events(name)').eq('assigned_user_id',me()).eq('shift_date',today).order('start_time'),
+    sb.from('time_entries').select('*, shifts(title)').eq('user_id',me()).not('clock_out','is',null).order('clock_in',{ascending:false}).limit(10)
+  ]);
+  const hist=(history||[]).length?`<div class="sec"><div class="sec-hd">Recent</div><div class="list">${history.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<div class="kv"><span><span style="color:var(--label);font-weight:500;">${h(e.shifts?.title||'Shift')}</span><br><span class="muted" style="font-size:var(--fs-fn);">${fmtDT(e.clock_in)} → ${fmtT(e.clock_out)}${e.break_minutes?` · ${e.break_minutes} min break`:''}</span></span><span class="kv-v num">${hrs!=null?hrs.toFixed(2)+' h':''}</span></div>`;}).join('')}</div></div>`:'';
+  if(openEntry){
+    return{title:'Time clock',body:`<div class="card clock-card"><span class="clock-ring"></span><div class="hero-eyebrow" style="margin-top:8px;">Clocked in · ${h(openEntry.shifts?.title||'Shift')}</div><div class="clock-big" id="live-timer" data-start="${openEntry.clock_in}">--:--:--</div><div class="hero-sub">since ${fmtT(openEntry.clock_in)}${openEntry.shifts?.location?' · '+h(openEntry.shifts.location):''}</div><div class="hero-acts" style="justify-content:center;"><button class="btn btn-lg btn-danger-solid" onclick="clockOut('${openEntry.id}')">Clock out</button></div></div>${hist}`,wire:startTimer};
+  }
+  return{title:'Time clock',sub:fmtLong(today),body:`${(myShifts||[]).length?`<div class="sec"><div class="sec-hd">Your shifts today</div><div class="list">${myShifts.map(s=>`<div class="shift"><div class="shift-time"><b>${hm(s.start_time)}</b><span>${hm(s.end_time)}</span></div><div class="shift-main"><div class="shift-title">${h(s.title)}${s.events?.name?' · '+h(s.events.name):''}</div><div class="shift-sub">${h(s.location||'')}</div></div><div class="shift-right"><button class="btn btn-primary" onclick="clockIn('${s.id}')">${ico('clock')}Clock in</button></div></div>`).join('')}</div></div>`:`<div class="card">${emptyHTML('clock','No shift today','Clock in appears here on the day of a shift assigned to you.')}</div>`}${hist}`};
+}
+function startTimer(){clearInterval(_timer);const el=document.getElementById('live-timer');if(!el)return;const started=new Date(el.dataset.start);const tick=()=>{const e=document.getElementById('live-timer');if(!e){clearInterval(_timer);return;}const s=Math.max(0,Math.floor((Date.now()-started)/1000));e.textContent=`${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;};tick();_timer=setInterval(tick,1000);}
+async function clockIn(shiftId){const{error}=await sb.from('time_entries').insert({shift_id:shiftId,user_id:me(),clock_in:new Date().toISOString()});if(error){toast(error.message,'err');return;}toast('Clocked in');render();}
+async function clockOut(id){
+  const s=openSheet({title:'Clock out',body:`<div class="fld"><label class="fld-label">Unpaid break (minutes)</label><input class="fld-inp num" id="co-break" type="number" min="0" step="5" value="0"></div>`,foot:`<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="co-ok">Clock out</button>`});
+  s.q('#co-ok').addEventListener('click',async()=>{const br=parseInt(s.v('#co-break'))||0;const{error}=await sb.from('time_entries').update({clock_out:new Date().toISOString(),break_minutes:br}).eq('id',id);if(error){toast(error.message,'err');return;}s.close();toast('Clocked out');render();});
+}
 
-function openModal(html){const wrap=document.createElement("div");wrap.className="modal-backdrop";wrap.innerHTML=`<div class="modal">${html}</div>`;wrap.addEventListener("click",(e)=>{if(e.target===wrap)wrap.remove();});document.body.appendChild(wrap);return wrap;}
+// ── Time off ──
+function timeOffRow(r,showName){
+  const st=r.status==='APPROVED'?'<span class="badge ok">Approved</span>':r.status==='DECLINED'?'<span class="badge no">Declined</span>':'<span class="badge pend">Pending</span>';
+  const days=Math.round((new Date(r.end_date)-new Date(r.start_date))/864e5)+1;
+  return`<div class="shift" style="grid-template-columns:minmax(0,1fr) auto;"><div class="shift-main"><div class="shift-title">${showName?h(r.profiles?.name||'Staff')+' · ':''}${fmtDate(r.start_date)}${r.end_date!==r.start_date?' → '+fmtDate(r.end_date):''} <span class="muted">· ${days} day${days===1?'':'s'}</span></div><div class="shift-sub">${h(r.reason||'No reason given')}</div></div><div class="shift-right">${isAdmin()&&r.status==='PENDING'?`<button class="btn btn-sm" style="background:var(--ok-tint);color:var(--ok);" onclick="decideTimeOff('${r.id}','APPROVED')">${ico('check')}Approve</button><button class="btn btn-sm btn-danger" onclick="decideTimeOff('${r.id}','DECLINED')">Decline</button>`:st}</div></div>`;
+}
+async function timeOffPage(){
+  const q=isAdmin()?sb.from('time_off_requests').select('*, profiles!time_off_requests_user_id_fkey(name)').order('created_at',{ascending:false}):sb.from('time_off_requests').select('*').eq('user_id',me()).order('created_at',{ascending:false});
+  const{data}=await q;const rows=data||[];
+  const pend=rows.filter(r=>r.status==='PENDING'),done=rows.filter(r=>r.status!=='PENDING');
+  return{title:'Time off',actions:`<button class="btn btn-sm btn-primary" onclick="requestTimeOff()">${ico('plus')}Request</button>`,body:rows.length?`${pend.length?`<div class="sec"><div class="sec-hd">Pending</div><div class="list">${pend.map(r=>timeOffRow(r,isAdmin())).join('')}</div></div>`:''}${done.length?`<div class="sec"><div class="sec-hd">Decided</div><div class="list">${done.map(r=>timeOffRow(r,isAdmin())).join('')}</div></div>`:''}`:`<div class="card">${emptyHTML('leaf','No requests yet',isAdmin()?'Requests from the team appear here.':'Ask for days off here and you’ll see the answer here too.')}</div>`};
+}
+function requestTimeOff(){
+  const s=openSheet({title:'Request time off',body:`<div class="g2"><div class="fld"><label class="fld-label">From</label><input class="fld-inp" id="to-start" type="date" value="${todayIso()}"></div><div class="fld"><label class="fld-label">To</label><input class="fld-inp" id="to-end" type="date" value="${todayIso()}"></div></div><div class="fld"><label class="fld-label">Reason (optional)</label><input class="fld-inp" id="to-reason" placeholder="Holiday, appointment…"></div>`,foot:`<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="to-ok">Send request</button>`});
+  s.q('#to-ok').addEventListener('click',async()=>{const start_date=s.v('#to-start'),end_date=s.v('#to-end');if(!start_date||!end_date){toast('Pick both dates','err');return;}if(end_date<start_date){toast('End date is before the start','err');return;}const{error}=await sb.from('time_off_requests').insert({user_id:me(),start_date,end_date,reason:s.v('#to-reason')||null,status:'PENDING'});if(error){toast(error.message,'err');return;}s.close();toast('Request sent');render();});
+}
+async function decideTimeOff(id,status){
+  if(status==='DECLINED'&&!(await askConfirm('Decline this request? The person is told straight away.',{title:'Decline time off',confirmLabel:'Decline'})))return;
+  const{error}=await sb.from('time_off_requests').update({status,decided_by:me(),decided_at:new Date().toISOString()}).eq('id',id);if(error){toast(error.message,'err');return;}
+  toast(status==='APPROVED'?'Approved':'Declined');render();
+}
 
-function openEventForm(){const modal=openModal(`<h3>New event</h3><div class="stack"><label>Name</label><input id="m-name" /><label>Client</label><input id="m-client" /><label>Location</label><input id="m-location" /><label>Address</label><input id="m-address" /><label>Date</label><input id="m-date" type="date" /><div class="row"><div style="flex:1"><label>Start</label><input id="m-start" type="time" /></div><div style="flex:1"><label>End</label><input id="m-end" type="time" /></div></div><label>Guest count</label><input id="m-guests" type="number" /><label>Job code <span style="font-weight:400;color:#5b6660">(links to Kitchen Prep)</span></label><input id="m-jobcode" placeholder="e.g. ARL031026" style="text-transform:uppercase" /><label>Notes</label><textarea id="m-notes" rows="3"></textarea><div class="row" style="margin-top:8px"><button class="btn" id="m-save">Create</button><button class="btn secondary" id="m-cancel">Cancel</button></div></div>`);modal.querySelector("#m-cancel").addEventListener("click",()=>modal.remove());modal.querySelector("#m-save").addEventListener("click",async()=>{const payload={name:modal.querySelector("#m-name").value.trim(),client_name:modal.querySelector("#m-client").value.trim()||null,location:modal.querySelector("#m-location").value.trim(),address:modal.querySelector("#m-address").value.trim()||null,event_date:modal.querySelector("#m-date").value,start_time:modal.querySelector("#m-start").value,end_time:modal.querySelector("#m-end").value,guest_count:modal.querySelector("#m-guests").value?parseInt(modal.querySelector("#m-guests").value):null,job_code:modal.querySelector("#m-jobcode").value.trim().toUpperCase()||null,notes:modal.querySelector("#m-notes").value.trim()||null,created_by:state.session.user.id};if(!payload.name||!payload.location||!payload.event_date||!payload.start_time||!payload.end_time){toast("Please fill in name, location, date and times");return;}const{error}=await sb.from("events").insert(payload);if(error){toast(error.message);return;}modal.remove();render();});}
+// ── Staff (admin) ──
+async function staffPage(){
+  const{data,error}=await sb.rpc('list_profiles');if(error)throw error;
+  const rows=data||[];state.profiles=rows;
+  const pending=rows.filter(p=>!p.active),active=rows.filter(p=>p.active).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const person=p=>`<div class="person" onclick="navigate('#/staff/${p.id}')"><span class="avatar${p.id===me()?' me':''}">${initials(p.name)}</span><div style="flex:1;min-width:0;"><div class="person-name">${h(p.name)}</div><div class="person-sub">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}${p.role==='ADMIN'&&p.job_title?' · Admin':''}${p.pay_rate>0?' · '+fmt$(p.pay_rate)+'/h':''}</div></div>${p.active?'':'<span class="badge pend">Waiting</span>'}${chev()}</div>`;
+  return{title:'Staff',sub:`${active.length} active${pending.length?` · ${pending.length} waiting for approval`:''}`,body:`${pending.length?`<div class="sec"><div class="sec-hd">Waiting for approval</div><div class="list">${pending.map(person).join('')}</div></div>`:''}<div class="sec"><div class="sec-hd">Team</div>${active.length?`<div class="list">${active.map(person).join('')}</div>`:`<div class="card">${emptyHTML('people','No staff yet','New sign-ups appear here for approval.')}</div>`}</div><div class="note">Anyone can create an account at this address; nothing shows until you approve them here. Pay rates come from the linked Finance record, never typed here.</div>`};
+}
+async function staffDetailPage(id){
+  const[{data:rows,error},{data:fin}]=await Promise.all([sb.rpc('list_profiles'),sb.rpc('list_finance_staff_for_linking')]);
+  if(error)throw error;
+  const p=(rows||[]).find(r=>r.id===id);if(!p)return{title:'Not found',body:emptyHTML('person','No such person')};
+  const opts=(fin||[]).map(f=>`<option value="${f.id}" ${f.id===p.finance_staff_id?'selected':''}>${h(f.name)}</option>`).join('');
+  return{title:p.name,sub:h(p.email||''),actions:`<button class="btn btn-sm" onclick="navigate('#/staff')">${ico('chevronL')}Staff</button>`,body:`
+    <div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+      <div class="g2"><div class="fld"><label class="fld-label">Role</label><select class="fld-sel" id="f-role"><option value="STAFF" ${p.role==='STAFF'?'selected':''}>Staff</option><option value="ADMIN" ${p.role==='ADMIN'?'selected':''}>Admin</option></select></div>
+      <div class="fld"><label class="fld-label">Job title</label><input class="fld-inp" id="f-job" value="${h(p.job_title||'')}" placeholder="Chef de partie, Front of house…"></div></div>
+      <div class="fld"><label class="fld-label">Finance record (pay rate comes from here)</label><select class="fld-sel" id="f-fin"><option value="">Not linked</option>${opts}</select>${p.pay_rate>0?`<div class="muted" style="font-size:var(--fs-fn);">Current rate ${fmt$(p.pay_rate)} an hour</div>`:''}</div>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><span><div style="font-weight:500;">Active</div><div class="muted" style="font-size:var(--fs-fn);">Can sign in, see the rota and claim shifts</div></span><span class="switch"><input type="checkbox" id="f-active" ${p.active?'checked':''}><span class="knob"></span></span></label>
+      <div style="display:flex;justify-content:flex-end;gap:8px;"><button class="btn btn-primary" onclick="saveStaff('${p.id}')">${ico('check')}Save</button></div>
+    </div>`};
+}
+async function saveStaff(id){
+  const g=s=>document.getElementById(s);
+  const financeId=g('f-fin').value||null;
+  const{error}=await sb.rpc('admin_update_profile',{target_id:id,new_role:g('f-role').value,new_job_title:g('f-job').value.trim()||null,new_active:g('f-active').checked,new_finance_staff_id:financeId,clear_finance_link:!financeId});
+  if(error){toast(error.message,'err');return;}
+  toast('Saved');navigate('#/staff');
+}
 
-function openShiftForm({eventId,shift}){const modal=openModal(`<h3>${shift?"Edit shift":"New shift"}</h3><div class="stack"><label>Title</label><input id="m-title" value="${escapeHtml(shift?.title||"")}" /><label>Location</label><input id="m-location" value="${escapeHtml(shift?.location||"")}" /><label>Date</label><input id="m-date" type="date" value="${shift?.shift_date||""}" /><div class="row"><div style="flex:1"><label>Start</label><input id="m-start" type="time" value="${shift?.start_time||""}" /></div><div style="flex:1"><label>End</label><input id="m-end" type="time" value="${shift?.end_time||""}" /></div></div><label>Notes</label><textarea id="m-notes" rows="2">${escapeHtml(shift?.notes||"")}</textarea><div class="row" style="margin-top:8px"><button class="btn" id="m-save">${shift?"Save":"Create"}</button>${shift?`<button class="btn danger" id="m-delete">Delete</button>`:""}<button class="btn secondary" id="m-cancel">Cancel</button></div></div>`);modal.querySelector("#m-cancel").addEventListener("click",()=>modal.remove());modal.querySelector("#m-save").addEventListener("click",async()=>{const payload={title:modal.querySelector("#m-title").value.trim(),location:modal.querySelector("#m-location").value.trim(),shift_date:modal.querySelector("#m-date").value,start_time:modal.querySelector("#m-start").value,end_time:modal.querySelector("#m-end").value,notes:modal.querySelector("#m-notes").value.trim()||null};if(!payload.title||!payload.location||!payload.shift_date||!payload.start_time||!payload.end_time){toast("Please fill in every field");return;}let error;if(shift){({error}=await sb.from("shifts").update(payload).eq("id",shift.id));}else{({error}=await sb.from("shifts").insert({...payload,event_id:eventId,created_by:state.session.user.id}));}if(error){toast(error.message);return;}modal.remove();render();});modal.querySelector("#m-delete")?.addEventListener("click",async()=>{if(!confirm("Delete this shift?"))return;const{error}=await sb.from("shifts").delete().eq("id",shift.id);if(error){toast(error.message.includes("foreign key")?"Can't delete — it has recorded time entries.":error.message);return;}modal.remove();render();});}
+// ── Timesheets (admin) ──
+function weekStart(iso){const d=new Date(iso+'T00:00:00');const day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d.toLocaleDateString('en-CA');}
+async function weekEntries(ws){const we=addDays(ws,6);const{data}=await sb.from('time_entries').select('*, profiles(name)').gte('clock_in',ws+'T00:00:00').lt('clock_in',addDays(ws,7)+'T00:00:00').order('clock_in');return{rows:(data||[]).filter(e=>e.clock_out),we};}
+async function timesheetsPage(){
+  if(!state.week)state.week=weekStart(todayIso());
+  const ws=state.week;const{rows,we}=await weekEntries(ws);
+  const rate=Object.fromEntries(state.profiles.map(p=>[p.id,p.pay_rate]));
+  const byUser={};rows.forEach(e=>{(byUser[e.user_id]=byUser[e.user_id]||{name:e.profiles?.name||'Staff',h:0,pay:0,n:0});const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0;byUser[e.user_id].h+=hrs;byUser[e.user_id].n++;if(rate[e.user_id]!=null)byUser[e.user_id].pay+=hrs*rate[e.user_id];});
+  const totH=rows.reduce((s,e)=>s+(hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0),0),totPay=Object.values(byUser).reduce((s,u)=>s+u.pay,0);
+  return{title:'Timesheets',sub:`Week of ${fmtDate(ws)} – ${fmtDate(we)}`,actions:`<div class="week-nav"><button class="btn btn-icon btn-sm" onclick="shiftWeek(-1)">${ico('chevronL')}</button><button class="btn btn-sm" onclick="shiftWeek(0)">This week</button><button class="btn btn-icon btn-sm" onclick="shiftWeek(1)">${ico('chevronR')}</button></div><button class="btn btn-sm" onclick="exportWeekCsv()">${ico('download')}CSV</button>`,body:rows.length?`
+    <div class="card" style="overflow:hidden;"><table class="ts-table"><thead><tr><th>Name</th><th>Shifts</th><th class="tr">Hours</th><th class="tr">Pay</th></tr></thead><tbody>${Object.values(byUser).sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<tr><td style="font-weight:500;">${h(u.name)}</td><td class="muted">${u.n}</td><td class="tr">${u.h.toFixed(2)}</td><td class="tr">${u.pay?fmt$(u.pay):'<span class="muted">—</span>'}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td></td><td class="tr">${totH.toFixed(2)}</td><td class="tr">${fmt$(totPay)}</td></tr></tfoot></table></div>
+    <div class="sec"><div class="sec-hd">Every entry</div><div class="card" style="overflow:hidden;"><table class="ts-table"><thead><tr><th>Name</th><th>Shift</th><th>In</th><th>Out</th><th class="tr">Hours</th></tr></thead><tbody>${rows.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<tr><td style="font-weight:500;">${h(e.profiles?.name||'')}</td><td class="muted">${h(e.shifts?.title||'')}</td><td class="num">${fmtDT(e.clock_in)}</td><td class="num">${fmtT(e.clock_out)}${e.break_minutes?` <span class="muted">−${e.break_minutes}m</span>`:''}</td><td class="tr">${hrs!=null?hrs.toFixed(2):''}</td></tr>`;}).join('')}</tbody></table></div></div>
+    <div class="note">Pay uses each person’s rate from their linked Finance record. Export the CSV for payroll.</div>`:`<div class="card">${emptyHTML('doc','No completed entries this week','Clock-ins and outs appear here once a shift is finished.')}</div>`};
+}
+function shiftWeek(n){state.week=n===0?weekStart(todayIso()):addDays(state.week,7*n);render();}
+async function exportWeekCsv(){
+  const ws=state.week||weekStart(todayIso());const{rows}=await weekEntries(ws);
+  const rate=Object.fromEntries(state.profiles.map(p=>[p.id,p.pay_rate]));
+  const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  let csv='Name,Shift,Date,Clock in,Clock out,Break (min),Hours,Rate,Pay\n';
+  rows.forEach(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0;const r=rate[e.user_id];csv+=[e.profiles?.name,e.shifts?.title,e.clock_in.slice(0,10),fmtT(e.clock_in),fmtT(e.clock_out),e.break_minutes||0,hrs.toFixed(2),r!=null?(+r).toFixed(2):'',r!=null?(hrs*r).toFixed(2):''].map(esc).join(',')+'\n';});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`timesheet-${ws}.csv`;a.click();
+}
 
-function openTimeOffForm(){const modal=openModal(`<h3>Request time off</h3><div class="stack"><label>Start date</label><input id="m-start" type="date" /><label>End date</label><input id="m-end" type="date" /><label>Reason (optional)</label><textarea id="m-reason" rows="2"></textarea><div class="row" style="margin-top:8px"><button class="btn" id="m-save">Request</button><button class="btn secondary" id="m-cancel">Cancel</button></div></div>`);modal.querySelector("#m-cancel").addEventListener("click",()=>modal.remove());modal.querySelector("#m-save").addEventListener("click",async()=>{const start_date=modal.querySelector("#m-start").value;const end_date=modal.querySelector("#m-end").value;if(!start_date||!end_date){toast("Pick both dates");return;}const{error}=await sb.from("time_off_requests").insert({user_id:state.session.user.id,start_date,end_date,reason:modal.querySelector("#m-reason").value.trim()||null});if(error){toast(error.message);return;}modal.remove();render();});}
+// ── Events (admin): the rota is built on Kitchen Prep's function sheets ──
+async function prepUpcoming(){
+  try{const{data}=await sbPrep.from('events').select('id,client_name,job_code,event_date,start_time,end_time,covers,venue_name,location,address,status,event_type,budget,deposit_status,event_dishes(dish_id)').gte('event_date',todayIso()).neq('status','Cancelled').order('event_date').limit(60);return data||[];}catch(e){return[];}
+}
+async function eventsPage(){
+  const today=todayIso();
+  const[{data:boh},prep,{data:shifts}]=await Promise.all([
+    sb.from('events').select('*').gte('event_date',today).order('event_date').order('start_time'),
+    prepUpcoming(),
+    sb.from('shifts').select('id,event_id,status').gte('shift_date',today)
+  ]);
+  const rota=boh||[];const codes=new Set(rota.map(e=>(e.job_code||'').toUpperCase()).filter(Boolean));
+  const notYet=prep.filter(p=>p.job_code&&!codes.has(p.job_code.toUpperCase()));
+  const count=id=>{const s=(shifts||[]).filter(x=>x.event_id===id);return{n:s.length,open:s.filter(x=>x.status==='OPEN').length};};
+  const evRow=e=>{const c=count(e.id);return`<div class="shift row-nav" onclick="navigate('#/events/${e.id}')" style="grid-template-columns:52px minmax(0,1fr) auto;"><div class="shift-time"><b>${new Date(e.event_date+'T00:00:00').getDate()}</b><span>${new Date(e.event_date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</span></div><div class="shift-main"><div class="shift-title">${h(e.name)}</div><div class="shift-sub">${relDay(e.event_date)} · ${hm(e.start_time)}–${hm(e.end_time)} · ${h(e.location||'')}${e.job_code?` · <span class="prep-code">${h(e.job_code)}</span>`:''}</div></div><div class="shift-right">${c.n?`<span class="badge${c.open?' open':' ok'}">${c.open?c.open+' open':c.n+' staffed'}</span>`:'<span class="badge">No shifts</span>'}${chev()}</div></div>`;};
+  const prepRow=p=>`<div class="shift" style="grid-template-columns:52px minmax(0,1fr) auto;"><div class="shift-time"><b>${new Date(p.event_date+'T00:00:00').getDate()}</b><span>${new Date(p.event_date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</span></div><div class="shift-main"><div class="shift-title">${h(p.client_name||'Event')}</div><div class="shift-sub">${relDay(p.event_date)}${p.start_time?' · '+hm(p.start_time):''} · ${p.covers||0} covers · ${h(p.venue_name||p.location||'')} · <span class="prep-code">${h(p.job_code)}</span></div></div><div class="shift-right"><button class="btn btn-sm btn-primary" onclick="addPrepToRota('${p.id}')">${ico('plus')}Add to rota</button></div></div>`;
+  return{title:'Events',sub:`${rota.length} on the rota${notYet.length?` · ${notYet.length} in Kitchen Prep not staffed yet`:''}`,actions:`<button class="btn btn-sm" onclick="openEventSheet()">${ico('plus')}New event</button>`,body:`
+    ${notYet.length?`<div class="sec"><div class="sec-hd">From Kitchen Prep — not on the rota yet</div><div class="list">${notYet.map(prepRow).join('')}</div><div class="note">Booked in Kitchen Prep. One tap copies the date, times, venue and job code here so you can add shifts; the two stay linked by job code.</div></div>`:''}
+    <div class="sec"><div class="sec-hd">On the rota</div>${rota.length?`<div class="list">${rota.map(evRow).join('')}</div>`:`<div class="card">${emptyHTML('forkknife','Nothing on the rota','Add an event from Kitchen Prep above, or create one.')}</div>`}</div>`};
+}
+async function addPrepToRota(prepId){
+  const prep=await prepUpcoming();const p=prep.find(x=>x.id===prepId);if(!p){toast("Couldn't read that event from Kitchen Prep",'err');return;}
+  const payload={name:p.client_name||'Event',client_name:p.client_name||null,location:p.venue_name||p.location||'TBC',address:p.address||null,event_date:p.event_date,start_time:hm(p.start_time)||'09:00',end_time:hm(p.end_time)||'17:00',guest_count:parseInt(p.covers)||null,job_code:(p.job_code||'').toUpperCase()||null,notes:null,created_by:me()};
+  const{data,error}=await sb.from('events').insert(payload).select().single();
+  if(error){toast(error.message,'err');return;}
+  toast('On the rota — now add shifts');navigate('#/events/'+data.id);
+}
+function openEventSheet(ev){
+  const s=openSheet({title:ev?'Edit event':'New event',body:`
+    <div class="fld"><label class="fld-label">Name</label><input class="fld-inp" id="e-name" value="${h(ev?.name||'')}" placeholder="Who or what it is"></div>
+    <div class="g2"><div class="fld"><label class="fld-label">Client</label><input class="fld-inp" id="e-client" value="${h(ev?.client_name||'')}"></div><div class="fld"><label class="fld-label">Job code <span class="muted">(links to Kitchen Prep)</span></label><input class="fld-inp" id="e-code" value="${h(ev?.job_code||'')}" placeholder="e.g. GS031026CORP" style="text-transform:uppercase;"></div></div>
+    <div class="g2"><div class="fld"><label class="fld-label">Venue</label><input class="fld-inp" id="e-loc" value="${h(ev?.location||'')}"></div><div class="fld"><label class="fld-label">Address</label><input class="fld-inp" id="e-addr" value="${h(ev?.address||'')}"></div></div>
+    <div class="g3"><div class="fld"><label class="fld-label">Date</label><input class="fld-inp" id="e-date" type="date" value="${ev?.event_date||''}"></div><div class="fld"><label class="fld-label">Start</label><input class="fld-inp" id="e-start" type="time" value="${hm(ev?.start_time)}"></div><div class="fld"><label class="fld-label">End</label><input class="fld-inp" id="e-end" type="time" value="${hm(ev?.end_time)}"></div></div>
+    <div class="g2"><div class="fld"><label class="fld-label">Guests</label><input class="fld-inp num" id="e-guests" type="number" min="0" value="${ev?.guest_count??''}"></div><div class="fld"><label class="fld-label">Status</label><select class="fld-sel" id="e-status">${['PLANNED','CONFIRMED','CANCELLED'].concat(ev&&ev.status&&!['PLANNED','CONFIRMED','CANCELLED'].includes(ev.status)?[ev.status]:[]).map(st=>`<option value="${st}" ${(ev?.status||'PLANNED')===st?'selected':''}>${st[0]+st.slice(1).toLowerCase()}</option>`).join('')}</select></div></div>
+    <div class="fld"><label class="fld-label">Notes for staff</label><textarea class="fld-ta" id="e-notes" style="min-height:70px;">${h(ev?.notes||'')}</textarea></div>`,
+    foot:`<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="e-ok">${ev?'Save':'Create'}</button>`});
+  s.q('#e-ok').addEventListener('click',async()=>{
+    const payload={name:s.v('#e-name'),client_name:s.v('#e-client')||null,location:s.v('#e-loc'),address:s.v('#e-addr')||null,event_date:s.v('#e-date'),start_time:s.v('#e-start'),end_time:s.v('#e-end'),guest_count:s.v('#e-guests')?parseInt(s.v('#e-guests')):null,job_code:s.v('#e-code').toUpperCase()||null,notes:s.v('#e-notes')||null};
+    if(ev&&s.v('#e-status')&&s.v('#e-status')!==(ev.status||''))payload.status=s.v('#e-status');
+    if(!payload.name||!payload.location||!payload.event_date||!payload.start_time||!payload.end_time){toast('Name, venue, date and times are needed','err');return;}
+    let res;if(ev)res=await sb.from('events').update(payload).eq('id',ev.id).select().single();else res=await sb.from('events').insert({...payload,created_by:me()}).select().single();
+    if(res.error){toast(res.error.message,'err');return;}
+    s.close();toast(ev?'Saved':'Event created');navigate('#/events/'+res.data.id);if(ev)render();
+  });
+}
+async function eventDetailPage(id){
+  const[{data:ev},{data:shifts}]=await Promise.all([sb.from('events').select('*').eq('id',id).single(),sb.from('shifts').select('*, profiles(name)').eq('event_id',id).order('shift_date').order('start_time')]);
+  if(!ev)return{title:'Not found',body:emptyHTML('forkknife','No such event')};
+  let prep=null;
+  if(ev.job_code){try{const{data}=await sbPrep.from('events').select('id,client_name,event_date,covers,status,budget,deposit_status,venue_name,event_dishes(dish_id)').eq('job_code',ev.job_code).limit(1);prep=(data||[])[0]||null;}catch(e){}}
+  const rows=shifts||[];const open=rows.filter(s=>s.status==='OPEN').length;
+  const payLabel={deposit:'Deposit taken',invoiced:'Invoice sent',paid:'Paid in full'};
+  const prepPanel=ev.job_code?`<div class="card prep-panel"><div class="prep-panel-hd"><span class="sec-hd" style="padding:0;">Kitchen Prep</span><span class="prep-code">${h(ev.job_code)}</span></div>${prep?`<div class="prep-row"><span>Booking</span><b>${h(prep.client_name||'')} · ${prep.covers||0} covers</b></div><div class="prep-row"><span>Menu</span><b>${(prep.event_dishes||[]).length} dish${(prep.event_dishes||[]).length===1?'':'es'}</b></div><div class="prep-row"><span>Status</span><b>${h(prep.status||'')} · ${payLabel[prep.deposit_status]||'Unpaid'}</b></div><a class="btn btn-sm" style="align-self:flex-start;margin-top:4px;" href="${PREP_APP_URL}" target="_blank" rel="noopener">Open Kitchen Prep${ico('open')}</a>`:`<div class="note" style="padding:0;">No Kitchen Prep booking carries this job code yet.</div>`}</div>`:'';
+  return{title:ev.name,sub:`${relDay(ev.event_date)} · ${hm(ev.start_time)}–${hm(ev.end_time)}${ev.status==='CANCELLED'?' · <span class="badge no">Cancelled</span>':''}`,actions:`<button class="btn btn-sm" onclick="navigate('#/events')">${ico('chevronL')}Events</button>${isAdmin()?`<button class="btn btn-sm" onclick="editEvent('${ev.id}')">${ico('pencil')}Edit</button><button class="btn btn-sm btn-primary" onclick="openShiftSheet(null,'${ev.id}')">${ico('plus')}Add shift</button>`:''}`,body:`
+    <div class="card">
+      ${ev.client_name?`<div class="kv"><span class="kv-l">Client</span><span class="kv-v">${h(ev.client_name)}</span></div>`:''}
+      <div class="kv"><span class="kv-l">Venue</span><span class="kv-v">${h(ev.location||'')}${ev.address?`<br><span class="muted" style="font-weight:400;">${h(ev.address)}</span>`:''}</span></div>
+      ${ev.guest_count?`<div class="kv"><span class="kv-l">Guests</span><span class="kv-v num">${ev.guest_count}</span></div>`:''}
+      ${ev.notes?`<div class="kv"><span class="kv-l">Notes</span><span class="kv-v" style="font-weight:400;white-space:pre-wrap;">${h(ev.notes)}</span></div>`:''}
+    </div>
+    ${prepPanel}
+    <div class="sec"><div class="sec-hd">Shifts <span class="seg-count" style="margin:0;">${rows.length?`${rows.length} · ${open?open+' open':'all staffed'}`:''}</span></div>${rows.length?`<div class="list">${rows.map(s=>shiftRow(s,{date:true,claim:!isAdmin(),nav:isAdmin()})).join('')}</div>`:`<div class="card">${emptyHTML('people','No shifts yet',isAdmin()?'Add the roles you need; staff claim open ones or you assign them.':'')}</div>`}</div>
+    ${isAdmin()?`<div style="display:flex;justify-content:flex-end;"><button class="btn btn-sm btn-danger" onclick="deleteEvent('${ev.id}')">${ico('trash')}Delete event</button></div>`:''}`};
+}
+async function editEvent(id){const{data}=await sb.from('events').select('*').eq('id',id).single();if(data)openEventSheet(data);}
+async function deleteEvent(id){
+  if(!(await askConfirm('Delete this event and its shifts from the rota? Kitchen Prep is not affected.',{title:'Delete event',confirmLabel:'Delete'})))return;
+  const{error}=await sb.from('events').delete().eq('id',id);
+  if(error){toast(/foreign key/i.test(error.message)?"Can't delete — hours have been clocked against it":error.message,'err');return;}
+  toast('Deleted');navigate('#/events');
+}
+// ── Shift sheet (admin edits; staff see details) ──
+const ROLE_PICKS=['Chef','Sous chef','Kitchen porter','Front of house','Bar','Driver','Event lead'];
+async function openShiftSheet(shiftId,eventId){
+  let shift=null,ev=null;
+  if(shiftId){const{data}=await sb.from('shifts').select('*, profiles(name), events(name,location,event_date,start_time,end_time)').eq('id',shiftId).single();shift=data;eventId=shift?.event_id;}
+  if(eventId){const{data}=await sb.from('events').select('*').eq('id',eventId).single();ev=data;}
+  if(!isAdmin()){
+    if(!shift)return;
+    openSheet({title:shift.title,sub:shift.events?.name||'',body:`<div class="card"><div class="kv"><span class="kv-l">When</span><span class="kv-v">${relDay(shift.shift_date)} · ${hm(shift.start_time)}–${hm(shift.end_time)}</span></div><div class="kv"><span class="kv-l">Where</span><span class="kv-v">${h(shift.location||'')}</span></div><div class="kv"><span class="kv-l">Who</span><span class="kv-v">${shift.assigned_user_id?(shift.assigned_user_id===me()?'You':h(shift.profiles?.name||'Assigned')):'Open — anyone can claim'}</span></div>${shift.notes?`<div class="kv"><span class="kv-l">Notes</span><span class="kv-v" style="font-weight:400;">${h(shift.notes)}</span></div>`:''}</div>`,foot:shift.status==='OPEN'?`<button class="btn" data-close>Close</button><button class="btn btn-primary" onclick="this.closest('.modal-ov').remove();claimShift('${shift.id}')">Claim this shift</button>`:`<button class="btn" data-close>Close</button>`});
+    return;
+  }
+  const staff=state.profiles.filter(p=>p.active).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const s=openSheet({title:shift?'Edit shift':'New shift',sub:ev?.name||'',body:`
+    <div class="fld"><label class="fld-label">Role</label><input class="fld-inp" id="s-title" value="${h(shift?.title||'')}" placeholder="Chef, Front of house…"><div class="chips" style="margin-top:6px;">${ROLE_PICKS.map(r=>`<button class="chip" type="button" onclick="document.getElementById('s-title').value='${r}'">${r}</button>`).join('')}</div></div>
+    <div class="g3"><div class="fld"><label class="fld-label">Date</label><input class="fld-inp" id="s-date" type="date" value="${shift?.shift_date||ev?.event_date||todayIso()}"></div><div class="fld"><label class="fld-label">Start</label><input class="fld-inp" id="s-start" type="time" value="${hm(shift?.start_time||ev?.start_time)}"></div><div class="fld"><label class="fld-label">End</label><input class="fld-inp" id="s-end" type="time" value="${hm(shift?.end_time||ev?.end_time)}"></div></div>
+    <div class="fld"><label class="fld-label">Where</label><input class="fld-inp" id="s-loc" value="${h(shift?.location||ev?.location||'')}"></div>
+    <div class="fld"><label class="fld-label">Who</label><select class="fld-sel" id="s-who"><option value="">Open — staff can claim it</option>${staff.map(p=>`<option value="${p.id}" ${shift?.assigned_user_id===p.id?'selected':''}>${h(p.name)}${p.job_title?' · '+h(p.job_title):''}</option>`).join('')}</select></div>
+    <div class="fld"><label class="fld-label">Notes</label><input class="fld-inp" id="s-notes" value="${h(shift?.notes||'')}" placeholder="Uniform, parking, who to report to…"></div>`,
+    foot:`${shift?`<button class="btn btn-danger" id="s-del" style="margin-right:auto;">${ico('trash')}Delete</button>`:''}<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="s-ok">${shift?'Save':'Add shift'}</button>`});
+  s.q('#s-ok').addEventListener('click',async()=>{
+    const who=s.v('#s-who');
+    const payload={title:s.v('#s-title'),location:s.v('#s-loc'),shift_date:s.v('#s-date'),start_time:s.v('#s-start'),end_time:s.v('#s-end'),notes:s.v('#s-notes')||null,assigned_user_id:who||null,status:who?'ASSIGNED':'OPEN'};
+    if(!payload.title||!payload.location||!payload.shift_date||!payload.start_time||!payload.end_time){toast('Role, place, date and times are needed','err');return;}
+    let error;
+    if(shift)({error}=await sb.from('shifts').update(payload).eq('id',shift.id));
+    else({error}=await sb.from('shifts').insert({...payload,event_id:eventId||null,created_by:me()}));
+    if(error){toast(error.message,'err');return;}
+    s.close();toast(shift?'Shift saved':'Shift added');render();
+  });
+  s.q('#s-del')?.addEventListener('click',async()=>{
+    if(!(await askConfirm('Delete this shift?',{title:'Delete shift',confirmLabel:'Delete'})))return;
+    const{error}=await sb.from('shifts').delete().eq('id',shift.id);
+    if(error){toast(/foreign key/i.test(error.message)?"Can't delete — hours were clocked on it":error.message,'err');return;}
+    s.close();toast('Shift deleted');render();
+  });
+}
 
-function loginScreen(){return`<div class="center-screen"><div class="auth-card card stack"><h2>Digby's Staff</h2><p class="muted">Sign in to see your schedule.</p><label>Email</label><input id="f-email" type="email" autocomplete="username" /><label>Password</label><input id="f-password" type="password" autocomplete="current-password" /><button class="btn" id="do-login" style="margin-top:8px">Sign in</button><p class="muted" id="auth-error" style="color:var(--warn)"></p><p class="muted">First time? <button class="link" id="go-signup">Create an account</button></p></div></div>`;}
-function signupScreen(){return`<div class="center-screen"><div class="auth-card card stack"><h2>Create your account</h2><p class="muted">An admin needs to approve your account before you can see the schedule.</p><label>Name</label><input id="f-name" /><label>Email</label><input id="f-email" type="email" autocomplete="username" /><label>Password</label><input id="f-password" type="password" autocomplete="new-password" placeholder="At least 8 characters" /><button class="btn" id="do-signup" style="margin-top:8px">Sign up</button><p class="muted" id="auth-error" style="color:var(--warn)"></p><p class="muted">Already have an account? <button class="link" id="go-login">Sign in</button></p></div></div>`;}
-function pendingScreen(){return`<div class="center-screen"><div class="auth-card card stack" style="text-align:center"><h2>Almost there</h2><p class="muted">Your account is waiting for an admin to approve it.</p><button class="btn secondary" id="signout-pending">Sign out</button></div></div>`;}
-function wireAuthScreen(kind){const err=document.getElementById("auth-error");document.getElementById("go-signup")?.addEventListener("click",()=>navigate("#/signup"));document.getElementById("go-login")?.addEventListener("click",()=>navigate("#/login"));document.getElementById("do-login")?.addEventListener("click",async()=>{const email=document.getElementById("f-email").value.trim();const password=document.getElementById("f-password").value;const{error}=await sb.auth.signInWithPassword({email,password});if(error){err.textContent=error.message;return;}navigate("#/dashboard");render();});document.getElementById("do-signup")?.addEventListener("click",async()=>{const name=document.getElementById("f-name").value.trim();const email=document.getElementById("f-email").value.trim();const password=document.getElementById("f-password").value;if(!name||!email||password.length<8){err.textContent="Fill in your name, email, and a password of at least 8 characters.";return;}const{error}=await sb.auth.signUp({email,password,options:{data:{name}}});if(error){err.textContent=error.message;return;}navigate("#/dashboard");render();});}
+// ── Profile / More ──
+function profilePage(){
+  const p=state.profile;
+  return{title:'You',sub:h(p.email||''),body:`
+    <div class="card" style="padding:18px;display:flex;align-items:center;gap:14px;"><span class="avatar me" style="width:52px;height:52px;font-size:var(--fs-hl);">${initials(p.name)}</span><div><div style="font-size:var(--fs-hl);font-weight:600;">${h(p.name)}</div><div class="muted" style="font-size:var(--fs-sh);">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}${p.pay_rate>0?' · '+fmt$(p.pay_rate)+' an hour':''}</div></div></div>
+    <div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+      <div class="fld"><label class="fld-label">Phone</label><div style="display:flex;gap:8px;"><input class="fld-inp" id="p-phone" value="${h(p.phone||'')}" inputmode="tel"><button class="btn" onclick="savePhone()">Save</button></div></div>
+      <div class="fld"><label class="fld-label">New password</label><div style="display:flex;gap:8px;"><input class="fld-inp" id="p-pass" type="password" placeholder="At least 8 characters" autocomplete="new-password"><button class="btn" onclick="savePassword()">Update</button></div></div>
+    </div>
+    <div class="list">
+      <div class="more-row" onclick="toggleTheme()">${ico('moon')}<span style="flex:1;">Light / dark</span><span class="muted">Follows your device unless set</span></div>
+      <div class="more-row" onclick="sb.auth.signOut()">${ico('logout')}<span style="flex:1;">Sign out</span></div>
+    </div>
+    <div class="note" style="text-align:center;">Digby's Staff v${APP_VERSION} · build ${new Date(APP_BUILD_DATE+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>`};
+}
+async function savePhone(){const{error}=await sb.rpc('update_my_profile',{new_phone:document.getElementById('p-phone').value.trim()||null});if(error){toast(error.message,'err');return;}toast('Saved');}
+async function savePassword(){const pw=document.getElementById('p-pass').value;if(pw.length<8){toast('At least 8 characters','err');return;}const{error}=await sb.auth.updateUser({password:pw});if(error){toast(error.message,'err');return;}try{await sb.rpc('update_my_profile',{new_must_change_password:false});}catch(e){}document.getElementById('p-pass').value='';toast('Password updated');}
+function morePage(){
+  const items=[['#/profile','person','You'],['#/timeoff','leaf','Time off'],...(isAdmin()?[['#/events','forkknife','Events'],['#/staff','people','Staff'],['#/timesheets','doc','Timesheets']]:[])];
+  return{title:'More',body:`<div class="list">${items.map(([r,i,l])=>`<div class="more-row" onclick="navigate('${r}')">${ico(i)}<span style="flex:1;">${l}</span>${chev()}</div>`).join('')}</div><div class="list"><div class="more-row" onclick="openNotifications()">${ico('bell')}<span style="flex:1;">Notifications</span>${state.unread?`<span class="badge no">${state.unread}</span>`:''}${chev()}</div><div class="more-row" onclick="toggleTheme()">${ico('moon')}<span style="flex:1;">Light / dark</span></div><div class="more-row" onclick="sb.auth.signOut()">${ico('logout')}<span style="flex:1;">Sign out</span></div></div>`};
+}
+
+// ── Notifications ──
+function openNotifications(){
+  const list=state.notifications;
+  const s=openSheet({title:'Notifications',body:list.length?`<div class="list">${list.map(n=>`<div class="notif${n.read?'':' unread'}" data-id="${n.id}" data-link="${h(n.link||'')}"><span class="notif-dot"></span><div style="min-width:0;flex:1;"><div class="notif-t">${h(n.title)}</div>${n.body?`<div class="notif-b">${h(n.body)}</div>`:''}<div class="notif-d">${fmtDT(n.created_at)}</div></div></div>`).join('')}</div>`:emptyHTML('bell','Nothing yet','Shift claims, approvals and changes land here.'),foot:list.some(n=>!n.read)?`<button class="btn" id="n-all">Mark all read</button><button class="btn btn-primary" data-close>Done</button>`:`<button class="btn btn-primary" data-close>Done</button>`});
+  s.el.querySelectorAll('.notif').forEach(el=>el.addEventListener('click',async()=>{await sb.from('notifications').update({read:true}).eq('id',el.dataset.id);const link=el.dataset.link;s.close();if(link)navigate(link.startsWith('#')?link:'#'+link);else render();}));
+  s.q('#n-all')?.addEventListener('click',async()=>{const ids=list.filter(n=>!n.read).map(n=>n.id);if(ids.length)await sb.from('notifications').update({read:true}).in('id',ids);s.close();render();});
+}
+
+// ── Auth screens ──
+const authWM=`<div class="auth-wm"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></div>`;
+function loginScreen(){return`<div class="auth"><div class="card auth-card">${authWM}<div class="auth-title">Sign in</div><div class="fld"><label class="fld-label">Email</label><input class="fld-inp" id="a-email" type="email" autocomplete="username" inputmode="email"></div><div class="fld"><label class="fld-label">Password</label><input class="fld-inp" id="a-pass" type="password" autocomplete="current-password"></div><div class="auth-err" id="a-err"></div><button class="btn btn-primary btn-lg" id="a-go">Sign in</button><div class="note" style="text-align:center;">New here? <button class="link-btn" onclick="navigate('#/signup')">Create an account</button></div></div></div>`;}
+function signupScreen(){return`<div class="auth"><div class="card auth-card">${authWM}<div class="auth-title">Create your account</div><div class="note" style="padding:0;">An admin approves new accounts before the rota shows.</div><div class="fld"><label class="fld-label">Your name</label><input class="fld-inp" id="a-name" autocomplete="name"></div><div class="fld"><label class="fld-label">Email</label><input class="fld-inp" id="a-email" type="email" autocomplete="username" inputmode="email"></div><div class="fld"><label class="fld-label">Password</label><input class="fld-inp" id="a-pass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></div><div class="auth-err" id="a-err"></div><button class="btn btn-primary btn-lg" id="a-go">Sign up</button><div class="note" style="text-align:center;">Already have an account? <button class="link-btn" onclick="navigate('#/login')">Sign in</button></div></div></div>`;}
+function pendingScreen(){return`<div class="auth"><div class="card auth-card" style="text-align:center;align-items:center;">${authWM}<div class="empty-icon">${ico('clock')}</div><div class="auth-title">Almost there</div><div class="note">Your account is waiting for an admin to approve it. You'll see the rota as soon as they do.</div><button class="btn" id="signout-pending">Sign out</button></div></div>`;}
+function wireAuth(kind){
+  const err=document.getElementById('a-err');const go=document.getElementById('a-go');
+  const submit=async()=>{
+    go.disabled=true;
+    const email=document.getElementById('a-email').value.trim(),password=document.getElementById('a-pass').value;
+    if(kind==='login'){const{error}=await sb.auth.signInWithPassword({email,password});if(error){err.textContent=/invalid/i.test(error.message)?'Wrong email or password':error.message;go.disabled=false;return;}navigate('#/today');render();}
+    else{const name=document.getElementById('a-name').value.trim();if(!name||!email||password.length<8){err.textContent='Your name, email and a password of at least 8 characters.';go.disabled=false;return;}const{error}=await sb.auth.signUp({email,password,options:{data:{name}}});if(error){err.textContent=error.message;go.disabled=false;return;}navigate('#/today');render();}
+  };
+  go.addEventListener('click',submit);
+  document.querySelectorAll('.auth-card input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')submit();}));
+}
+
+// ── Segmented control thumb ──
+function segSync(seg){const on=seg.querySelector(':scope > .on, :scope > .active');if(!on){seg.style.setProperty('--seg-o','0');return;}seg.style.setProperty('--seg-x',on.offsetLeft+'px');seg.style.setProperty('--seg-w',on.offsetWidth+'px');seg.style.setProperty('--seg-o','1');}
+function segSyncAll(){document.querySelectorAll('.seg').forEach(segSync);}
+window.addEventListener('resize',segSyncAll);
 
 render();
+
 </script>
 </body>
 </html>
