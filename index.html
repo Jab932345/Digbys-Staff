@@ -524,7 +524,7 @@ input[type=range]{accent-color:var(--accent);}
 // One file, Supabase Auth, same design system as Kitchen Prep. Events on the
 // rota come from Kitchen Prep's function sheets by job code, so a booking is
 // typed once and staffed here.
-const APP_VERSION='2.12',APP_BUILD_DATE='2026-09-22';
+const APP_VERSION='2.14',APP_BUILD_DATE='2026-09-22';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
 const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
@@ -591,7 +591,7 @@ const hm=t=>t?String(t).slice(0,5):'';
 const entryLabel=e=>(e.shifts&&e.shifts.title)||[e.note,e.event_name].filter(Boolean).join(' · ')||'Ad hoc';
 // Ad-hoc entries can point at an event without a shift; fetch those names in one go (works before digbys-staff-adhoc.sql too).
 async function withEvents(list){const rows=(list||[]).filter(Boolean);const ids=[...new Set(rows.filter(e=>e.event_id&&!e.shifts).map(e=>e.event_id))];if(!ids.length)return list;const{data}=await sb.from('events').select('id,name').in('id',ids);const by=Object.fromEntries((data||[]).map(e=>[e.id,e.name]));rows.forEach(e=>{if(e.event_id&&!e.shifts)e.event_name=by[e.event_id]||null;});return list;}
-const hoursBetween=(i,o,b)=>{if(!o)return null;const ms=new Date(o)-new Date(i)-(b||0)*60000;return Math.max(0,ms/3600000);};
+const hoursBetween=(i,o)=>{if(!o)return null;return Math.max(0,(new Date(o)-new Date(i))/3600000);};  // breaks are paid — nothing is deducted
 const initials=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')||'?';
 const first=n=>String(n||'').split(' ')[0];
 const _errLog=[];
@@ -813,7 +813,7 @@ async function clockPage(){
     sb.from('time_entries').select('*, shifts(title)').eq('user_id',me()).not('clock_out','is',null).order('clock_in',{ascending:false}).limit(10)
   ]);
   await withEvents([openEntry,...(history||[])]);
-  const hist=(history||[]).length?`<div class="sec"><div class="sec-hd">Recent</div><div class="list">${history.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<div class="kv"><span><span style="color:var(--label);font-weight:500;">${h(entryLabel(e))}</span><br><span class="muted" style="font-size:var(--fs-fn);">${fmtDT(e.clock_in)} → ${fmtT(e.clock_out)}${e.break_minutes?` · ${e.break_minutes} min break`:''}</span></span><span class="kv-v num">${hrs!=null?hrs.toFixed(2)+' h':''}</span></div>`;}).join('')}</div></div>`:'';
+  const hist=(history||[]).length?`<div class="sec"><div class="sec-hd">Recent</div><div class="list">${history.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out);return`<div class="kv"><span><span style="color:var(--label);font-weight:500;">${h(entryLabel(e))}</span><br><span class="muted" style="font-size:var(--fs-fn);">${fmtDT(e.clock_in)} → ${fmtT(e.clock_out)}</span></span><span class="kv-v num">${hrs!=null?hrs.toFixed(2)+' h':''}</span></div>`;}).join('')}</div></div>`:'';
   if(openEntry){
     return{title:'Time clock',body:`<div class="card clock-card"><span class="clock-ring"></span><div class="hero-eyebrow" style="margin-top:8px;">Clocked in · ${h(entryLabel(openEntry))}</div><div class="clock-big" id="live-timer" data-start="${openEntry.clock_in}">--:--:--</div><div class="hero-sub">since ${fmtT(openEntry.clock_in)}${openEntry.shifts?.location?' · '+h(openEntry.shifts.location):''}</div><div class="hero-acts" style="justify-content:center;"><button class="btn btn-lg btn-danger-solid" onclick="clockOut('${openEntry.id}')">Clock out</button></div></div>${hist}`,wire:startTimer};
   }
@@ -841,8 +841,8 @@ async function clockInAdhoc(){
   });
 }
 async function clockOut(id){
-  const s=openSheet({title:'Clock out',body:`<div class="fld"><label class="fld-label">Unpaid break (minutes)</label><input class="fld-inp num" id="co-break" type="number" min="0" step="5" value="0"></div>`,foot:`<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="co-ok">Clock out</button>`});
-  s.q('#co-ok').addEventListener('click',async()=>{const br=parseInt(s.v('#co-break'))||0;const{error}=await sb.from('time_entries').update({clock_out:new Date().toISOString(),break_minutes:br}).eq('id',id);if(error){toast(error.message,'err');return;}s.close();toast('Clocked out');render();});
+  if(!await askConfirm('Clock out now?',{title:'Clock out',confirmLabel:'Clock out',danger:false}))return;
+  const{error}=await sb.from('time_entries').update({clock_out:new Date().toISOString()}).eq('id',id);if(error){toast(error.message,'err');return;}toast('Clocked out');render();
 }
 
 // ── Time off ──
@@ -960,12 +960,12 @@ async function timesheetsPage(){
   if(!state.week)state.week=weekStart(todayIso());
   const ws=state.week;const{rows,we}=await weekEntries(ws);await withEvents(rows);
   const rate=Object.fromEntries(state.profiles.map(p=>[p.id,p.pay_rate]));
-  const byUser={};rows.forEach(e=>{(byUser[e.user_id]=byUser[e.user_id]||{name:e.profiles?.name||'Staff',h:0,pay:0,n:0});const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0;byUser[e.user_id].h+=hrs;byUser[e.user_id].n++;if(rate[e.user_id]!=null)byUser[e.user_id].pay+=hrs*rate[e.user_id];});
-  const totH=rows.reduce((s,e)=>s+(hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0),0),totPay=Object.values(byUser).reduce((s,u)=>s+u.pay,0);
+  const byUser={};rows.forEach(e=>{(byUser[e.user_id]=byUser[e.user_id]||{name:e.profiles?.name||'Staff',h:0,pay:0,n:0});const hrs=hoursBetween(e.clock_in,e.clock_out)||0;byUser[e.user_id].h+=hrs;byUser[e.user_id].n++;if(rate[e.user_id]!=null)byUser[e.user_id].pay+=hrs*rate[e.user_id];});
+  const totH=rows.reduce((s,e)=>s+(hoursBetween(e.clock_in,e.clock_out)||0),0),totPay=Object.values(byUser).reduce((s,u)=>s+u.pay,0);
   return{title:'Timesheets',sub:`Week of ${fmtDate(ws)} – ${fmtDate(we)}`,actions:`<div class="week-nav"><button class="btn btn-icon btn-sm" onclick="shiftWeek(-1)">${ico('chevronL')}</button><button class="btn btn-sm" onclick="shiftWeek(0)">This week</button><button class="btn btn-icon btn-sm" onclick="shiftWeek(1)">${ico('chevronR')}</button></div><button class="btn btn-sm" onclick="exportWeekCsv()">${ico('download')}CSV</button>`,body:rows.length?`
     <div class="card" style="overflow:hidden;"><table class="ts-table"><thead><tr><th>Name</th><th>Entries</th><th class="tr">Hours</th><th class="tr">Pay</th></tr></thead><tbody>${Object.values(byUser).sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<tr><td style="font-weight:500;">${h(u.name)}</td><td class="muted">${u.n}</td><td class="tr">${u.h.toFixed(2)}</td><td class="tr">${u.pay?fmt$(u.pay):'<span class="muted">—</span>'}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td></td><td class="tr">${totH.toFixed(2)}</td><td class="tr">${fmt$(totPay)}</td></tr></tfoot></table></div>
-    <div class="sec"><div class="sec-hd">Every entry</div><div class="card ts-entries-table" style="overflow:hidden;"><table class="ts-table"><thead><tr><th>Name</th><th>Work</th><th>In</th><th>Out</th><th class="tr">Hours</th></tr></thead><tbody>${rows.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<tr><td style="font-weight:500;">${h(e.profiles?.name||'')}</td><td class="muted">${h(entryLabel(e))}${e.shift_id?'':' <span class="badge" title="Clocked in without a rota shift">Ad hoc</span>'}</td><td class="num">${fmtDT(e.clock_in)}</td><td class="num">${fmtT(e.clock_out)}${e.break_minutes?` <span class="muted">−${e.break_minutes}m</span>`:''}</td><td class="tr">${hrs!=null?hrs.toFixed(2):''}</td></tr>`;}).join('')}</tbody></table></div>
-    <div class="list ts-entries-list">${rows.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes);return`<div class="kv"><span style="min-width:0;"><span style="color:var(--label);font-weight:500;">${h(e.profiles?.name||'')}</span> <span class="muted">· ${h(entryLabel(e))}</span>${e.shift_id?'':' <span class="badge">Ad hoc</span>'}<br><span class="muted" style="font-size:var(--fs-fn);">${fmtDT(e.clock_in)} → ${fmtT(e.clock_out)}${e.break_minutes?` · ${e.break_minutes} min break`:''}</span></span><span class="kv-v num" style="flex:none;">${hrs!=null?hrs.toFixed(2)+' h':''}</span></div>`;}).join('')}</div></div>
+    <div class="sec"><div class="sec-hd">Every entry</div><div class="card ts-entries-table" style="overflow:hidden;"><table class="ts-table"><thead><tr><th>Name</th><th>Work</th><th>In</th><th>Out</th><th class="tr">Hours</th></tr></thead><tbody>${rows.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out);return`<tr><td style="font-weight:500;">${h(e.profiles?.name||'')}</td><td class="muted">${h(entryLabel(e))}${e.shift_id?'':' <span class="badge" title="Clocked in without a rota shift">Ad hoc</span>'}</td><td class="num">${fmtDT(e.clock_in)}</td><td class="num">${fmtT(e.clock_out)}</td><td class="tr">${hrs!=null?hrs.toFixed(2):''}</td></tr>`;}).join('')}</tbody></table></div>
+    <div class="list ts-entries-list">${rows.map(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out);return`<div class="kv"><span style="min-width:0;"><span style="color:var(--label);font-weight:500;">${h(e.profiles?.name||'')}</span> <span class="muted">· ${h(entryLabel(e))}</span>${e.shift_id?'':' <span class="badge">Ad hoc</span>'}<br><span class="muted" style="font-size:var(--fs-fn);">${fmtDT(e.clock_in)} → ${fmtT(e.clock_out)}</span></span><span class="kv-v num" style="flex:none;">${hrs!=null?hrs.toFixed(2)+' h':''}</span></div>`;}).join('')}</div></div>
     <div class="note">Pay uses each person’s rate from their linked Finance record. Export the CSV for payroll.</div>`:`<div class="card">${emptyHTML('doc','No completed entries this week','Clock-ins and outs appear here once a shift is finished.')}</div>`};
 }
 function shiftWeek(n){state.week=n===0?weekStart(todayIso()):addDays(state.week,7*n);render();}
@@ -973,8 +973,8 @@ async function exportWeekCsv(){
   const ws=state.week||weekStart(todayIso());const{rows}=await weekEntries(ws);await withEvents(rows);
   const rate=Object.fromEntries(state.profiles.map(p=>[p.id,p.pay_rate]));
   const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  let csv='Name,Work,Date,Clock in,Clock out,Break (min),Hours,Rate,Pay\n';
-  rows.forEach(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out,e.break_minutes)||0;const r=rate[e.user_id];csv+=[e.profiles?.name,entryLabel(e),e.clock_in.slice(0,10),fmtT(e.clock_in),fmtT(e.clock_out),e.break_minutes||0,hrs.toFixed(2),r!=null?(+r).toFixed(2):'',r!=null?(hrs*r).toFixed(2):''].map(esc).join(',')+'\n';});
+  let csv='Name,Work,Date,Clock in,Clock out,Hours,Rate,Pay\n';
+  rows.forEach(e=>{const hrs=hoursBetween(e.clock_in,e.clock_out)||0;const r=rate[e.user_id];csv+=[e.profiles?.name,entryLabel(e),e.clock_in.slice(0,10),fmtT(e.clock_in),fmtT(e.clock_out),hrs.toFixed(2),r!=null?(+r).toFixed(2):'',r!=null?(hrs*r).toFixed(2):''].map(esc).join(',')+'\n';});
   const name=`timesheet-${ws}.csv`,blob=new Blob([csv],{type:'text/csv'});
   // phones (incl. installed to the home screen): the share sheet — AirDrop, Mail, Save to Files. Desktop: a download.
   try{const file=new File([blob],name,{type:'text/csv'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return;}}catch(e){if(e&&e.name==='AbortError')return;}
@@ -983,7 +983,13 @@ async function exportWeekCsv(){
 
 // ── Events (admin): the rota is built on Kitchen Prep's function sheets ──
 async function prepUpcoming(){
-  try{const{data}=await sbPrep.from('events').select('id,client_name,job_code,event_date,start_time,end_time,covers,venue_name,location,address,status,event_type,budget,deposit_status,event_dishes(dish_id)').gte('event_date',todayIso()).neq('status','Cancelled').order('event_date').limit(60);return data||[];}catch(e){return[];}
+  let evs=[],pds=[];
+  try{const{data}=await sbPrep.from('events').select('id,client_name,job_code,event_date,start_time,end_time,covers,venue_name,location,address,status,event_type,budget,deposit_status,event_dishes(dish_id)').gte('event_date',todayIso()).neq('status','Cancelled').order('event_date').limit(60);evs=data||[];}catch(e){}
+  // prep days set in Kitchen Prep (calendar or Prep → Prep days) come through as rota-able days at the unit
+  try{const{data}=await sbPrep.from('app_settings').select('value').eq('key','prep_days').maybeSingle();pds=(Array.isArray(data?.value)?data.value:[]).filter(p=>p&&p.date&&p.date>=todayIso());}catch(e){}
+  const code=d=>'PREP'+d.slice(8,10)+d.slice(5,7)+d.slice(2,4);
+  const days=pds.map(p=>({id:'prepday-'+p.date,client_name:'Prep day',job_code:code(p.date),event_date:p.date,start_time:p.start||'08:00',end_time:p.end||'16:00',covers:null,venue_name:"Digby's prep unit",location:null,address:null,status:'Confirmed',event_type:'PREP',chefs:p.chefs||1,prepDay:true}));
+  return evs.concat(days).sort((a,b)=>a.event_date.localeCompare(b.event_date)||String(a.start_time||'').localeCompare(String(b.start_time||'')));
 }
 async function eventsPage(){
   const today=todayIso();
@@ -997,7 +1003,7 @@ async function eventsPage(){
   const changed=id=>{const e=rota.find(x=>x.id===id);const p=e&&e.job_code?prep.find(x=>(x.job_code||'').toUpperCase()===e.job_code.toUpperCase()):null;return p?prepDrift(e,p).length:0;};
   const count=id=>{const s=(shifts||[]).filter(x=>x.event_id===id);return{n:s.length,open:s.filter(x=>x.status==='OPEN').length};};
   const evRow=e=>{const c=count(e.id);return`<div class="shift row-nav" onclick="navigate('#/events/${e.id}')"><div class="shift-time"><b>${new Date(e.event_date+'T00:00:00').getDate()}</b><span>${new Date(e.event_date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</span></div><div class="shift-main"><div class="shift-title">${h(e.name)}</div><div class="shift-sub">${relDay(e.event_date)} · ${hm(e.start_time)}–${hm(e.end_time)} · ${h(e.location||'')}</div></div><div class="shift-right">${e.job_code?`<span class="prep-code">${h(e.job_code)}</span>`:''}${changed(e.id)?`<span class="badge open" title="Date, time, guests or venue changed in Kitchen Prep">Changed</span>`:''}${c.n?`<span class="badge${c.open?' open':' ok'}">${c.open?c.open+' open':c.n+' staffed'}</span>`:'<span class="badge">No shifts</span>'}${chev()}</div></div>`;};
-  const prepRow=p=>`<div class="shift"><div class="shift-time"><b>${new Date(p.event_date+'T00:00:00').getDate()}</b><span>${new Date(p.event_date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</span></div><div class="shift-main"><div class="shift-title">${h(p.client_name||'Event')}</div><div class="shift-sub">${relDay(p.event_date)}${p.start_time?' · '+hm(p.start_time):''} · ${p.covers||0} covers · ${h(p.venue_name||p.location||'')}</div></div><div class="shift-right"><span class="prep-code">${h(p.job_code)}</span><button class="btn btn-sm btn-primary" onclick="addPrepToRota('${p.id}')">${ico('plus')}Add to rota</button></div></div>`;
+  const prepRow=p=>`<div class="shift"><div class="shift-time"><b>${new Date(p.event_date+'T00:00:00').getDate()}</b><span>${new Date(p.event_date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</span></div><div class="shift-main"><div class="shift-title">${h(p.client_name||'Event')}</div><div class="shift-sub">${relDay(p.event_date)}${p.start_time?' · '+hm(p.start_time):''}${p.prepDay?`–${hm(p.end_time)} · ${p.chefs} chef${p.chefs===1?'':'s'}`:` · ${p.covers||0} covers`} · ${h(p.venue_name||p.location||'')}</div></div><div class="shift-right"><span class="prep-code">${h(p.job_code)}</span><button class="btn btn-sm btn-primary" onclick="addPrepToRota('${p.id}')">${ico('plus')}Add to rota</button></div></div>`;
   return{title:'Events',sub:`${rota.length} on the rota${notYet.length?` · ${notYet.length} in Kitchen Prep not staffed yet`:''}`,actions:`<button class="btn btn-sm" onclick="openEventSheet()">${ico('plus')}New event</button>`,body:`
     ${notYet.length?`<div class="sec"><div class="sec-hd">From Kitchen Prep — not on the rota yet</div><div class="list">${notYet.map(prepRow).join('')}</div><div class="note">Booked in Kitchen Prep. One tap copies the date, times, venue and job code here so you can add shifts; the two stay linked by job code.</div></div>`:''}
     <div class="sec"><div class="sec-hd">On the rota</div>${rota.length?`<div class="list">${rota.map(evRow).join('')}</div>`:`<div class="card">${emptyHTML('forkknife','Nothing on the rota','Add an event from Kitchen Prep above, or create one.')}</div>`}</div>`};
