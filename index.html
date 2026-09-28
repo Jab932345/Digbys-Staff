@@ -2407,7 +2407,7 @@ input[type=range]{accent-color:var(--accent);}
 // ═══ Build stamp — bump APP_VERSION on every delivered file. Shown in the
 // sidebar footer, the Settings sheet and (on phones) the Today header, so it is
 // obvious which build Vercel is actually serving.
-const APP_VERSION='34',APP_BUILD_DATE='2026-09-28';
+const APP_VERSION='35',APP_BUILD_DATE='2026-09-28';
 function stampVersion(){document.querySelectorAll('.app-ver').forEach(el=>{el.textContent='v'+APP_VERSION;el.title='Build '+APP_BUILD_DATE;});document.querySelectorAll('.app-ver-long').forEach(el=>el.textContent='Kitchen Prep v'+APP_VERSION+' · build '+new Date(APP_BUILD_DATE+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}));}
 document.addEventListener('DOMContentLoaded',stampVersion);
 // ═══ Icons — SF-Symbol-style line glyphs, 24-grid, stroke 1.75, round caps.
@@ -4283,9 +4283,13 @@ async function loadBOHForCard(ev) {
 // actions live in showEventDetail's header; Mark Paid/Invoiced live in its
 // Financials card. markPayment and goPrep below are called from there.
 async function markPayment(evId,status){
-  await sb.from('events').update({deposit_status:status||null}).eq('id',evId);
-  const ev=events.find(e=>e.id===evId);if(ev)ev.deposit_status=status||null;
-  toast(status==='paid'?'Marked paid in full':status==='invoiced'?'Marked invoiced':status==='deposit'?'Deposit recorded':'Payment cleared');
+  const ev=events.find(e=>e.id===evId);
+  const patch={deposit_status:status||null};
+  const confirm=(status==='deposit'||status==='paid')&&ev&&(ev.status==='Provisional'||ev.status==='Enquiry');
+  if(confirm)patch.status='Confirmed';
+  await sb.from('events').update(patch).eq('id',evId);
+  if(ev)Object.assign(ev,patch);
+  toast((status==='paid'?'Marked paid in full':status==='invoiced'?'Marked invoiced':status==='deposit'?'Deposit recorded':'Payment cleared')+(confirm?' · booking confirmed':''));
   if(_evDetail.id===evId){const w=document.getElementById('ev-detail-wrap');if(w&&w.style.display!=='none'){const badge=w.querySelector('.ev-detail-hd .ev-status');renderEventTab();}}
   renderPipeline();
 }
@@ -7452,7 +7456,7 @@ async function saveInvoice(andPrint){
   const lines=_invDraft.lines.filter(l=>(l.description||'').trim()||l.unit_price);
   if(!lines.length){toast('Add at least one line','err');return;}
   const amount=+invDraftTotal().toFixed(2);
-  const row={event_id:ev.id,number,kind:_invDraft.kind,status:'draft',issued_on:g('inv-issued').value||ymd(new Date()),due_on:g('inv-due').value||null,bill_to:g('inv-billto').value.trim()||null,lines,amount,reference:ev.job_code||('INV'+number),notes:g('inv-notes').value.trim()||null};
+  const row={event_id:ev.id,number,kind:_invDraft.kind,status:'draft',issued_on:g('inv-issued').value||ymd(new Date()),due_on:g('inv-due').value||null,bill_to:g('inv-billto').value.trim()||null,lines,amount,reference:invReference(ev,_invDraft.kind,number),notes:g('inv-notes').value.trim()||null};
   const{data,error}=await sb.from('invoices').insert(row).select().single();
   if(error){toast(error.message.includes('unique')?'Invoice number already used':error.message,'err');return;}
   if(number>=(parseInt(getSetting('invoice_next_number'))||0))await saveSetting('invoice_next_number',number+1);
@@ -7484,7 +7488,10 @@ async function applyInvoicePaid(inv,paidOn,paidAmount,paidRef){
   const ev=events.find(e=>e.id===inv.event_id);
   if(ev){
     const next=inv.kind==='deposit'?(ev.deposit_status==='paid'?'paid':'deposit'):'paid';
-    if(ev.deposit_status!==next){await sb.from('events').update({deposit_status:next}).eq('id',ev.id);ev.deposit_status=next;}
+    const patch2={};if(ev.deposit_status!==next)patch2.deposit_status=next;
+    // money in confirms the booking
+    if(ev.status==='Provisional'||ev.status==='Enquiry'){patch2.status='Confirmed';inv._confirmed=true;}
+    if(Object.keys(patch2).length){await sb.from('events').update(patch2).eq('id',ev.id);Object.assign(ev,patch2);}
   }
   return true;
 }
@@ -7531,9 +7538,14 @@ const _norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
 function clientWords(ev){return String((ev.client_name||'')+' '+(ev.contact_name||'')).toLowerCase().split(/[^a-z]+/).filter(w=>w.length>=4&&!/^(the|and|ltd|limited|events|event|catering|company|wedding|party|corporate|mr|mrs|miss|ms)$/.test(w));}
 // A receipt matches an invoice when the amount agrees to the penny and either
 // the job code / invoice number is in the reference, or the payer's name is.
+// Payment references: the job code, with D for a deposit and F for the final balance (EJC151026WEDD)
+function invReference(ev,kind,number){return ev.job_code?String(ev.job_code).toUpperCase()+({deposit:'D',final:'F'}[kind]||''):'INV'+number;}
 function receiptMatches(r,inv,ev){
   if(Math.abs(parseFloat(r.amount)-parseFloat(inv.amount))>=0.011)return false;
   const hay=_norm((r.reference||'')+' '+(r.counterParty||'')+' '+(r.description||''));
+  // a D or F reference only pays the invoice it names
+  if(ev.job_code){const esc=String(ev.job_code).replace(/[^A-Za-z0-9]/g,'');const m=new RegExp(esc+'[\\s\\-/]*([DF])(?![A-Za-z0-9])','i').exec([r.reference,r.description].filter(Boolean).join(' | '));
+    if(m){const want=m[1].toUpperCase()==='D'?'deposit':'final';if(inv.kind!==want)return false;}}
   const keys=[ev.job_code,'inv'+inv.number,'invoice'+inv.number,'in'+inv.number].map(_norm).filter(k=>k.length>=4);
   if(keys.some(k=>hay.includes(k)))return true;
   return clientWords(ev).some(w=>hay.includes(w));
@@ -7588,7 +7600,7 @@ async function autoCheckAllPayments(opts={}){
   for(const[evId,invs]of Object.entries(byEv)){
     const ev=events.find(e=>e.id===evId);if(!ev)continue;
     const n=await matchEventInvoices(ev,invs,{silent:true});
-    if(n){total+=n;invs.filter(i=>i.status==='paid').forEach(i=>notes.push(`${ev.client_name||'Event'} — ${{deposit:'deposit',final:'final',full:'invoice'}[i.kind]||i.kind} ${money(i.amount)}`));
+    if(n){total+=n;invs.filter(i=>i.status==='paid').forEach(i=>notes.push(`${ev.client_name||'Event'} — ${{deposit:'deposit',final:'final',full:'invoice'}[i.kind]||i.kind} ${money(i.amount)}${i._confirmed?' · now Confirmed':''}`));
       if(_evDetail.id===evId){_evDetail.invoices.forEach(x=>{const u=invs.find(i=>i.id===x.id);if(u)Object.assign(x,u);});}}
   }
   if(total){toast(`Payment received · ${notes.join(' · ')}`);renderPipeline();if(_evDetail.id&&_evDetail.tab==='financials')renderEventTab();}
@@ -8250,3 +8262,4 @@ bStaffInit();
 
 </body>
 </html>
+   
