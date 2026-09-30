@@ -521,6 +521,55 @@ a.btn{text-decoration:none;}
 html.demo .ph-title::after{content:'Demo';display:inline-flex;align-items:center;vertical-align:middle;margin-left:10px;height:22px;padding:0 9px;border-radius:var(--r-pill);background:var(--warn-tint);color:var(--warn);font-size:12px;font-weight:700;letter-spacing:.02em;}
 @media (max-width:760px){html.demo .ph-title::after{display:none;}}
 
+/* ══ Primrose Hill Farm — the demo wears the farm's colours: sage on warm cream, Trajan-style capitals.
+   The brand accent is sage; anything that means "wrong" or "late" keeps a warm red of its own. ══ */
+html.brand-phf{
+  --serif:'Cinzel','Trajan Pro','Cormorant SC',Georgia,serif;
+  --bg:#F3F1EC;--bg3:#F3F1EC;--material:rgba(244,242,237,.8);--material-strong:rgba(252,251,248,.9);
+  --label:#252825;--label2:rgba(50,56,52,.64);--label3:rgba(50,56,52,.44);--label4:rgba(50,56,52,.18);
+  --sep:rgba(50,56,52,.15);--sep-strong:rgba(50,56,52,.27);
+  --fill:rgba(100,110,103,.12);--fill2:rgba(100,110,103,.17);--fill3:rgba(100,110,103,.09);--fill4:rgba(100,110,103,.06);
+  --accent:#5B7C70;--accent-hover:#4E6D62;--accent-tint:rgba(91,124,112,.13);--accent-tint2:rgba(91,124,112,.22);--accent-text:#4A6A5F;
+  --danger:#B0473D;--danger-tint:rgba(176,71,61,.11);--danger-text:#A2433A;
+  --focus:0 0 0 3.5px rgba(91,124,112,.3);
+  --cat-ma:#8B5E47;
+}
+@media (prefers-color-scheme:dark){html.brand-phf:not([data-theme="light"]){
+  --bg:#0E100F;--bg2:#1A1C1B;--bg3:#262927;--surface:#1A1C1B;--surface-raised:#262927;--sheet:#222523;
+  --material:rgba(20,22,21,.74);--material-strong:rgba(28,30,29,.88);
+  --accent:#5E8577;--accent-hover:#6A9384;--accent-tint:rgba(127,164,150,.18);--accent-tint2:rgba(127,164,150,.28);--accent-text:#9CC0B2;
+  --danger:#D8665A;--danger-tint:rgba(216,102,90,.18);--danger-text:#EE8A7E;--focus:0 0 0 2px #9CC0B2;--cat-ma:#C08D72;}}
+html.brand-phf[data-theme="dark"]{
+  --bg:#0E100F;--bg2:#1A1C1B;--bg3:#262927;--surface:#1A1C1B;--surface-raised:#262927;--sheet:#222523;
+  --material:rgba(20,22,21,.74);--material-strong:rgba(28,30,29,.88);
+  --accent:#5E8577;--accent-hover:#6A9384;--accent-tint:rgba(127,164,150,.18);--accent-tint2:rgba(127,164,150,.28);--accent-text:#9CC0B2;
+  --danger:#D8665A;--danger-tint:rgba(216,102,90,.18);--danger-text:#EE8A7E;--focus:0 0 0 2px #9CC0B2;--cat-ma:#C08D72;}
+/* the wordmark: PRIMROSE HILL FARM over a small-caps line between hairlines, as on the farm's own */
+html.brand-phf .sb-wordmark{flex-direction:column;align-items:center;gap:7px;padding:10px 4px 22px;}
+html.brand-phf .sb-wordmark .wm{font-family:var(--serif);font-size:14.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;line-height:1;}
+html.brand-phf .sb-wordmark .wm-sub{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-size:9.5px;font-weight:600;letter-spacing:.34em;color:var(--label2);margin-right:-.34em;}
+html.brand-phf .sb-wordmark .wm-sub::before,html.brand-phf .sb-wordmark .wm-sub::after{content:'';flex:0 0 24px;height:0;border-top:.5px solid var(--label3);}
+html.brand-phf .ph-title{font-family:var(--serif);font-weight:500;letter-spacing:.035em;}
+html.brand-phf .ph-title::after{font-family:var(--sans);letter-spacing:.02em;}
+/* red stays red: errors, late, unpaid, allergens, destructive actions */
+html.brand-phf .conn-dot.err,html.brand-phf .alert-dot:not(.warn),html.brand-phf .cst-issue-dot.err,html.brand-phf .plan-bar i.over,html.brand-phf .nav-badge{background:var(--danger);}
+html.brand-phf .btn-danger,html.brand-phf .diet-chip.removed,html.brand-phf .badge-red,html.brand-phf .ev-status.Cancelled,html.brand-phf .pay-pill.unpaid,html.brand-phf .g-sev,html.brand-phf .diet-guest-tag,html.brand-phf .al-tag.c,html.brand-phf .par-badge.out,html.brand-phf .cal-flag-pay,html.brand-phf .al-c,html.brand-phf .dd-status.error{background:var(--danger-tint);color:var(--danger-text);}
+html.brand-phf .btn-danger-solid,html.brand-phf .al-tog.c,html.brand-phf .al-mark.c,html.brand-phf .al-chip.c,html.brand-phf .pd-kit.over{background:var(--danger);color:#fff;}
+html.brand-phf .toast.err::before{background-color:var(--danger);}
+html.brand-phf .now-tile.alert .now-n,html.brand-phf .now-tile.alert .now-s,html.brand-phf .now-tile.alert .now-ico,html.brand-phf .plan-load-tbl td.over,html.brand-phf .board-card-late,html.brand-phf .stat-n.is-alert,html.brand-phf .cst-flag.warn,html.brand-phf .cst-flag.err,html.brand-phf .ir-cost.warn,html.brand-phf .lbl-split.fail .lbl-split-job,html.brand-phf .as-item.destructive,html.brand-phf .as-item.destructive .as-ico,html.brand-phf .prep-task-due.late,html.brand-phf .ck-chip.due.late,html.brand-phf .ck-kit.chk.bad,html.brand-phf .ck-res.bad,html.brand-phf .haccp-last.bad{color:var(--danger-text);}
+html.brand-phf .board-card.out{box-shadow:0 0 0 1.5px var(--danger);}
+html.brand-phf .ck-chip.due.late,html.brand-phf .ck-kit.chk.bad,html.brand-phf .ck-res.bad,html.brand-phf .ck-check.bad,html.brand-phf .ck-step-checks .ck-check.bad{background:var(--danger-tint);}
+
+html.brand-phf .notif-dot,html.brand-phf .bell-dot{background:var(--danger);}
+html.brand-phf .stat-n.is-alert,html.brand-phf .auth-err{color:var(--danger-text);}
+html.brand-phf .badge.no{background:var(--danger-tint);color:var(--danger-text);}
+html.brand-phf .auth-wm .wm{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;}
+/* the phone's top bar: the farm's name on one line */
+html.brand-phf .mob-top .sb-wordmark{flex-direction:row;align-items:baseline;gap:8px;padding:0;}
+html.brand-phf .mob-top .sb-wordmark .wm{font-size:13.5px;}
+html.brand-phf .mob-top .sb-wordmark .wm-sub{width:auto;letter-spacing:.2em;margin-right:0;}
+html.brand-phf .mob-top .sb-wordmark .wm-sub::before,html.brand-phf .mob-top .sb-wordmark .wm-sub::after{display:none;}
+
 </style>
 </head>
 <body>
@@ -531,21 +580,21 @@ html.demo .ph-title::after{content:'Demo';display:inline-flex;align-items:center
 // One file, Supabase Auth, same design system as Kitchen Prep. Events on the
 // rota come from Kitchen Prep's function sheets by job code, so a booking is
 // typed once and staffed here.
-const APP_VERSION='2.15',APP_BUILD_DATE='2026-09-29';
+const APP_VERSION='2.16',APP_BUILD_DATE='2026-09-30';
 const SUPABASE_URL="https://jaajrllkozknilvmdezt.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphYWpybGxrb3prbmlsdm1kZXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQxNDAsImV4cCI6MjA5MjYwMDE0MH0.09U5cba3JxRmysrn2X3TxPqr-q6jJE4QhyeKQwEK03M";
 const PREP_URL="https://qfnwyooipwtfzikukztz.supabase.co";
 const PREP_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmbnd5b29pcHd0Znppa3VrenR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczODY0MTcsImV4cCI6MjA5Mjk2MjQxN30.qzq30fT8L2bhX7kx46HZdco3rt7bN2zRGSKETCNgQqw";
 const PREP_APP_URL="https://digbys-prep.vercel.app";
 // ═══ DEMO MODE — ?demo opens a fully working copy on the same season as Kitchen Prep's demo (same bookings,
-// job codes, rota, prep days and timesheets), signed in as James. Nothing is written anywhere; ?demo=off or
-// Sign out leaves it.
+// job codes, rota, prep days and timesheets) at Primrose Hill Farm, in the farm's name and colours, signed in
+// as James. Nothing is written anywhere; ?demo=off or Leave the demo leaves it.
 const STAFF_DEMO=(()=>{
   const url=new URL(location.href);
   if(url.searchParams.has('demo')){if(url.searchParams.get('demo')==='off')localStorage.removeItem('st_demo');else localStorage.setItem('st_demo','1');url.searchParams.delete('demo');history.replaceState(null,'',url.pathname+(url.search||'')+url.hash);}
   if(localStorage.getItem('st_demo')!=='1')return null;
-  // ── The demo story — shared word for word by Kitchen Prep and Digby's Staff, so both apps
-  // show the same season: the same bookings, job codes, rota, prep days and timesheets.
+  // ── The demo story — shared word for word by Kitchen Prep and the Staff app, so both apps show the
+  // same season at Primrose Hill Farm: the same bookings, job codes, rota, prep days and timesheets.
   // Every date is relative to today: the showcase wedding is always three days away.
   function digbysDemoStory(){
     const T=new Date();T.setHours(0,0,0,0);
@@ -555,7 +604,7 @@ const STAFF_DEMO=(()=>{
     const initials=n=>n.split(/[\s—&]+/).filter(w=>/^[A-Za-z]/.test(w)).map(w=>w[0].toUpperCase()).join('').slice(0,3)||'XXX';
     const STAFF=[
       // id, name, email, role, job title, pay rate, phone
-      ['u-james','James Brierley','james@digbysevents.co.uk','ADMIN','Owner · head chef',0,'07700 900101'],
+      ['u-james','James Brierley','james@example.com','ADMIN','Executive chef',0,'07700 900101'],
       ['u-ellie','Ellie Marsh','ellie@example.com','STAFF','Sous chef',15.5,'07700 900102'],
       ['u-tom','Tom Reed','tom@example.com','STAFF','Chef de partie',14,'07700 900103'],
       ['u-priya','Priya Shah','priya@example.com','STAFF','Front of house lead',13.5,'07700 900104'],
@@ -567,71 +616,80 @@ const STAFF_DEMO=(()=>{
       ['u-olivia','Olivia Price','olivia@example.com','STAFF',null,12.71,null]   // signed up, waiting to be approved
     ].map(([id,name,email,role,title,rate,phone])=>({id,name,email,role,title,rate,phone,active:id!=='u-olivia'}));
     const R=(role,who,start,end)=>({role,who,start,end});
-    const WED_ROD=[['12:30','Guests arrive','','Canapés and fizz on the lawn'],['13:00','Ceremony','30 min','In the barn'],['13:45','Canapés','45 min','Three per head'],['15:00','Wedding breakfast','2 h','Starter, main, dessert'],['17:15','Speeches','30 min',''],['19:30','Evening guests','','+30'],['21:00','Evening food','','Pork belly bites for everyone']];
-    // key, days from today, client, type, covers, venue, address, status, payment, £ per head, extras, contact, start, end
+    const FARM='Primrose Hill Farm, Arlescote, Banbury OX17 1DQ';
+    const WED_ROD=[['12:30','Guests arrive','','Fizz on The Terrace'],['13:00','Ceremony','30 min','Ceremony Barn'],['13:45','Canapés','45 min','Three per head on The Terrace'],['15:00','Wedding breakfast','2 h','Dining Barn — three courses'],['17:15','Speeches','30 min',''],['19:30','Evening guests','','The Party'],['21:00','Evening food','','']];
+    const WED_ROTA=[R('Head chef','u-james','09:00','23:30'),R('Sous chef','u-ellie','09:00','23:30'),R('Chef de partie','u-tom','11:00','22:00'),R('Front of house lead','u-priya','11:00','00:00'),R('Front of house','u-sam','12:00','00:00'),R('Front of house','u-grace','12:00','00:00'),R('Front of house','u-jack','12:00','00:00')];
+    // key, days from today, client, type, covers, venue (the barn), status, payment, £ per head, extras, contact, start, end, menu [dish, portions], variants [dish, variant, n, why]
     const EV=[
-      {key:'grant',off:-4,client:'Hannah & Oliver Grant — Wedding',type:'WED',covers:96,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Completed',dep:'paid',pph:64,
-        extras:[['Crockery, glass & linen','Plato Hire',350],['Travel','',40]],contact:'Hannah Grant',start:'13:00',end:'23:30',
-        menu:[['d31'],['d32'],['d9'],['d8'],['d11'],['d36'],['d39'],['d21',120]],variants:[['d8','d11',5,'Vegetarian']],
-        guests:[['Table 3 — Mr Ahmed','Vegetarian','preference',[]],['Table 6 — Lucy Grant','Vegetarian ×4','preference',[]]],
-        rod:WED_ROD,staffing:'3 chefs · 4 FOH · 1 KP',
-        rota:[R('Head chef','u-james','09:00','23:30'),R('Sous chef','u-ellie','09:00','23:30'),R('Chef de partie','u-tom','11:00','22:00'),R('Front of house lead','u-priya','11:00','00:00'),R('Front of house','u-sam','12:00','00:00'),R('Front of house','u-grace','12:00','00:00'),R('Front of house','u-jack','12:00','00:00'),R('Kitchen porter','u-ben','12:00','00:00')]},
-      {key:'morris',off:-8,client:'The Morris family — wake',type:'WAKE',covers:45,venue:'Harbury Village Hall',address:'Harbury, Leamington Spa',status:'Completed',dep:'paid',pph:15.5,
-        extras:[['Travel','',20]],contact:'Paul Morris',start:'12:30',end:'15:30',menu:[['d1'],['d10'],['d29'],['d3']],variants:[],guests:[],
-        rod:[['12:00','Set up','',''],['12:45','Buffet open','2 h','Sandwiches, scones, brownies'],['15:00','Clear down','','']],staffing:'1 chef · 2 FOH',
-        rota:[R('Chef','u-tom','09:00','16:00'),R('Front of house','u-priya','11:30','16:00'),R('Front of house','u-maya','11:30','16:00')]},
-      {key:'hend',off:-15,client:'The Hendersons — 25th anniversary',type:'PRIV',covers:10,venue:'Client home',address:'Leamington Spa',status:'Completed',dep:'paid',pph:68,
-        extras:[],contact:'Claire Henderson',start:'19:00',end:'23:00',menu:[['d9'],['d35'],['d38'],['d36'],['d39']],variants:[],guests:[['Mr Henderson','No shellfish','allergy',['Crustaceans']]],
-        rod:[['18:00','Arrive and set up','',''],['19:30','Sit down','','Four courses at the table'],['22:30','Clear down','','']],staffing:'1 chef · 1 FOH',
-        rota:[R('Chef','u-james','15:00','23:30'),R('Front of house','u-grace','18:00','23:30')]},
-      {key:'whit',off:3,client:'Sophie & Ben Whitaker — Wedding',type:'WED',covers:110,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Confirmed',dep:'deposit',bankFinal:true,pph:62,
-        extras:[['Crockery, glass & linen','Plato Hire',385],['Travel','',45],['Late finish (after 23:00)','',120]],contact:'Sophie Whitaker',contact2:'Rachel at Primrose Hill Farm (venue) — 07700 900552',start:'13:00',end:'23:30',
-        menu:[['d31'],['d32'],['d4'],['d8'],['d11'],['d36'],['d37'],['d2'],['d12'],['d16',140]],variants:[['d8','d11',6,'Vegetarian'],['d2','d12',3,'Coeliac']],
+      {key:'grant',off:-4,client:'Hannah & Oliver Grant — Wedding',type:'WED',covers:96,venue:'Dining Barn',status:'Completed',dep:'paid',pph:62,
+        extras:[['Crockery, glass & linen','Plato Hire',350]],contact:'Hannah Grant',start:'13:00',end:'23:30',
+        menu:[['d101'],['d102'],['d103'],['d201'],['d202'],['d301'],['d302'],['d501'],['d502'],['d602',130]],variants:[['d201','d202',5,'Vegetarian'],['d301','d302',5,'Vegetarian'],['d501','d502',2,'Coeliac']],
+        guests:[['Table 3 — Mr Ahmed','Vegetarian','preference',[]],['Table 6 — the Grant cousins','Vegetarian ×4','preference',[]],['Table 2 — Mrs Hale','Coeliac','allergy',['Cereals containing gluten']],['Table 8 — Jo Price','Coeliac','allergy',['Cereals containing gluten']]],
+        rod:WED_ROD,staffing:'3 chefs · 4 FOH · 1 KP',rota:WED_ROTA.concat([R('Kitchen porter','u-ben','12:00','00:00')])},
+      {key:'north',off:-8,client:'Northbrook Partners — away day',type:'CORP',covers:36,venue:'Courtyard Barn',status:'Completed',dep:'paid',payInFull:true,pph:38,
+        extras:[],contact:'Claire Norton',start:'12:30',end:'15:00',menu:[['d201'],['d303'],['d505']],variants:[],guests:[],
+        rod:[['09:00','Arrival coffee','','Courtyard Barn'],['12:30','Lunch','1 h','Three courses'],['15:00','Depart','','']],staffing:'2 chefs · 2 FOH',
+        rota:[R('Head chef','u-james','08:00','16:00'),R('Chef de partie','u-tom','09:00','16:00'),R('Front of house lead','u-priya','08:30','16:00'),R('Front of house','u-maya','11:00','16:00')]},
+      {key:'hend',off:-15,client:'The Hendersons — 25th anniversary',type:'PRIV',covers:24,venue:'The Terrace',status:'Completed',dep:'paid',full:true,pph:68,
+        extras:[],contact:'Claire Henderson',start:'19:00',end:'23:00',menu:[['d104'],['d203'],['d304'],['d501']],variants:[],
+        guests:[['Mr Henderson','No shellfish','allergy',['Crustaceans']]],
+        chef:'Mr Henderson (no shellfish): his bass with a plain butter sauce, made in its own pan — no brown shrimp.',
+        rod:[['18:00','Set up','',''],['19:00','Drinks on The Terrace','',''],['19:30','Sit down','','Four courses'],['22:30','Clear down','','']],staffing:'1 chef · 2 FOH',
+        rota:[R('Chef','u-james','14:00','23:30'),R('Front of house','u-grace','18:00','23:30'),R('Front of house','u-sam','18:00','23:30')]},
+      {key:'whit',off:3,client:'Sophie & Ben Whitaker — Wedding',type:'WED',covers:110,venue:'Dining Barn',status:'Confirmed',dep:'deposit',bankFinal:true,pph:62,
+        extras:[['Crockery, glass & linen','Plato Hire',385],['Late finish (after 23:00)','',120]],contact:'Sophie Whitaker',contact2:'Rachel (wedding coordinator) — 07700 900552',start:'13:00',end:'23:30',
+        menu:[['d101'],['d102'],['d103'],['d201'],['d202'],['d301'],['d302'],['d501'],['d502'],['d601',150]],variants:[['d201','d202',6,'Vegetarian'],['d301','d302',6,'Vegetarian'],['d501','d502',3,'Coeliac']],
         guests:[['Table 2 — Emma Hale','Coeliac','allergy',['Cereals containing gluten']],['Table 5 — Mr & Mrs Carr','Coeliac (both)','allergy',['Cereals containing gluten']],['Table 7 — Oliver Reed','Severe nut allergy — carries an EpiPen','allergy',['Nuts','Peanuts']],['Tables 1, 4 and 6','Vegetarian ×6','preference',[]]],
         rod:WED_ROD,staffing:'3 chefs · 5 FOH · 1 KP',
-        kitchen:'Barn kitchen on site: two ovens, no gas — take the induction hobs and both hot boxes.',chef:'Mains plated from the barn kitchen at 15:20. Veg and GF plates marked with a rosemary sprig and a GF pick.',
-        service:'Top table first. Table 7 (nut allergy): broccoli without almonds, plated separately and taken out by Priya.',clientNote:'Thirty evening guests arrive at 19:30 — pork belly bites at 21:00 for everyone (140).',
-        rota:[R('Head chef','u-james','09:00','23:30'),R('Sous chef','u-ellie','09:00','23:30'),R('Chef de partie','u-tom','11:00','22:00'),R('Front of house lead','u-priya','11:00','00:00'),R('Front of house','u-sam','12:00','00:00'),R('Front of house','u-grace','12:00','00:00'),R('Front of house','u-jack','12:00','00:00'),R('Front of house','u-maya','12:00','00:00'),R('Kitchen porter','u-ben','12:00','00:00')]},
-      {key:'ellis',off:6,client:'Margaret Ellis — wake',type:'WAKE',covers:60,venue:'Boddington Village Hall',address:'Upper Boddington',status:'Confirmed',dep:'invoiced',pph:15.5,
-        extras:[['Travel','',20]],contact:'Andrew Ellis',start:'12:30',end:'15:30',menu:[['d1'],['d10'],['d29'],['d3'],['d40']],variants:[['d3','d40',2,'Coeliac, dairy free']],
-        guests:[['Mrs Ellis (sister)','Coeliac, dairy free','allergy',['Cereals containing gluten','Milk']],['Mr Pike','Coeliac','allergy',['Cereals containing gluten']]],
-        rod:[['12:00','Set up','',''],['12:45','Buffet open','2 h','Sandwiches, scones, brownies'],['15:00','Clear down','','']],staffing:'1 chef · 2 FOH',
-        kitchen:'Hall has a domestic kitchen only — everything goes plated on platters, scones warmed in the hall oven.',
-        rota:[R('Chef','u-tom','09:00','16:00'),R('Front of house','u-priya','11:30','16:00'),R('Front of house',null,'11:30','16:00')]},
-      {key:'hartwell',off:9,client:'Hartwell & Co — team lunch',type:'CORP',covers:40,venue:'Hartwell & Co',address:'Regent Street, Leamington Spa',status:'Confirmed',dep:'paid',payInFull:true,pph:18,
-        extras:[],contact:'Dan Hartwell',start:'12:00',end:'14:30',menu:[['d20'],['d14'],['d25'],['d3']],variants:[],
+        kitchen:'Service kitchen behind the Dining Barn. Both water baths on the back bench for the sirloin; hot boxes by the barn door.',
+        chef:'Mains away at 15:20. Veg and GF plates carry a rosemary sprig and a GF pick. Coeliac ×3: terrine with GF toast (dry store), no sourdough — panna cotta for dessert.',
+        service:'Top table first. Table 7 (nut allergy): the only nuts in the kitchen are the hazelnuts on the veg starter — his terrine is plated first on a clean board and walked by Priya.',
+        clientNote:'Forty evening guests at 19:30 — pulled pork buns at 21:00 for everyone (150).',
+        rota:WED_ROTA.concat([R('Front of house','u-maya','12:00','00:00'),R('Kitchen porter','u-ben','12:00','00:00')])},
+      {key:'tasting',off:6,client:'Anna & Liam Patel — menu tasting',type:'PRIV',covers:4,venue:'Courtyard Barn',status:'Confirmed',dep:'invoiced',full:true,pph:45,
+        extras:[],contact:'Anna Patel',start:'18:30',end:'20:30',
+        menu:[['d101',4],['d104',4],['d201',2],['d204',2],['d301',2],['d302',2],['d501',2],['d503',2]],variants:[],
+        guests:[['Liam Patel','Vegetarian — tasting both mains','preference',[]]],
+        kitchen:'Two of each course, plated as on the day — they choose their winter wedding menu tonight.',
+        rod:[['18:30','Welcome','','Courtyard Barn'],['18:45','Tasting','1 h 30','Two starters, two mains, two desserts'],['20:15','Menu chat','','Choose the menu for the day']],staffing:'1 chef · 1 FOH',
+        rota:[R('Chef','u-ellie','15:00','21:00'),R('Front of house',null,'18:00','21:00')]},
+      {key:'hartwell',off:9,client:'Hartwell & Co — autumn away day',type:'CORP',covers:40,venue:'Courtyard Barn',status:'Confirmed',dep:'paid',payInFull:true,pph:48,
+        extras:[],contact:'Dan Hartwell',start:'12:00',end:'15:00',menu:[['d205'],['d301'],['d302'],['d505']],variants:[],
         guests:[['Five of the team','Vegetarian ×5','preference',[]]],
-        rod:[['11:00','Set up in the boardroom','',''],['12:00','Lunch','1 h','Flatbreads, fries, slaw, brownies'],['13:30','Clear down','','']],staffing:'1 chef · 1 FOH',
-        rota:[R('Chef','u-ellie','09:00','15:00'),R('Front of house','u-sam','11:00','15:00')]},
-      {key:'harvest',off:10,client:'Primrose Hill Farm — Harvest Supper',type:'BUF',covers:80,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Confirmed',dep:'deposit',pph:38,
-        extras:[],contact:'Mike Jeffries',start:'18:30',end:'22:30',menu:[['d21'],['d5'],['d23'],['d25'],['d24'],['d27'],['d28'],['d2']],variants:[],guests:[['Farm shop team','Two vegetarians — cowboy beans without bacon','preference',[]]],
-        rod:[['06:00','Brisket on the smoker','',''],['17:30','Set up the counter','',''],['18:30','Supper','3 h','Long tables in the barn'],['22:00','Clear down','','']],staffing:'3 chefs · 3 FOH · 1 KP',
-        kitchen:'Whole beef from the farm — brisket from carcass PHB-2026-015, butchered last week.',
-        rota:[R('Pitmaster','u-james','06:00','23:00'),R('Chef','u-ellie','14:00','23:00'),R('Chef','u-tom','14:00','23:00'),R('Front of house lead','u-priya','16:30','23:00'),R('Front of house','u-grace','16:30','23:00'),R('Front of house',null,'16:30','23:00'),R('Kitchen porter','u-ben','16:30','23:00')]},
-      {key:'tmoct',off:17,client:"Digby's Tasting Menu — October",type:'TM',covers:28,venue:'Oxhay Farm',address:'Oxhay Farm, near Moreton-in-Marsh',status:'Confirmed',dep:'paid',pph:65,
-        extras:[],contact:'James Brierley',start:'19:00',end:'23:00',menu:[['d31'],['d32'],['d9'],['d34'],['d35'],['d38'],['d39']],variants:[],guests:[],
-        rod:[['18:30','Doors','',''],['19:00','Snacks','',''],['19:30','Courses','','Every 25 minutes'],['22:15','Coffee','','']],staffing:'2 chefs · 2 FOH',tickets:true,
+        rod:[['09:30','Arrival coffee','','Courtyard Barn'],['12:30','Lunch','1 h 30','Velouté, sirloin, posset'],['15:00','Depart','','']],staffing:'2 chefs · 2 FOH',
+        rota:[R('Chef','u-ellie','09:00','16:00'),R('Chef de partie','u-tom','10:00','16:00'),R('Front of house','u-sam','09:00','16:00'),R('Front of house','u-jack','11:00','16:00')]},
+      {key:'harvest',off:10,client:'Harvest Supper — Dexter beef from the farm',type:'BUF',covers:80,venue:'Dining Barn',status:'Confirmed',dep:'paid',tickets:true,pph:48,
+        extras:[],contact:'James Brierley',start:'18:30',end:'22:30',menu:[['d201'],['d401'],['d402'],['d403'],['d504']],variants:[],guests:[],
+        kitchen:'Short ribs from carcass PHB-2026-015, hung 21 days and butchered on the farm last week.',
+        rod:[['08:00','Short ribs into the combi','',''],['17:30','Long tables laid','','Dining Barn'],['18:30','Supper','3 h','Sharing boards, then the short rib feast'],['22:00','Clear down','','']],staffing:'3 chefs · 3 FOH · 1 KP',
+        rota:[R('Head chef','u-james','08:00','23:00'),R('Sous chef','u-ellie','14:00','23:00'),R('Chef de partie','u-tom','14:00','23:00'),R('Front of house lead','u-priya','16:30','23:00'),R('Front of house','u-grace','16:30','23:00'),R('Front of house',null,'16:30','23:00'),R('Kitchen porter','u-ben','16:30','23:00')]},
+      {key:'supper',off:17,client:'Supper Club — autumn tasting menu',type:'TM',covers:28,venue:'Courtyard Barn',status:'Confirmed',dep:'paid',tickets:true,pph:65,
+        extras:[],contact:'James Brierley',start:'19:00',end:'23:00',menu:[['d104'],['d105'],['d203'],['d204'],['d304'],['d505']],variants:[],guests:[],
+        rod:[['18:30','Doors','',''],['19:00','Snacks','','Arancini, pork belly'],['19:30','Courses','','Every 25 minutes'],['22:15','Coffee','','']],staffing:'2 chefs · 2 FOH',
         rota:[R('Head chef','u-james','12:00','23:30'),R('Sous chef','u-ellie','12:00','23:30'),R('Front of house lead','u-priya','17:30','23:30'),R('Front of house','u-grace','17:30','23:30')]},
-      {key:'aldridge',off:20,client:'Rachel & Tom Aldridge — engagement dinner',type:'PRIV',covers:12,venue:'Client home',address:'Kineton',status:'Confirmed',dep:'deposit',pph:72,
-        extras:[],contact:'Rachel Aldridge',start:'19:00',end:'23:00',menu:[['d33'],['d17'],['d38'],['d37'],['d39']],variants:[],guests:[],
-        rod:[['17:30','Arrive and set up','',''],['19:30','Sit down','','Four courses'],['22:30','Clear down','','']],staffing:'1 chef · 1 FOH',
-        rota:[R('Chef','u-james','15:00','23:30'),R('Front of house','u-maya','18:00','23:30')]},
-      {key:'carter',off:24,client:'Emily & Josh Carter — Wedding',type:'WED',covers:140,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Confirmed',dep:'deposit',pph:60,
-        extras:[['Crockery, glass & linen','Plato Hire',450],['Travel','',45]],contact:'Emily Carter',start:'12:30',end:'00:00',
-        menu:[['d31'],['d32'],['d34'],['d17',132],['d13',8],['d38'],['d37'],['d39'],['d21',170]],variants:[],guests:[['Head table','Vegetarian ×8 — mac and cheese','preference',[]]],
+      {key:'aldridge',off:20,client:'Rachel & Tom Aldridge — engagement party',type:'CAN',covers:60,venue:'The Party',status:'Confirmed',dep:'deposit',pph:34,
+        extras:[],contact:'Rachel Aldridge',start:'19:00',end:'23:30',menu:[['d101'],['d103'],['d104'],['d105'],['d601',60]],variants:[],guests:[],
+        rod:[['19:00','Guests arrive','','The Party'],['19:15','Canapés','1 h 30','Four per head'],['21:00','Buns','','Pulled pork for everyone']],staffing:'1 chef · 3 FOH',
+        rota:[R('Chef','u-james','14:00','23:30'),R('Front of house','u-maya','18:00','23:30')]},
+      {key:'carter',off:24,client:'Emily & Josh Carter — Wedding',type:'WED',covers:120,venue:'Dining Barn',status:'Confirmed',dep:'deposit',finalSent:[-4,10],pph:60,
+        extras:[['Crockery, glass & linen','Plato Hire',450]],contact:'Emily Carter',start:'12:30',end:'00:00',
+        menu:[['d101'],['d104'],['d105'],['d201'],['d202'],['d301'],['d302'],['d503'],['d602',170]],variants:[['d201','d202',8,'Vegetarian'],['d301','d302',8,'Vegetarian']],
+        guests:[['Head table','Vegetarian ×8','preference',[]]],
         rod:WED_ROD,staffing:'3 chefs · 6 FOH · 1 KP',rota:null},   // not on the rota yet: Staff offers it under From Kitchen Prep
-      {key:'rotary',off:45,client:'Rotary Club of Southam — Gala Dinner',type:'GAL',covers:90,venue:'Southam Rugby Club',address:'Southam',status:'Provisional',dep:null,pph:55,
-        extras:[],contact:'Graham Lees',start:'19:00',end:'00:00',menu:[['d4'],['d7'],['d2']],variants:[],guests:[],rod:[['18:30','Drinks reception','',''],['19:30','Dinner','2 h',''],['22:00','Raffle','','']],staffing:'2 chefs · 5 FOH',rota:null},
-      {key:'stmarys',off:38,client:"St Mary's — canapé reception",type:'CAN',covers:120,venue:"St Mary's Church Hall",address:'Warwick',status:'Enquiry',dep:null,pph:16,
-        extras:[],contact:'Rev. Alan Price',start:'18:00',end:'20:30',menu:[['d31'],['d32']],variants:[],guests:[],rod:[['17:00','Arrive','',''],['18:00','Canapés','2 h','Five per head']],staffing:'1 chef · 4 FOH',rota:null},
-      {key:'hartxmas',off:66,client:'Hartwell & Co — Christmas party',type:'CORP',covers:60,venue:'Hartwell & Co',address:'Regent Street, Leamington Spa',status:'Confirmed',dep:'deposit',pph:45,
-        extras:[],contact:'Dan Hartwell',start:'18:30',end:'23:00',menu:[['d4'],['d8'],['d11'],['d36'],['d2'],['d12']],variants:[['d8','d11',4,'Vegetarian'],['d2','d12',2,'Coeliac']],guests:[],rod:[['18:30','Drinks','',''],['19:30','Dinner','2 h','']],staffing:'2 chefs · 4 FOH',rota:null},
-      {key:'patel',off:80,client:'Anna & Liam Patel — Winter Wedding',type:'WED',covers:85,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Confirmed',dep:'deposit',pph:64,
-        extras:[['Crockery, glass & linen','Plato Hire',300],['Travel','',45]],contact:'Anna Patel',start:'12:00',end:'23:30',menu:[['d31'],['d32'],['d9'],['d8'],['d11'],['d38'],['d36'],['d39']],variants:[['d8','d11',7,'Vegetarian']],guests:[],rod:WED_ROD,staffing:'3 chefs · 4 FOH · 1 KP',rota:null},
-      {key:'bennett',off:199,client:'Lucy & George Bennett — Wedding',type:'WED',covers:120,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Provisional',dep:null,pph:62,extras:[],contact:'Lucy Bennett',start:'13:00',end:'23:30',menu:[],variants:[],guests:[],rod:[],staffing:'',rota:null},
-      {key:'dean',off:234,client:'Chloe & Sam Dean — Wedding',type:'WED',covers:150,venue:'Primrose Hill Farm',address:'Primrose Hill Farm, Cotswolds',status:'Enquiry',dep:null,pph:62,extras:[],contact:'Chloe Dean',start:'13:00',end:'23:30',menu:[],variants:[],guests:[],rod:[],staffing:'',rota:null}
+      {key:'kineton',off:38,client:'Kineton Cricket Club — awards dinner',type:'CORP',covers:70,venue:'Dining Barn',status:'Enquiry',dep:null,pph:45,
+        extras:[],contact:'Ian Marsh',start:'19:00',end:'23:30',menu:[['d201'],['d303'],['d505']],variants:[],guests:[],rod:[['19:00','Drinks','',''],['19:30','Dinner','2 h',''],['21:30','Awards','','']],staffing:'2 chefs · 4 FOH',rota:null},
+      {key:'rotary',off:45,client:'Banbury Rotary — Christmas lunch',type:'CORP',covers:90,venue:'Dining Barn',status:'Provisional',dep:null,pph:42,
+        extras:[],contact:'Graham Lees',start:'12:30',end:'16:00',menu:[['d205'],['d303'],['d503']],variants:[],guests:[],rod:[['12:00','Mulled wine','',''],['12:30','Lunch','2 h','']],staffing:'2 chefs · 5 FOH',rota:null},
+      {key:'hartxmas',off:66,client:'Hartwell & Co — Christmas party',type:'CORP',covers:60,venue:'Dining Barn',status:'Confirmed',dep:'deposit',pph:55,
+        extras:[],contact:'Dan Hartwell',start:'18:30',end:'23:30',menu:[['d101'],['d104'],['d205'],['d301'],['d302'],['d503']],variants:[['d301','d302',4,'Vegetarian']],guests:[],
+        rod:[['18:30','Drinks and canapés','',''],['19:30','Dinner','2 h','']],staffing:'2 chefs · 4 FOH',rota:null},
+      {key:'patel',off:80,client:'Anna & Liam Patel — Winter Wedding',type:'WED',covers:85,venue:'Dining Barn',status:'Confirmed',dep:'deposit',pph:64,
+        extras:[['Crockery, glass & linen','Plato Hire',300]],contact:'Anna Patel',start:'12:00',end:'23:30',
+        menu:[['d101'],['d102'],['d103'],['d205'],['d301'],['d302'],['d503'],['d602',110]],variants:[['d301','d302',7,'Vegetarian']],guests:[],rod:WED_ROD,staffing:'3 chefs · 4 FOH · 1 KP',rota:null},
+      {key:'bennett',off:199,client:'Lucy & George Bennett — Wedding',type:'WED',covers:120,venue:'Dining Barn',status:'Provisional',dep:null,pph:62,extras:[],contact:'Lucy Bennett',start:'13:00',end:'23:30',menu:[],variants:[],guests:[],rod:[],staffing:'',rota:null},
+      {key:'dean',off:234,client:'Chloe & Sam Dean — Wedding',type:'WED',covers:126,venue:'Dining Barn',status:'Enquiry',dep:null,pph:62,extras:[],contact:'Chloe Dean',start:'13:00',end:'23:30',menu:[],variants:[],guests:[],rod:[],staffing:'',rota:null}
     ];
-    EV.forEach(e=>{e.date=day(e.off);e.code=initials(e.client)+ddmmyy(e.date)+e.type;e.price=+(e.pph*e.covers).toFixed(2);});
+    EV.forEach(e=>{e.address=FARM;e.date=day(e.off);e.code=initials(e.client)+ddmmyy(e.date)+e.type;e.price=+(e.pph*e.covers).toFixed(2);});
     // prep days: the three before the wedding, then the weeks that follow (two chefs the day before a big job)
     const PD=[[0,2,'07:30','16:00'],[1,2,'08:00','16:00'],[2,3,'07:30','17:00'],[5,1,'08:00','15:00'],[7,2,'08:00','16:00'],[8,2,'08:00','16:00'],[15,2,'08:00','16:00'],[16,2,'08:00','16:00'],[22,2,'08:00','16:00'],[23,3,'07:30','17:00']]
       .map(([o,chefs,start,end])=>({off:o,date:day(o),chefs,start,end,code:'PREP'+ddmmyy(day(o))}));
@@ -644,7 +702,7 @@ const STAFF_DEMO=(()=>{
     const shiftMins=(s,e)=>{let m=mins(e)-mins(s);if(m<=0)m+=1440;return m;};
     const shifts=[];
     EV.forEach(e=>{(e.rota||[]).forEach((r,i)=>shifts.push({id:'sh-'+e.key+'-'+(i+1),ev:e.key,code:e.code,title:r.role,who:r.who,date:e.date,start:r.start,end:r.end,location:e.venue}));});
-    PD.concat(pastPrep).forEach(p=>{const who=PREP_ROTA[String(p.off)];if(!who)return;who.forEach((u,i)=>shifts.push({id:'sh-'+p.code+'-'+(i+1),ev:p.code,code:p.code,title:'Prep chef',who:u,date:p.date,start:p.start,end:p.end,location:'Prep unit, Southam'}));});
+    PD.concat(pastPrep).forEach(p=>{const who=PREP_ROTA[String(p.off)];if(!who)return;who.forEach((u,i)=>shifts.push({id:'sh-'+p.code+'-'+(i+1),ev:p.code,code:p.code,title:'Prep chef',who:u,date:p.date,start:p.start,end:p.end,location:'Farm kitchen'}));});
     // timesheets: what was actually worked (a few minutes either side), breaks on long shifts; today's prep crew clocked in
     let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
     const at=(date,hhmm,plus)=>{const[a,b]=hhmm.split(':').map(Number);const d=new Date(date+'T00:00:00');d.setHours(a,b+(plus||0),0,0);return d;};
@@ -658,7 +716,7 @@ const STAFF_DEMO=(()=>{
         const inAt=at(s.date,s.start,s.who==='u-james'?11:22);if(inAt<now)entries.push({id:'te-'+s.id,shift:s.id,who:s.who,in:inAt.toISOString(),out:null,brk:0});
       }
     });
-    // labour: hours worked (or rostered, for what's to come) × pay rate; the owner isn't on the payroll
+    // labour: hours worked (or rostered, for what's to come) × pay rate; the executive chef isn't on the hourly payroll
     const labour=key=>{const ss=shifts.filter(s=>s.ev===key&&s.who);let cost=0,hours=0;
       ss.forEach(s=>{const te=entries.find(t=>t.shift===s.id&&t.out);const m=te?(new Date(te.out)-new Date(te.in))/60000-te.brk:shiftMins(s.start,s.end)-(shiftMins(s.start,s.end)>360?30:0);hours+=m/60;cost+=m/60*((staffById(s.who)||{}).rate||0);});
       return{shifts:shifts.filter(s=>s.ev===key).length,hours:+hours.toFixed(1),cost:+cost.toFixed(2),actual:ss.some(s=>entries.some(t=>t.shift===s.id&&t.out))};};
@@ -669,7 +727,7 @@ const STAFF_DEMO=(()=>{
   const BOH={profiles:[],finance_staff:[],events:[],shifts:[],time_entries:[],time_off_requests:[],notifications:[]};
   const DETAILS={
     'u-james':{food_hygiene_level:'Level 3',food_hygiene_expiry:day(420),first_aid_trained:true,first_aid_expiry:day(300),employment_start:'2021-04-01'},
-    'u-ellie':{food_hygiene_level:'Level 2',food_hygiene_expiry:day(190),first_aid_trained:true,first_aid_expiry:day(240),employment_start:'2023-03-13',pay_frequency:'Monthly',notes:'Runs the unit on prep days.'},
+    'u-ellie':{food_hygiene_level:'Level 2',food_hygiene_expiry:day(190),first_aid_trained:true,first_aid_expiry:day(240),employment_start:'2023-03-13',pay_frequency:'Monthly',notes:'Runs the farm kitchen on prep days.'},
     'u-tom':{food_hygiene_level:'Level 2',food_hygiene_expiry:day(-10),first_aid_trained:false,employment_start:'2024-05-20',pay_frequency:'Monthly',notes:'Food hygiene certificate lapsed — refresher booked.'},
     'u-priya':{food_hygiene_level:'Level 2',food_hygiene_expiry:day(260),first_aid_trained:true,first_aid_expiry:day(35),employment_start:'2023-06-01',pay_frequency:'Per event'},
     'u-sam':{food_hygiene_level:'Level 2',food_hygiene_expiry:day(330),employment_start:'2025-04-12',pay_frequency:'Per event'},
@@ -682,13 +740,13 @@ const STAFF_DEMO=(()=>{
   S.staff.forEach(s=>{
     const d=DETAILS[s.id]||{};const fs='fs-'+s.id.slice(2);
     BOH.profiles.push({id:s.id,email:s.email,name:s.name,role:s.role,job_title:s.title,active:s.active,phone:s.phone,finance_staff_id:s.id==='u-olivia'?null:fs,must_change_password:false,created_at:ts(s.id==='u-olivia'?-1:-300)});
-    if(s.id!=='u-olivia')BOH.finance_staff.push({id:fs,name:s.name,pay_rate:s.rate,phone:s.phone,address:'Southam, Warwickshire',ni_number:'QQ123456C',bank_name:'Starling',bank_sort_code:'00-00-00',bank_account:'00000000',
+    if(s.id!=='u-olivia')BOH.finance_staff.push({id:fs,name:s.name,pay_rate:s.rate,phone:s.phone,address:'Banbury, Oxfordshire',ni_number:'QQ123456C',bank_name:'Starling',bank_sort_code:'00-00-00',bank_account:'00000000',
       emergency_contact_name:'On file',emergency_contact_phone:'07700 900999',tax_code:'1257L',rtw_doc_type:d.rtw_skip?null:'UK Passport',rtw_check_date:d.rtw_skip?null:(d.employment_start||'2025-01-01'),active:true,first_aid_trained:!!d.first_aid_trained,...d});
   });
   BOH.finance_staff.forEach(f=>{delete f.rtw_skip;});
   // the rota: every booking with shifts, and the prep days on it
   S.events.filter(e=>e.rota).forEach(e=>{const starts=e.rota.map(r=>r.start).sort();BOH.events.push({id:'be-'+e.key,name:e.client,client_name:e.contact,location:e.venue,address:e.address,event_date:e.date,start_time:starts[0],end_time:e.end,guest_count:e.key==='hartwell'?35:e.covers,job_code:e.code,notes:e.kitchen||null,status:'CONFIRMED',created_by:'u-james',created_at:ts(Math.min(-3,e.off-30))});});
-  S.prepDays.concat(S.pastPrep).filter(p=>S.prepRota[String(p.off)]).forEach(p=>BOH.events.push({id:'be-'+p.code,name:'Prep day',client_name:'Prep day',location:"Digby's prep unit",address:'Southam',event_date:p.date,start_time:p.start,end_time:p.end,guest_count:null,job_code:p.code,notes:`${p.chefs} chef${p.chefs===1?'':'s'} — the prep list is in Kitchen Prep`,status:'CONFIRMED',created_by:'u-james',created_at:ts(Math.min(-2,p.off-6))}));
+  S.prepDays.concat(S.pastPrep).filter(p=>S.prepRota[String(p.off)]).forEach(p=>BOH.events.push({id:'be-'+p.code,name:'Prep day',client_name:'Prep day',location:'Farm kitchen',address:'Primrose Hill Farm, Arlescote',event_date:p.date,start_time:p.start,end_time:p.end,guest_count:null,job_code:p.code,notes:`${p.chefs} chef${p.chefs===1?'':'s'} — the prep list is in Kitchen Prep`,status:'CONFIRMED',created_by:'u-james',created_at:ts(Math.min(-2,p.off-6))}));
   S.shifts.forEach(s=>BOH.shifts.push({id:s.id,event_id:'be-'+s.ev,title:s.title,location:s.location,shift_date:s.date,start_time:s.start,end_time:s.end,notes:null,status:s.who?'ASSIGNED':'OPEN',assigned_user_id:s.who,created_by:'u-james'}));
   S.entries.forEach(t=>BOH.time_entries.push({id:t.id,shift_id:t.shift,user_id:t.who,clock_in:t.in,clock_out:t.out,break_minutes:t.brk,note:null,event_id:null}));
   BOH.time_off_requests=[
@@ -707,7 +765,7 @@ const STAFF_DEMO=(()=>{
   // Kitchen Prep's side: the bookings (by job code) and its prep days
   const PREP={events:S.events.filter(e=>e.status!=='Cancelled').map(e=>({id:'ev-'+e.key,client_name:e.client,job_code:e.code,event_date:e.date,start_time:e.start,end_time:e.end,covers:e.covers,venue_name:e.venue,location:e.venue,address:e.address,status:e.status,event_type:e.type,budget:String(e.price),deposit_status:e.bankFinal?'paid':e.dep||null,event_dishes:(e.menu||[]).map(m=>({dish_id:m[0]}))})),
     app_settings:[{key:'prep_days',value:S.prepDays.map(p=>({date:p.date,start:p.start,end:p.end,chefs:p.chefs}))}]};
-  const AUTH={user:{id:'u-james',email:'james@digbysevents.co.uk'},listeners:[]};
+  const AUTH={user:{id:'u-james',email:'james@example.com'},listeners:[]};
   let seq=1;
   const EMBED={shifts:{events:['event_id','events'],profiles:['assigned_user_id','profiles']},time_entries:{shifts:['shift_id','shifts'],profiles:['user_id','profiles'],events:['event_id','events']},time_off_requests:{profiles:['user_id','profiles']}};
   function embed(db,table,sel,row){const r=Object.assign({},row);const emb=EMBED[table]||{};
@@ -769,7 +827,9 @@ const STAFF_DEMO=(()=>{
     resetPasswordForEmail(){return Promise.resolve({data:{},error:null});}
   };
   const client=db=>({from:t=>chain(db,t),rpc:(n,a)=>rpc(db,n,a||{}),auth});
-  document.documentElement.classList.add('demo');
+  // the demo is Primrose Hill Farm's: its name, colours and Trajan-style capitals
+  document.documentElement.classList.add('demo','brand-phf');document.title='Primrose Hill Farm — Staff';
+  try{const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#F3F1EC');const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap';document.head.appendChild(l);}catch(e){}
   return{sb:client(BOH),sbPrep:client(PREP),BOH,PREP};
 })();
 function leaveStaffDemo(){localStorage.removeItem('st_demo');location.href=location.pathname;}
@@ -777,6 +837,8 @@ function demoQ(u){return STAFF_DEMO?u.replace(/(#|$)/,'/?demo$1').replace(/\/\/\
 
 const sb=STAFF_DEMO?STAFF_DEMO.sb:supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const sbPrep=STAFF_DEMO?STAFF_DEMO.sbPrep:supabase.createClient(PREP_URL,PREP_KEY);
+// Whose team this is: Digby's — or, in the demo, Primrose Hill Farm's
+const STAFF_BRAND=STAFF_DEMO?{wm:'Primrose Hill Farm',name:'Primrose Hill Farm',prepUnit:'Farm kitchen'}:{wm:"DIGBY'S",name:"Digby's",prepUnit:"Digby's prep unit"};
 // Every write that nobody checks still surfaces: an error no caller reads within the tick becomes an error toast (with Copy).
 function watchWrites(client){const from=client.from.bind(client);client.from=(t)=>{const b=from(t);['insert','update','upsert','delete'].forEach(m=>{if(typeof b[m]!=='function')return;const o=b[m].bind(b);b[m]=(...a)=>{const q=o(...a);const then=q.then.bind(q);q.then=(res,rej)=>then(r=>{if(r&&r.error){let read=false;const px=new Proxy(r,{get(o,k){if(k==='error')read=true;return o[k];}});setTimeout(()=>{if(!read)toast(`${t}: ${r.error.message||r.error}`,'err');},0);return res?res(px):px;}return res?res(r):r;},rej);return q;};});return b;};}
 watchWrites(sb);
@@ -919,7 +981,7 @@ function shell(hash,page){
   const p=state.profile;
   return`<div class="app">
   <aside class="sidebar">
-    <button class="sb-wordmark" onclick="navigate('#/today')"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></button>
+    <button class="sb-wordmark" onclick="navigate('#/today')"><span class="wm">${STAFF_BRAND.wm}</span><span class="wm-sub">Staff</span></button>
     <nav class="sb-nav">${nav.map(([r,i,l])=>`<button class="nav-item${active(r)?' active':''}" onclick="navigate('${r}')">${ico(i)}<span>${l}</span></button>`).join('')}</nav>
     <div class="sb-foot" style="flex-direction:column;align-items:stretch;gap:4px;padding:0;">
       <button class="sb-user" onclick="navigate('#/profile')"><span class="avatar me">${initials(p.name)}</span><span style="min-width:0;"><div class="sb-user-name">${h(p.name)}</div><div class="sb-user-role">${h(p.job_title||(p.role==='ADMIN'?'Admin':'Staff'))}</div></span></button>
@@ -931,7 +993,7 @@ function shell(hash,page){
   </aside>
   <main class="main">
     <div class="view active">
-      <div class="mob-top"><button class="sb-wordmark" style="padding:0;" onclick="navigate('#/today')"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></button>${STAFF_DEMO?`<button class="demo-pill" onclick="leaveStaffDemo()">Demo</button>`:''}<span style="display:flex;gap:2px;"><button class="theme-btn bell${state.unread?' has':''}" onclick="openNotifications()">${ico('bell')}<span class="bell-dot"></span></button><button class="theme-btn" onclick="navigate('#/profile')">${ico('person')}</button></span></div>
+      <div class="mob-top"><button class="sb-wordmark" style="padding:0;" onclick="navigate('#/today')"><span class="wm">${STAFF_BRAND.wm}</span><span class="wm-sub">Staff</span></button>${STAFF_DEMO?`<button class="demo-pill" onclick="leaveStaffDemo()">Demo</button>`:''}<span style="display:flex;gap:2px;"><button class="theme-btn bell${state.unread?' has':''}" onclick="openNotifications()">${ico('bell')}<span class="bell-dot"></span></button><button class="theme-btn" onclick="navigate('#/profile')">${ico('person')}</button></span></div>
       <div class="ph"><div><div class="ph-title">${h(page.title||'')}</div>${page.sub?`<div class="ph-sub" style="margin-left:0;margin-top:4px;">${page.sub}</div>`:''}</div>${page.actions?`<div class="ph-actions">${page.actions}</div>`:''}</div>
       <div class="page"><div class="page-inner">${page.body}</div></div>
     </div>
@@ -1233,7 +1295,7 @@ async function prepUpcoming(){
   // prep days set in Kitchen Prep (calendar or Prep → Prep days) come through as rota-able days at the unit
   try{const{data}=await sbPrep.from('app_settings').select('value').eq('key','prep_days').maybeSingle();pds=(Array.isArray(data?.value)?data.value:[]).filter(p=>p&&p.date&&p.date>=todayIso());}catch(e){}
   const code=d=>'PREP'+d.slice(8,10)+d.slice(5,7)+d.slice(2,4);
-  const days=pds.map(p=>({id:'prepday-'+p.date,client_name:'Prep day',job_code:code(p.date),event_date:p.date,start_time:p.start||'08:00',end_time:p.end||'16:00',covers:null,venue_name:"Digby's prep unit",location:null,address:null,status:'Confirmed',event_type:'PREP',chefs:p.chefs||1,prepDay:true}));
+  const days=pds.map(p=>({id:'prepday-'+p.date,client_name:'Prep day',job_code:code(p.date),event_date:p.date,start_time:p.start||'08:00',end_time:p.end||'16:00',covers:null,venue_name:STAFF_BRAND.prepUnit,location:null,address:null,status:'Confirmed',event_type:'PREP',chefs:p.chefs||1,prepDay:true}));
   return evs.concat(days).sort((a,b)=>a.event_date.localeCompare(b.event_date)||String(a.start_time||'').localeCompare(String(b.start_time||'')));
 }
 async function eventsPage(){
@@ -1378,7 +1440,7 @@ async function profilePage(){
       <div class="more-row" onclick="toggleTheme()">${ico('moon')}<span style="flex:1;">Light / dark</span><span class="muted">Follows your device unless set</span></div>
       <div class="more-row" onclick="sb.auth.signOut()">${ico('logout')}<span style="flex:1;">${STAFF_DEMO?'Leave the demo':'Sign out'}</span></div>
     </div>
-    <div class="note" style="text-align:center;">Digby's Staff v${APP_VERSION} · build ${new Date(APP_BUILD_DATE+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>`};
+    <div class="note" style="text-align:center;">${STAFF_BRAND.name} Staff v${APP_VERSION} · build ${new Date(APP_BUILD_DATE+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>`};
 }
 function adminResetPassword(id){
   const p=state.profiles.find(x=>x.id===id);if(!p)return;
@@ -1419,7 +1481,7 @@ function morePage(){
   return{title:'More',body:`<div class="list">${items.map(([r,i,l])=>`<div class="more-row" onclick="navigate('${r}')">${ico(i)}<span style="flex:1;">${l}</span>${chev()}</div>`).join('')}</div><div class="list"><div class="more-row" onclick="openNotifications()">${ico('bell')}<span style="flex:1;">Notifications</span>${state.unread?`<span class="badge no">${state.unread}</span>`:''}${chev()}</div><div class="more-row" onclick="toggleTheme()">${ico('moon')}<span style="flex:1;">Light / dark</span></div><div class="more-row" onclick="sb.auth.signOut()">${ico('logout')}<span style="flex:1;">${STAFF_DEMO?'Leave the demo':'Sign out'}</span></div></div>
     ${isAdmin()?`<div class="sec"><div class="sec-hd">Setup <button class="btn btn-sm" onclick="runSetupChecks()" style="margin-left:auto;">Check again</button></div>${setupListHTML()}<div class="note">Checked against the live database each time you open this page.</div><div class="note">Email links: in Supabase → Authentication → URL Configuration set the Site URL to this app’s address and add it to Redirect URLs — otherwise confirmation and reset links send people to localhost. Password resets: “Forgot your password?” emails only go out once Supabase → Authentication → SMTP Settings has a custom sender; until then use Reset password on a person’s page (a temporary password they must change).</div></div>`:''}
     ${_errLog.length?`<div class="sec"><div class="sec-hd">Recent errors <button class="btn btn-sm" onclick="copyErrorLog()" style="margin-left:auto;">Copy all</button></div><div class="list">${_errLog.slice(0,8).map(r=>`<div class="kv"><span style="min-width:0;"><span class="muted">${r.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span> ${h(r.msg)}</span></div>`).join('')}</div><div class="note">Tap Copy on an error toast, or Copy all here, and paste it to get it fixed.</div></div>`:''}
-    <div class="note" style="text-align:center;margin-top:16px;">Digby's Staff v${APP_VERSION}</div>`};
+    <div class="note" style="text-align:center;margin-top:16px;">${STAFF_BRAND.name} Staff v${APP_VERSION}</div>`};
 }
 
 // ── Notifications ──
@@ -1431,7 +1493,7 @@ function openNotifications(){
 }
 
 // ── Auth screens ──
-const authWM=`<div class="auth-wm"><span class="wm">DIGBY'S</span><span class="wm-sub">Staff</span></div>`;
+const authWM=`<div class="auth-wm"><span class="wm">${STAFF_BRAND.wm}</span><span class="wm-sub">Staff</span></div>`;
 function loginScreen(){return`<div class="auth"><div class="card auth-card">${authWM}<div class="auth-title">Sign in</div><div class="fld"><label class="fld-label">Email</label><input class="fld-inp" id="a-email" type="email" autocomplete="username" inputmode="email"></div><div class="fld"><label class="fld-label">Password</label><input class="fld-inp" id="a-pass" type="password" autocomplete="current-password"></div><div class="auth-err" id="a-err"></div><button class="btn btn-primary btn-lg" id="a-go">Sign in</button><div class="note" style="text-align:center;"><button class="link-btn" onclick="forgotPassword()">Forgot your password?</button></div><div class="note" style="text-align:center;padding-top:0;">New here? <button class="link-btn" onclick="navigate('#/signup')">Create an account</button></div></div></div>`;}
 async function forgotPassword(){
   const email=(document.getElementById('a-email')?.value||'').trim();const err=document.getElementById('a-err');
